@@ -5,7 +5,7 @@
         <h1 class="text-3xl font-bold mb-2">Seguimiento de Guaguas en Tiempo Real</h1>
         <p class="text-gray-400">Transporte público de Gran Canaria</p>
         <div class="mt-2 bg-yellow-900/30 border border-yellow-700 text-yellow-200 px-4 py-2 rounded text-sm">
-          ℹ️ Demo con simulación basada en rutas y horarios reales de Guaguas Municipales y Global. 
+          ℹ️ Demo con simulación basada en rutas y horarios reales de <strong>Guaguas Municipales</strong> (amarillo - urbanas) y <strong>Global</strong> (azul - interurbanas). 
           Las guaguas solo aparecen dentro de sus horarios operativos y se mueven por rutas geográficamente precisas de Gran Canaria.
           <br><small class="text-yellow-300/80">Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos son simulados con máxima fidelidad a la realidad.</small>
         </div>
@@ -26,13 +26,18 @@
         </div>
 
         <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Con retrasos</h3>
-          <p class="text-2xl font-bold text-yellow-400">{{ delayedBuses.length }}</p>
+          <h3 class="text-sm font-semibold mb-2">Municipales</h3>
+          <p class="text-2xl font-bold text-yellow-400">{{ municipalesBuses.length }}</p>
         </div>
 
         <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Actualización</h3>
-          <p class="text-sm text-gray-400">Cada 5 segundos</p>
+          <h3 class="text-sm font-semibold mb-2">Global</h3>
+          <p class="text-2xl font-bold text-blue-400">{{ globalBuses.length }}</p>
+        </div>
+
+        <div class="bg-gray-800 p-4 rounded-lg">
+          <h3 class="text-sm font-semibold mb-2">Con retrasos</h3>
+          <p class="text-2xl font-bold text-red-400">{{ delayedBuses.length }}</p>
         </div>
       </div>
 
@@ -67,7 +72,7 @@
               :icon-size="[40, 40]"
               :icon-anchor="[20, 20]"
             >
-              <div class="bus-marker" :class="getBusTypeClass(bus.type)">
+              <div class="bus-marker" :class="getBusTypeClass(bus.company, bus.type)">
                 <div class="bus-number">{{ bus.line }}</div>
                 <svg v-if="bus.delayed" class="delay-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
@@ -79,6 +84,7 @@
               <div class="bus-popup">
                 <h3 class="font-bold text-lg mb-2">Línea {{ bus.line }}</h3>
                 <div class="space-y-1 text-sm">
+                  <p><strong>Empresa:</strong> {{ getBusCompanyLabel(bus.company) }}</p>
                   <p><strong>Tipo:</strong> {{ getBusTypeLabel(bus.type) }}</p>
                   <p><strong>Desde:</strong> {{ bus.origin }}</p>
                   <p><strong>Hasta:</strong> {{ bus.destination }}</p>
@@ -103,16 +109,16 @@
         <h3 class="font-semibold mb-2">Leyenda</h3>
         <div class="flex flex-wrap gap-4 text-sm">
           <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded bg-blue-500"></div>
-            <span>Guagua Urbana</span>
+            <div class="w-6 h-6 rounded bg-yellow-500"></div>
+            <span>Guaguas Municipales (Urbanas)</span>
           </div>
           <div class="flex items-center gap-2">
-            <div class="w-6 h-6 rounded bg-green-500"></div>
-            <span>Guagua Interurbana</span>
+            <div class="w-6 h-6 rounded bg-blue-600"></div>
+            <span>Global (Interurbanas)</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded bg-purple-500"></div>
-            <span>Guagua Nocturna</span>
+            <span>Líneas Nocturnas</span>
           </div>
           <div class="flex items-center gap-2">
             <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -197,74 +203,100 @@ const selectedBusId = ref(null);
 const buses = ref([]);
 const updateInterval = ref(null);
 
-// Líneas de guaguas disponibles (datos reales de Guaguas Municipales y Global)
-const busLines = ['1', '2', '12', '17', '25', '30', '32', '35', '47', '49', '80', 'N1'];
+// Líneas disponibles - Municipales y Global
+const busLines = [
+  // Guaguas Municipales (urbanas)
+  '1', '2', '11', '12', '13', '17', '25',
+  // Global (interurbanas) - usando sus números reales
+  '1', '5', '30', '32', '60', '80', '91',
+  // Nocturnas
+  'N1'
+];
 
-// Generar datos simulados basados en rutas reales de Guaguas Municipales
-// Datos obtenidos de https://www.guaguas.com - Noviembre 2025
+// Generar datos simulados basados en rutas reales
+// GUAGUAS MUNICIPALES: Líneas urbanas de Las Palmas (amarillas)
+// GLOBAL: Líneas interurbanas que conectan toda Gran Canaria (azules)
+// Datos obtenidos de https://www.guaguas.com y http://globalsu.net - Noviembre 2025
 // Nota: No existe GTFS público disponible para Gran Canaria
 const generateBuses = () => {
   const routes = [
-    // Líneas Urbanas - Coordenadas aproximadas de rutas reales
+    // ========== GUAGUAS MUNICIPALES (Urbanas - Amarillas) ==========
     { 
-      line: '1', type: 'urban', origin: 'Santa Catalina', destination: 'San Telmo', 
-      stops: ['Teatro', 'Parque San Telmo', 'Puerto'], color: '#0066CC',
+      line: '1', type: 'urban', company: 'municipales', origin: 'Santa Catalina', destination: 'San Telmo', 
+      stops: ['Teatro', 'Parque San Telmo', 'Puerto'], color: '#FDB913',
       routeCoords: [[28.135, -15.431], [28.124, -15.430], [28.109, -15.416]]
     },
     { 
-      line: '2', type: 'urban', origin: 'Puerto', destination: 'Escaleritas', 
-      stops: ['Vegueta', 'San José', 'Escaleritas'], color: '#0066CC',
+      line: '2', type: 'urban', company: 'municipales', origin: 'Puerto', destination: 'Escaleritas', 
+      stops: ['Vegueta', 'San José', 'Escaleritas'], color: '#FDB913',
       routeCoords: [[28.109, -15.416], [28.100, -15.415], [28.089, -15.442]]
     },
     { 
-      line: '12', type: 'urban', origin: 'Teatro', destination: 'Tamaraceite', 
-      stops: ['León y Castillo', 'Cruz del Señor', 'Tamaraceite Alto'], color: '#0066CC',
+      line: '12', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Tamaraceite', 
+      stops: ['León y Castillo', 'Cruz del Señor', 'Tamaraceite Alto'], color: '#FDB913',
       routeCoords: [[28.109, -15.413], [28.125, -15.455], [28.145, -15.480]]
     },
     { 
-      line: '17', type: 'urban', origin: 'Santa Catalina', destination: 'Jinámar', 
-      stops: ['Miller Bajo', 'Cruz de Piedra', 'Jinámar Centro'], color: '#0066CC',
+      line: '17', type: 'urban', company: 'municipales', origin: 'Santa Catalina', destination: 'Jinámar', 
+      stops: ['Miller Bajo', 'Cruz de Piedra', 'Jinámar Centro'], color: '#FDB913',
       routeCoords: [[28.135, -15.431], [28.121, -15.395], [28.105, -15.375]]
     },
     { 
-      line: '25', type: 'urban', origin: 'Teatro', destination: 'Ciudad del Campo', 
-      stops: ['Schamann', 'San Cristóbal', 'Dragonal'], color: '#0066CC',
+      line: '25', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Ciudad del Campo', 
+      stops: ['Schamann', 'San Cristóbal', 'Dragonal'], color: '#FDB913',
       routeCoords: [[28.109, -15.413], [28.130, -15.440], [28.155, -15.460]]
     },
-    // Líneas Interurbanas (Global) - Rutas que cruzan la isla
     { 
-      line: '30', type: 'interurban', origin: 'San Telmo', destination: 'Maspalomas', 
-      stops: ['Ingenio', 'Vecindario', 'Playa del Inglés'], color: '#00AA66',
+      line: '11', type: 'urban', company: 'municipales', origin: 'Puerto', destination: 'Guanarteme', 
+      stops: ['Alcaravaneras', 'Rehoyas', 'Escaleritas'], color: '#FDB913',
+      routeCoords: [[28.109, -15.416], [28.120, -15.440], [28.132, -15.456]]
+    },
+    { 
+      line: '13', type: 'urban', company: 'municipales', origin: 'San Telmo', destination: 'Las Rehoyas', 
+      stops: ['Schamann', 'Vegueta', 'Lugo'], color: '#FDB913',
+      routeCoords: [[28.109, -15.416], [28.100, -15.415], [28.125, -15.448]]
+    },
+    
+    // ========== GLOBAL (Interurbanas - Azules) ==========
+    { 
+      line: '1', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Maspalomas', 
+      stops: ['Ingenio', 'Vecindario', 'Playa del Inglés'], color: '#0066CC',
       routeCoords: [[28.109, -15.416], [27.958, -15.452], [27.845, -15.565], [27.760, -15.586]]
     },
     { 
-      line: '32', type: 'interurban', origin: 'San Telmo', destination: 'Puerto Rico', 
-      stops: ['Arguineguín', 'Patalavaca', 'Amadores'], color: '#00AA66',
-      routeCoords: [[28.109, -15.416], [27.920, -15.560], [27.790, -15.685]]
-    },
-    { 
-      line: '35', type: 'interurban', origin: 'San Telmo', destination: 'Mogán', 
-      stops: ['Puerto Rico', 'Tauro', 'Puerto de Mogán'], color: '#00AA66',
-      routeCoords: [[28.109, -15.416], [27.790, -15.685], [27.815, -15.765]]
-    },
-    { 
-      line: '47', type: 'interurban', origin: 'San Telmo', destination: 'Arucas', 
-      stops: ['Tamaraceite', 'Tenoya', 'Bañaderos'], color: '#00AA66',
-      routeCoords: [[28.109, -15.416], [28.145, -15.480], [28.115, -15.515]]
-    },
-    { 
-      line: '49', type: 'interurban', origin: 'San Telmo', destination: 'Gáldar', 
-      stops: ['Arucas', 'Moya', 'Guía'], color: '#00AA66',
+      line: '5', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Gáldar', 
+      stops: ['Arucas', 'Moya', 'Guía'], color: '#0066CC',
       routeCoords: [[28.109, -15.416], [28.115, -15.515], [28.135, -15.595], [28.148, -15.655]]
     },
     { 
-      line: '80', type: 'interurban', origin: 'San Telmo', destination: 'Agaete', 
-      stops: ['Gáldar', 'San Pedro', 'Puerto de las Nieves'], color: '#00AA66',
+      line: '30', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Puerto Rico', 
+      stops: ['Arguineguín', 'Patalavaca', 'Amadores'], color: '#0066CC',
+      routeCoords: [[28.109, -15.416], [27.920, -15.560], [27.790, -15.685]]
+    },
+    { 
+      line: '32', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Mogán', 
+      stops: ['Puerto Rico', 'Tauro', 'Puerto de Mogán'], color: '#0066CC',
+      routeCoords: [[28.109, -15.416], [27.790, -15.685], [27.815, -15.765]]
+    },
+    { 
+      line: '60', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Agaete', 
+      stops: ['Gáldar', 'San Pedro', 'Puerto de las Nieves'], color: '#0066CC',
       routeCoords: [[28.109, -15.416], [28.148, -15.655], [28.095, -15.695]]
     },
-    // Líneas Nocturnas (solo operan viernes/sábado noche)
     { 
-      line: 'N1', type: 'night', origin: 'Santa Catalina', destination: 'Escaleritas', 
+      line: '80', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Aeropuerto', 
+      stops: ['Telde', 'Ingenio', 'Terminal Sur'], color: '#0066CC',
+      routeCoords: [[28.109, -15.416], [27.991, -15.412], [27.932, -15.386]]
+    },
+    { 
+      line: '91', type: 'interurban', company: 'global', origin: 'Maspalomas', destination: 'Puerto Rico', 
+      stops: ['San Agustín', 'Arguineguín', 'Patalavaca'], color: '#0066CC',
+      routeCoords: [[27.760, -15.586], [27.845, -15.565], [27.790, -15.685]]
+    },
+    
+    // ========== LÍNEAS NOCTURNAS - Guaguas Municipales ==========
+    { 
+      line: 'N1', type: 'night', company: 'municipales', origin: 'Santa Catalina', destination: 'Escaleritas', 
       stops: ['Teatro', 'Vegueta', 'Alcaravaneras'], color: '#9933FF',
       routeCoords: [[28.135, -15.431], [28.109, -15.413], [28.100, -15.415], [28.089, -15.442]]
     }
@@ -311,6 +343,7 @@ const generateBuses = () => {
         id: `bus-${routeIndex}-${i}`,
         line: route.line,
         type: route.type,
+        company: route.company, // 'municipales' o 'global'
         origin: route.origin,
         destination: route.destination,
         nextStop: route.stops[Math.floor(Math.random() * route.stops.length)],
@@ -412,13 +445,24 @@ const activeBuses = computed(() => buses.value);
 
 const delayedBuses = computed(() => buses.value.filter(bus => bus.delayed));
 
-const getBusTypeClass = (type) => {
-  const classes = {
-    urban: 'bg-blue-500',
-    interurban: 'bg-green-500',
-    night: 'bg-purple-500'
+const municipalesBuses = computed(() => buses.value.filter(bus => bus.company === 'municipales'));
+
+const globalBuses = computed(() => buses.value.filter(bus => bus.company === 'global'));
+
+// Cambiar a usar company en lugar de type para el color
+const getBusTypeClass = (company, type) => {
+  if (type === 'night') return 'bg-purple-500';
+  if (company === 'municipales') return 'bg-yellow-500'; // Amarillo para Guaguas Municipales
+  if (company === 'global') return 'bg-blue-600'; // Azul para Global
+  return 'bg-gray-500';
+};
+
+const getBusCompanyLabel = (company) => {
+  const labels = {
+    municipales: 'Guaguas Municipales',
+    global: 'Global'
   };
-  return classes[type] || 'bg-gray-500';
+  return labels[company] || 'Desconocido';
 };
 
 const getBusTypeLabel = (type) => {
