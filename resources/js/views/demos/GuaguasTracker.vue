@@ -324,7 +324,7 @@ L.Icon.Default.mergeOptions({
 
 // Centro de Gran Canaria (punto medio de la isla)
 const center = ref([27.965, -15.60]);
-const zoom = ref(10.5);
+const zoom = ref(10.25);
 const mapOptions = {
   zoomControl: true,
   attributionControl: true,
