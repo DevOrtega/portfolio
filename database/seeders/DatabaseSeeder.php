@@ -13,19 +13,19 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
-        // Personal Info
-        PersonalInfo::create([
-            'name' => 'Carlos Miguel Ortega Arencibia',
-            'headline' => 'Programador/Desarrollador de Aplicaciones Web',
-            'bio' => 'Me dirijo a usted con el propósito de expresar mi interés en formar parte de su equipo como Desarrollador de Aplicaciones Web. Soy un profesional con amplia experiencia en el desarrollo full-stack, especializado en Laravel, Vue.js y MySQL, y con una sólida trayectoria en la creación, migración y mantenimiento de aplicaciones web robustas y escalables. Durante mi experiencia en DESIC S.L., he liderado procesos de migración tecnológica, actualizando aplicaciones de Laravel 7 a Laravel 10 y de Vue.js 2 a Vue.js 3, además de implementar contenedores Docker y servicios web en Node.js y Java (Gradle).',
-            'email' => 'carloso2103@gmail.com',
-            'linkedin_url' => 'https://www.linkedin.com/in/carlosmortega/',
-            'github_url' => 'https://github.com/DevOrtega',
-            // 'phone' => '+34 650-396-943', // Not in schema but good to know
-            // 'location' => 'Las Palmas De Gran Canaria, Spain',
-        ]);
+        // Personal Info - Solo crear si no existe
+        PersonalInfo::firstOrCreate(
+            ['email' => 'carloso2103@gmail.com'],
+            [
+                'name' => 'Carlos Miguel Ortega Arencibia',
+                'headline' => 'Programador/Desarrollador de Aplicaciones Web',
+                'bio' => 'Me dirijo a usted con el propósito de expresar mi interés en formar parte de su equipo como Desarrollador de Aplicaciones Web. Soy un profesional con amplia experiencia en el desarrollo full-stack, especializado en Laravel, Vue.js y MySQL, y con una sólida trayectoria en la creación, migración y mantenimiento de aplicaciones web robustas y escalables. Durante mi experiencia en DESIC S.L., he liderado procesos de migración tecnológica, actualizando aplicaciones de Laravel 7 a Laravel 10 y de Vue.js 2 a Vue.js 3, además de implementar contenedores Docker y servicios web en Node.js y Java (Gradle).',
+                'linkedin_url' => 'https://www.linkedin.com/in/carlosmortega/',
+                'github_url' => 'https://github.com/DevOrtega',
+            ]
+        );
 
-        // Skills
+        // Skills - Solo crear si no existen
         $skills = [
             // Backend
             ['name' => 'Laravel', 'category' => 'Backend', 'proficiency' => 95],
@@ -63,10 +63,13 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($skills as $skill) {
-            Skill::create($skill);
+            Skill::firstOrCreate(
+                ['name' => $skill['name'], 'category' => $skill['category']],
+                ['proficiency' => $skill['proficiency']]
+            );
         }
 
-        // Experience
+        // Experience - Solo crear si no existen
         $experiences = [
             [
                 'company' => 'DESIC S.L.',
@@ -106,10 +109,17 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($experiences as $exp) {
-            Experience::create($exp);
+            Experience::firstOrCreate(
+                ['company' => $exp['company'], 'role' => $exp['role']],
+                [
+                    'start_date' => $exp['start_date'],
+                    'end_date' => $exp['end_date'],
+                    'description' => $exp['description']
+                ]
+            );
         }
 
-        // Education
+        // Education - Solo crear si no existen
         $education = [
             [
                 'institution' => 'IES El Rincón',
@@ -156,10 +166,17 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($education as $edu) {
-            Education::create($edu);
+            Education::firstOrCreate(
+                ['institution' => $edu['institution'], 'degree' => $edu['degree']],
+                [
+                    'start_date' => $edu['start_date'],
+                    'end_date' => $edu['end_date'],
+                    'description' => $edu['description']
+                ]
+            );
         }
 
-        // Projects (Keeping existing ones + inferred)
+        // Projects - Solo crear si no existen
         $projects = [
             [
                 'title' => 'Gamerspot_Frontend',
@@ -195,7 +212,10 @@ class DatabaseSeeder extends Seeder
         ];
 
         foreach ($projects as $project) {
-            ProjectModel::create($project);
+            ProjectModel::firstOrCreate(
+                ['title' => $project['title']],
+                $project
+            );
         }
     }
 }
