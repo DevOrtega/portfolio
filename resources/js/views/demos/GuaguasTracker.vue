@@ -322,12 +322,14 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
 });
 
-// Centro de Gran Canaria (Las Palmas)
-const center = ref([28.1235, -15.4362]);
-const zoom = ref(10);
+// Centro de Gran Canaria (punto medio de la isla)
+const center = ref([27.965, -15.60]);
+const zoom = ref(9.5);
 const mapOptions = {
   zoomControl: true,
-  attributionControl: true
+  attributionControl: true,
+  maxBounds: [[27.70, -15.90], [28.20, -15.30]], // Límites para evitar scroll fuera de GC
+  maxBoundsViscosity: 1.0 // Hacer los límites "pegajosos"
 };
 
 // Límites geográficos de Gran Canaria para mantener guaguas dentro del mapa
