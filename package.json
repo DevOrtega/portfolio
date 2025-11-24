@@ -4,15 +4,22 @@
     "type": "module",
     "scripts": {
         "build": "vite build",
-        "dev": "vite"
+        "dev": "vite",
+        "test": "vitest run",
+        "test:ui": "vitest --ui",
+        "test:coverage": "vitest run --coverage"
     },
     "devDependencies": {
         "@tailwindcss/vite": "^4.0.0",
+        "@vitest/ui": "^4.0.13",
+        "@vue/test-utils": "^2.4.6",
         "axios": "^1.13.2",
         "concurrently": "^9.0.1",
+        "happy-dom": "^20.0.10",
         "laravel-vite-plugin": "^2.0.0",
         "tailwindcss": "^4.0.0",
-        "vite": "^7.0.7"
+        "vite": "^7.0.7",
+        "vitest": "^4.0.13"
     },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.2",
