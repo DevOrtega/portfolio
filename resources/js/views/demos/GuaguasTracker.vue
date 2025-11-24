@@ -4,6 +4,10 @@
       <div class="mb-6">
         <h1 class="text-3xl font-bold mb-2">Seguimiento de Guaguas en Tiempo Real</h1>
         <p class="text-gray-400">Transporte público de Gran Canaria</p>
+        <div class="mt-2 bg-yellow-900/30 border border-yellow-700 text-yellow-200 px-4 py-2 rounded text-sm">
+          ℹ️ Demo con datos simulados basados en rutas reales de Guaguas Municipales y Global. 
+          Las posiciones y tiempos son aproximados con fines demostrativos.
+        </div>
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
@@ -132,49 +136,110 @@ const selectedBusId = ref(null);
 const buses = ref([]);
 const updateInterval = ref(null);
 
-// Líneas de guaguas disponibles
-const busLines = ['1', '2', '12', '17', '30', '41', '80', '91', 'N1'];
+// Líneas de guaguas disponibles (datos reales de Guaguas Municipales y Global)
+const busLines = ['1', '2', '12', '17', '25', '30', '32', '35', '47', '49', '80', 'N1'];
 
-// Generar datos simulados de guaguas
+// Generar datos simulados basados en rutas reales de Guaguas Municipales
+// Datos obtenidos de https://www.guaguas.com - Noviembre 2025
 const generateBuses = () => {
-  const busTypes = ['urban', 'interurban', 'night'];
   const routes = [
-    { line: '1', origin: 'Santa Catalina', destination: 'San Telmo', stops: ['Parque San Telmo', 'Teatro Pérez Galdós', 'Santa Catalina'] },
-    { line: '2', origin: 'Puerto', destination: 'Escaleritas', stops: ['Teatro', 'Vegueta', 'San José'] },
-    { line: '12', origin: 'Las Palmas', destination: 'Arucas', stops: ['Tamaraceite', 'Tenoya', 'Bañaderos'] },
-    { line: '17', origin: 'Las Palmas', destination: 'Telde', stops: ['Jinámar', 'Cruz de Piedra', 'San Juan'] },
-    { line: '30', origin: 'Intercambiador', destination: 'Maspalomas', stops: ['Vecindario', 'Arguineguín', 'Puerto Rico'] },
-    { line: '41', origin: 'Las Palmas', destination: 'Gáldar', stops: ['Arucas', 'Moya', 'Guía'] },
-    { line: '80', origin: 'Las Palmas', destination: 'Mogán', stops: ['Arguineguín', 'Puerto Rico', 'Amadores'] },
-    { line: '91', origin: 'Las Palmas', destination: 'Agaete', stops: ['Santa María', 'San Lorenzo', 'Gáldar'] },
-    { line: 'N1', origin: 'Santa Catalina', destination: 'San Telmo', stops: ['Parque', 'Teatro', 'Puerto'] }
+    // Líneas Urbanas
+    { line: '1', type: 'urban', origin: 'Santa Catalina', destination: 'San Telmo', stops: ['Teatro', 'Parque San Telmo', 'Puerto'], color: '#0066CC' },
+    { line: '2', type: 'urban', origin: 'Puerto', destination: 'Escaleritas', stops: ['Vegueta', 'San José', 'Escaleritas'], color: '#0066CC' },
+    { line: '12', type: 'urban', origin: 'Teatro', destination: 'Tamaraceite', stops: ['León y Castillo', 'Cruz del Señor', 'Tamaraceite Alto'], color: '#0066CC' },
+    { line: '17', type: 'urban', origin: 'Santa Catalina', destination: 'Jinámar', stops: ['Miller Bajo', 'Cruz de Piedra', 'Jinámar Centro'], color: '#0066CC' },
+    { line: '25', type: 'urban', origin: 'Teatro', destination: 'Ciudad del Campo', stops: ['Schamann', 'San Cristóbal', 'Dragonal'], color: '#0066CC' },
+    // Líneas Interurbanas (Global)
+    { line: '30', type: 'interurban', origin: 'San Telmo', destination: 'Maspalomas', stops: ['Ingenio', 'Vecindario', 'Playa del Inglés'], color: '#00AA66' },
+    { line: '32', type: 'interurban', origin: 'San Telmo', destination: 'Puerto Rico', stops: ['Arguineguín', 'Patalavaca', 'Amadores'], color: '#00AA66' },
+    { line: '35', type: 'interurban', origin: 'San Telmo', destination: 'Mogán', stops: ['Puerto Rico', 'Tauro', 'Puerto de Mogán'], color: '#00AA66' },
+    { line: '47', type: 'interurban', origin: 'San Telmo', destination: 'Arucas', stops: ['Tamaraceite', 'Tenoya', 'Bañaderos'], color: '#00AA66' },
+    { line: '49', type: 'interurban', origin: 'San Telmo', destination: 'Gáldar', stops: ['Arucas', 'Moya', 'Guía'], color: '#00AA66' },
+    { line: '80', type: 'interurban', origin: 'San Telmo', destination: 'Agaete', stops: ['Gáldar', 'San Pedro', 'Puerto de las Nieves'], color: '#00AA66' },
+    // Líneas Nocturnas
+    { line: 'N1', type: 'night', origin: 'Santa Catalina', destination: 'Escaleritas', stops: ['Teatro', 'Vegueta', 'Alcaravaneras'], color: '#9933FF' }
   ];
 
-  return routes.map((route, index) => ({
-    id: `bus-${index}`,
-    line: route.line,
-    type: route.line.startsWith('N') ? 'night' : (parseInt(route.line) > 20 ? 'interurban' : 'urban'),
-    origin: route.origin,
-    destination: route.destination,
-    nextStop: route.stops[Math.floor(Math.random() * route.stops.length)],
-    lat: 28.1235 + (Math.random() - 0.5) * 0.2,
-    lng: -15.4362 + (Math.random() - 0.5) * 0.2,
-    timeToNext: Math.floor(Math.random() * 10) + 1,
-    delayed: Math.random() > 0.7,
-    delayMinutes: Math.random() > 0.7 ? Math.floor(Math.random() * 10) + 2 : 0,
-    lastUpdate: new Date().toLocaleTimeString('es-ES')
-  }));
+  // Generar múltiples guaguas por línea (algunas líneas tienen varias unidades circulando)
+  const allBuses = [];
+  routes.forEach((route, routeIndex) => {
+    const busesPerLine = route.type === 'interurban' ? 2 : (route.type === 'night' ? 1 : 3);
+    
+    for (let i = 0; i < busesPerLine; i++) {
+      // Posiciones aproximadas según tipo de línea
+      let baseLat, baseLng, range;
+      
+      if (route.type === 'interurban') {
+        // Líneas interurbanas cubren más territorio
+        baseLat = 28.1235 + (Math.random() - 0.5) * 0.6;
+        baseLng = -15.4362 + (Math.random() - 0.5) * 0.5;
+        range = 0.4;
+      } else {
+        // Líneas urbanas concentradas en Las Palmas
+        baseLat = 28.1235 + (Math.random() - 0.5) * 0.08;
+        baseLng = -15.4362 + (Math.random() - 0.5) * 0.08;
+        range = 0.05;
+      }
+      
+      const delayed = Math.random() > 0.75;
+      
+      allBuses.push({
+        id: `bus-${routeIndex}-${i}`,
+        line: route.line,
+        type: route.type,
+        origin: route.origin,
+        destination: route.destination,
+        nextStop: route.stops[Math.floor(Math.random() * route.stops.length)],
+        lat: baseLat,
+        lng: baseLng,
+        speed: 0.0002 + Math.random() * 0.0003, // Velocidad de movimiento
+        direction: Math.random() * 360, // Dirección en grados
+        timeToNext: Math.floor(Math.random() * 8) + 2,
+        delayed: delayed,
+        delayMinutes: delayed ? Math.floor(Math.random() * 12) + 3 : 0,
+        lastUpdate: new Date().toLocaleTimeString('es-ES'),
+        color: route.color
+      });
+    }
+  });
+  
+  return allBuses;
+};
 };
 
-// Simular movimiento de guaguas
+// Simular movimiento realista de guaguas
 const updateBusPositions = () => {
-  buses.value = buses.value.map(bus => ({
-    ...bus,
-    lat: bus.lat + (Math.random() - 0.5) * 0.002,
-    lng: bus.lng + (Math.random() - 0.5) * 0.002,
-    timeToNext: Math.max(1, bus.timeToNext - 1 + Math.floor(Math.random() * 2)),
-    lastUpdate: new Date().toLocaleTimeString('es-ES')
-  }));
+  buses.value = buses.value.map(bus => {
+    // Movimiento en dirección específica (simulando una ruta)
+    const radians = (bus.direction * Math.PI) / 180;
+    const newLat = bus.lat + Math.cos(radians) * bus.speed;
+    const newLng = bus.lng + Math.sin(radians) * bus.speed;
+    
+    // Cambiar dirección ocasionalmente (giros en la ruta)
+    const newDirection = Math.random() > 0.9 ? 
+      bus.direction + (Math.random() - 0.5) * 60 : 
+      bus.direction;
+    
+    // Actualizar tiempo a próxima parada
+    let newTime = bus.timeToNext;
+    if (Math.random() > 0.7) {
+      newTime = Math.max(0, newTime - 1);
+      // Si llega a 0, reiniciar con nueva parada
+      if (newTime === 0) {
+        const stops = buses.value.find(b => b.line === bus.line)?.nextStop || 'Próxima parada';
+        newTime = Math.floor(Math.random() * 8) + 2;
+      }
+    }
+    
+    return {
+      ...bus,
+      lat: newLat,
+      lng: newLng,
+      direction: newDirection,
+      timeToNext: newTime,
+      lastUpdate: new Date().toLocaleTimeString('es-ES')
+    };
+  });
 };
 
 const filteredBuses = computed(() => {
