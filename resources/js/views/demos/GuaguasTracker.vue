@@ -324,13 +324,13 @@ L.Icon.Default.mergeOptions({
 
 // Centro de Gran Canaria (punto medio de la isla)
 const center = ref([27.965, -15.60]);
-const zoom = ref(10);
+const zoom = ref(10.5);
 const mapOptions = {
   zoomControl: true,
   attributionControl: true,
   maxBounds: [[27.70, -15.90], [28.20, -15.30]], // Límites para evitar scroll fuera de GC
   maxBoundsViscosity: 0.8, // Hacer los límites flexibles pero con resistencia
-  minZoom: 9 // Zoom mínimo para mantener la isla visible
+  minZoom: 9.5 // Zoom mínimo para mantener la isla visible
 };
 
 // Límites geográficos de Gran Canaria para mantener guaguas dentro del mapa
