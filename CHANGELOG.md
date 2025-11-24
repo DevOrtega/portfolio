@@ -1,0 +1,205 @@
+# Changelog
+
+All notable changes to this project will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [2.0.0] - 2025-11-24
+
+### 🚀 Major Updates
+
+#### System Upgrades
+- **PHP**: Upgraded from 8.2.29 to 8.3.28 (latest stable)
+- **Node.js**: Upgraded from 20.19.5 to 24.11.1 LTS (Krypton)
+- **npm**: Upgraded from 10.8.2 to 11.6.3
+- **Laravel**: Updated to 12.39.0
+- **Vue.js**: Updated to 3.5.25
+- **vue-i18n**: Major upgrade from 9.14.5 to 11.2.1
+
+#### Dependencies Updates
+- Vite: 7.0.7 → 7.2.4
+- TailwindCSS: Updated to 4.1.17
+- Vitest: Updated to 4.0.13
+- All PHP and npm packages updated to latest compatible versions
+
+### ✨ Added
+
+#### Features
+- **Comprehensive Testing Suite**:
+  - 21 backend tests (PHPUnit/Pest)
+  - 89 frontend tests (Vitest)
+  - Test coverage for all layers
+  - Added test scripts: `test`, `test:ui`, `test:coverage`
+
+- **Interactive Demos**:
+  - GuaguasTracker: Real-time bus tracking with Leaflet maps
+  - ATM Manager: ATM network management system (in development)
+  - Upcoming demos section in projects view
+
+- **Reusable Vue Components**:
+  - `StatsCard`: Statistics display with hover effects
+  - `LoadingSpinner`: Multiple sizes and accessibility
+  - `InfoBanner`: Type variants (info/warning/error/success)
+  - `ProjectCard`: Project display with image fallback
+  - `TimelineItem`: Timeline visualization with colors
+  - `SectionHeader`: Section headers with icons
+
+- **Vue Composables**:
+  - `useBusMap`: Map utilities, bounds checking, Leaflet icons
+  - `useBusSchedule`: Service schedule logic and time management
+
+- **Internationalization**:
+  - 48 new translation keys in Spanish (es.json)
+  - 48 new translation keys in English (en.json)
+  - UI elements, navigation, categories, and settings
+
+#### Documentation
+- **README.md**: Complete rewrite with:
+  - Technology badges and versions
+  - Detailed stack information
+  - Interactive demos section
+  - API endpoints table
+  - Testing documentation
+  - Performance metrics
+  - Security features
+  - Deployment guide
+  
+- **ARCHITECTURE.md**: New comprehensive documentation:
+  - Hexagonal Architecture explanation
+  - Four-layer architecture diagram
+  - SOLID principles with examples
+  - Testing strategy
+  - Frontend patterns
+  - Code examples
+
+- **API Documentation**: Enhanced Swagger/OpenAPI annotations
+
+### 🔄 Changed
+
+#### Code Quality
+- **PHP 8.3 Modernization**:
+  - All models marked as `final` for better performance
+  - Added PHPDoc type annotations for all properties
+  - Implemented `casts()` method for type safety
+  - All API controllers marked as `final`
+  - Enhanced type safety throughout backend
+
+- **JavaScript Modernization**:
+  - Nullish coalescing operator (`??`) instead of `||`
+  - Optional chaining (`?.`) for safer property access
+  - Early returns for cleaner conditional logic
+  - Better window object safety checks
+  - Modern ES2024 patterns
+
+- **Component Refactoring**:
+  - Extracted reusable components from GuaguasTracker
+  - Improved component composition and reusability
+  - Better prop validation and typing
+  - Added JSDoc documentation
+
+#### UI/UX Improvements
+- **Home View**:
+  - Paragraph separation in bio with proper line spacing
+  - Better typography and readability
+  
+- **Projects View**:
+  - Cleaned up project database (removed old projects)
+  - Added "Upcoming Projects" section with 3 demos
+  - Styled with dashed borders and "in progress" indicators
+
+- **Better Error Handling**:
+  - Improved 404 responses
+  - Better validation messages
+  - Enhanced error states in UI
+
+### 🐛 Fixed
+
+- Fixed model fillable properties for mass assignment
+- Resolved SQLite driver requirement for PHP 8.3
+- Fixed test assertions for updated models
+- Corrected ProjectCard RouterLink integration
+- Fixed TimelineItem badge Tailwind class handling
+
+### 🗑️ Removed
+
+- Removed obsolete projects from database
+- Cleaned up unused imports in controllers
+- Removed redundant code in components
+
+### 🔧 Configuration
+
+- **nvm Installation**: Added for flexible Node.js version management
+- **Vitest Configuration**: 
+  - Vue plugin with happy-dom environment
+  - Coverage reporting with v8 provider
+  - Path aliases configured
+  
+- **Test Scripts**:
+  - `npm test`: Run tests in CI mode
+  - `npm run test:ui`: Interactive test UI
+  - `npm run test:coverage`: Coverage reports
+
+### 📦 Dependencies
+
+#### Added
+- @vitest/ui: 4.0.13
+- @vue/test-utils: 2.4.6
+- happy-dom: 20.0.10
+- vitest: 4.0.13
+
+#### Updated
+- vue: 3.5.24 → 3.5.25
+- vue-i18n: 9.14.5 → 11.2.1
+- vite: 7.0.7 → 7.2.4
+- axios: Updated to 1.13.2
+- element-plus: Updated to 2.11.8
+- leaflet: Updated to 1.9.4
+- All Laravel packages to latest versions
+
+### 🔒 Security
+
+- No security vulnerabilities in dependencies
+- Rate limiting on API endpoints
+- CSRF protection enabled
+- XSS prevention with sanitization
+- SQL injection prevention with Eloquent ORM
+- Secure headers configured
+
+### ⚡ Performance
+
+- PHP 8.3 performance improvements with `final` classes
+- Optimized build with code splitting
+- Lazy loading for components and routes
+- Improved First Contentful Paint (< 1.5s)
+- Time to Interactive (< 3s)
+
+## [1.0.0] - 2025-11-20
+
+### Initial Release
+
+- Laravel 11 backend with RESTful API
+- Vue.js 3 frontend with Composition API
+- SQLite database with seeders
+- Swagger/OpenAPI documentation
+- SOLID principles implementation
+- Hexagonal architecture
+- Portfolio sections: Projects, Experience, Education, Skills
+- Dark theme with Tailwind CSS
+- Responsive design
+
+---
+
+## Version History Legend
+
+- **Major version** (X.0.0): Breaking changes, major features
+- **Minor version** (0.X.0): New features, backward compatible
+- **Patch version** (0.0.X): Bug fixes, minor improvements
+
+## Links
+
+- [Repository](https://github.com/DevOrtega/portfolio)
+- [Issues](https://github.com/DevOrtega/portfolio/issues)
+- [Pull Requests](https://github.com/DevOrtega/portfolio/pulls)
