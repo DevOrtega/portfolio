@@ -1,0 +1,105 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Portfolio API",
+        "description": "API documentation for the Portfolio project",
+        "contact": {
+            "email": "carlos@example.com"
+        },
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/education": {
+            "get": {
+                "tags": [
+                    "Education"
+                ],
+                "summary": "Get list of education",
+                "operationId": "getEducation",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/experiences": {
+            "get": {
+                "tags": [
+                    "Experiences"
+                ],
+                "summary": "Get list of experiences",
+                "operationId": "getExperiences",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/personal-info": {
+            "get": {
+                "tags": [
+                    "PersonalInfo"
+                ],
+                "summary": "Get personal information",
+                "operationId": "getPersonalInfo",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/projects": {
+            "get": {
+                "tags": [
+                    "Projects"
+                ],
+                "summary": "Get list of projects",
+                "operationId": "getProjects",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/skills": {
+            "get": {
+                "tags": [
+                    "Skills"
+                ],
+                "summary": "Get list of skills",
+                "operationId": "getSkills",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Education",
+            "description": "Education"
+        },
+        {
+            "name": "Experiences",
+            "description": "Experiences"
+        },
+        {
+            "name": "PersonalInfo",
+            "description": "PersonalInfo"
+        },
+        {
+            "name": "Projects",
+            "description": "Projects"
+        },
+        {
+            "name": "Skills",
+            "description": "Skills"
+        }
+    ]
+}
