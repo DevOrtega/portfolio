@@ -249,26 +249,3 @@
     "Unauthorized": "No autorizado",
     "Validation error": "Error de validación"
 }
-    "Projects": "Proyectos",
-    "Experience": "Experiencia",
-    "Education": "Formación",
-    "Skills": "Habilidades",
-    "Contact": "Contacto",
-    "Welcome to your portfolio": "Bienvenido a tu portfolio",
-    "Project successfully created": "Proyecto creado exitosamente",
-    "Project successfully updated": "Proyecto actualizado exitosamente",
-    "Project successfully deleted": "Proyecto eliminado exitosamente",
-    "Experience successfully created": "Experiencia creada exitosamente",
-    "Experience successfully updated": "Experiencia actualizada exitosamente",
-    "Experience successfully deleted": "Experiencia eliminada exitosamente",
-    "Education successfully created": "Formación creada exitosamente",
-    "Education successfully updated": "Formación actualizada exitosamente",
-    "Education successfully deleted": "Formación eliminada exitosamente",
-    "Skill successfully created": "Habilidad creada exitosamente",
-    "Skill successfully updated": "Habilidad actualizada exitosamente",
-    "Skill successfully deleted": "Habilidad eliminada exitosamente",
-    "Personal info successfully updated": "Información personal actualizada exitosamente",
-    "Resource not found": "Recurso no encontrado",
-    "Unauthorized": "No autorizado",
-    "Validation error": "Error de validación"
-}
