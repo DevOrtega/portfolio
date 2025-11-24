@@ -43,9 +43,13 @@ onMounted(async () => {
           <p class="text-2xl md:text-3xl text-gray-300 font-light">{{ personalInfo.headline }}</p>
         </div>
         
-        <p class="text-lg text-gray-400 leading-relaxed max-w-2xl mx-auto lg:mx-0">
-          {{ personalInfo.bio }}
-        </p>
+        <div class="text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 space-y-4">
+          <p v-for="(paragraph, index) in personalInfo.bio.split('\n').filter(p => p.trim())" 
+             :key="index" 
+             class="leading-relaxed">
+            {{ paragraph }}
+          </p>
+        </div>
         
         <div class="flex flex-wrap justify-center lg:justify-start gap-4 pt-4">
           <a v-if="personalInfo.github_url" :href="personalInfo.github_url" target="_blank" 
