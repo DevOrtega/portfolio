@@ -12,7 +12,7 @@ use OpenApi\Annotations as OA;
  * 
  * Handles HTTP requests for personal information.
  */
-class PersonalInfoController extends Controller
+final class PersonalInfoController extends Controller
 {
     /**
      * @OA\Get(

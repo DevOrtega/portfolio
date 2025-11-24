@@ -12,7 +12,7 @@ use OpenApi\Annotations as OA;
  * 
  * Handles HTTP requests for skills.
  */
-class SkillController extends Controller
+final class SkillController extends Controller
 {
     /**
      * @OA\Get(

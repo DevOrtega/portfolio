@@ -12,7 +12,7 @@ use OpenApi\Annotations as OA;
  * 
  * Handles HTTP requests for education records.
  */
-class EducationController extends Controller
+final class EducationController extends Controller
 {
     /**
      * @OA\Get(

@@ -32,8 +32,7 @@ export function useBusMap() {
    * @returns {number} Zoom level
    */
   const getResponsiveZoom = () => {
-    if (typeof window === 'undefined') return 10.25;
-    const width = window.innerWidth;
+    const width = window?.innerWidth ?? 1920;
     if (width < 640) return 9.5;    // mobile
     if (width < 768) return 9.75;   // small tablet
     if (width < 1024) return 10;    // tablet
@@ -48,10 +47,9 @@ export function useBusMap() {
    * @returns {boolean}
    */
   const isWithinBounds = (lat, lng) => {
-    return lat >= BOUNDS.south && 
-           lat <= BOUNDS.north &&
-           lng >= BOUNDS.west && 
-           lng <= BOUNDS.east;
+    if (lat < BOUNDS.south || lat > BOUNDS.north) return false;
+    if (lng < BOUNDS.west || lng > BOUNDS.east) return false;
+    return true;
   };
 
   /**
@@ -66,7 +64,7 @@ export function useBusMap() {
       default: { fill: '#9933FF', stroke: '#7722CC', text: '#FFF' }
     };
 
-    const color = colors[bus.company] || colors.default;
+    const color = colors[bus.company] ?? colors.default;
 
     const svgIcon = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">

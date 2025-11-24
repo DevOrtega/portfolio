@@ -12,7 +12,7 @@ use OpenApi\Annotations as OA;
  * 
  * Handles HTTP requests for work experiences.
  */
-class ExperienceController extends Controller
+final class ExperienceController extends Controller
 {
     /**
      * @OA\Get(
