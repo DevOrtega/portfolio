@@ -48,7 +48,68 @@
         <span v-else>Las líneas nocturnas (N1) solo operan viernes y sábados de 00:00-06:00.</span>
       </div>
 
-      <div class="bg-gray-800 rounded-lg overflow-hidden" style="height: 600px;">
+      <!-- Contenedor del mapa y árbol lateral -->
+      <div class="relative">
+        <!-- Botón para toggle del árbol -->
+        <button 
+          @click="treeVisible = !treeVisible"
+          class="absolute top-4 right-4 z-[1000] bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-lg shadow-lg transition-all"
+          :class="{ 'right-[320px]': treeVisible }"
+        >
+          <el-icon v-if="treeVisible"><ArrowRight /></el-icon>
+          <el-icon v-else><ArrowLeft /></el-icon>
+        </button>
+
+        <!-- Árbol lateral -->
+        <transition name="slide">
+          <div 
+            v-if="treeVisible"
+            class="absolute top-0 right-0 w-80 h-[600px] bg-gray-800 border-l border-gray-700 z-[999] overflow-y-auto rounded-r-lg shadow-xl"
+          >
+            <div class="p-4 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
+              <h3 class="font-bold text-lg mb-1">Filtro de Guaguas</h3>
+              <p class="text-xs text-gray-400">Click para mostrar/ocultar en el mapa</p>
+            </div>
+            <div class="p-4">
+              <el-tree
+                ref="treeRef"
+                :data="treeData"
+                :props="{ children: 'children', label: 'label' }"
+                node-key="id"
+                default-expand-all
+                @node-click="handleNodeClick"
+                class="bg-transparent text-white"
+              >
+                <template #default="{ node, data }">
+                  <span class="flex items-center gap-2 w-full">
+                    <span 
+                      v-if="data.type === 'bus'"
+                      class="w-3 h-3 rounded-full flex-shrink-0"
+                      :class="{
+                        'bg-gray-500': hiddenBusIds.has(data.id),
+                        'bg-yellow-400': !hiddenBusIds.has(data.id) && data.bus.company === 'municipales',
+                        'bg-blue-500': !hiddenBusIds.has(data.id) && data.bus.company === 'global'
+                      }"
+                    ></span>
+                    <span 
+                      v-else-if="data.type === 'line'"
+                      class="w-3 h-3 rounded-full flex-shrink-0"
+                      :class="{
+                        'bg-yellow-400': data.company === 'municipales',
+                        'bg-blue-500': data.company === 'global'
+                      }"
+                    ></span>
+                    <span class="text-sm truncate" :class="{ 'opacity-50': data.type === 'bus' && hiddenBusIds.has(data.id) }">
+                      {{ node.label }}
+                    </span>
+                  </span>
+                </template>
+              </el-tree>
+            </div>
+          </div>
+        </transition>
+
+        <div class="bg-gray-800 rounded-lg overflow-hidden" style="height: 600px;">
         <l-map
           ref="map"
           :zoom="zoom"
@@ -104,6 +165,7 @@
           </l-marker>
         </l-map>
       </div>
+      </div><!-- Fin contenedor relativo -->
 
       <div class="mt-4 bg-gray-800 p-4 rounded-lg">
         <h3 class="font-semibold mb-2">Leyenda</h3>
@@ -137,6 +199,9 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+import { ElTree, ElButton, ElIcon } from 'element-plus';
+import { ArrowRight, ArrowLeft } from '@element-plus/icons-vue';
+import 'element-plus/dist/index.css';
 
 // Configurar los íconos de Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
@@ -202,6 +267,12 @@ const selectedLine = ref('');
 const selectedBusId = ref(null);
 const buses = ref([]);
 const updateInterval = ref(null);
+
+// Control del árbol lateral
+const treeVisible = ref(true);
+const treeRef = ref(null);
+const selectedBusIds = ref(new Set()); // IDs de guaguas seleccionadas
+const hiddenBusIds = ref(new Set()); // IDs de guaguas ocultas
 
 // Líneas disponibles - Municipales y Global
 const busLines = [
@@ -365,6 +436,105 @@ const generateBuses = () => {
   return allBuses;
 };
 
+// Generar estructura de árbol para Element Plus
+const treeData = computed(() => {
+  const municipalesBuses = buses.value.filter(b => b.company === 'municipales');
+  const globalBuses = buses.value.filter(b => b.company === 'global');
+  
+  // Agrupar por línea
+  const groupByLine = (busList) => {
+    const grouped = {};
+    busList.forEach(bus => {
+      if (!grouped[bus.line]) {
+        grouped[bus.line] = [];
+      }
+      grouped[bus.line].push(bus);
+    });
+    return grouped;
+  };
+  
+  const municipalesGrouped = groupByLine(municipalesBuses);
+  const globalGrouped = groupByLine(globalBuses);
+  
+  return [
+    {
+      id: 'municipales',
+      label: `Guaguas Municipales (${municipalesBuses.length})`,
+      type: 'company',
+      children: Object.entries(municipalesGrouped).map(([line, busList]) => ({
+        id: `municipales-line-${line}`,
+        label: `Línea ${line} (${busList.length})`,
+        type: 'line',
+        line: line,
+        company: 'municipales',
+        children: busList.map((bus, idx) => ({
+          id: bus.id,
+          label: `Guagua ${line}-${idx + 1} → ${bus.destination}`,
+          type: 'bus',
+          bus: bus
+        }))
+      }))
+    },
+    {
+      id: 'global',
+      label: `Global (${globalBuses.length})`,
+      type: 'company',
+      children: Object.entries(globalGrouped).map(([line, busList]) => ({
+        id: `global-line-${line}`,
+        label: `Línea ${line} (${busList.length})`,
+        type: 'line',
+        line: line,
+        company: 'global',
+        children: busList.map((bus, idx) => ({
+          id: bus.id,
+          label: `Guagua ${line}-${idx + 1} → ${bus.destination}`,
+          type: 'bus',
+          bus: bus
+        }))
+      }))
+    }
+  ];
+});
+
+// Manejar clicks en el árbol
+const handleNodeClick = (data, node) => {
+  if (data.type === 'bus') {
+    // Click en una guagua individual
+    if (hiddenBusIds.value.has(data.id)) {
+      hiddenBusIds.value.delete(data.id);
+    } else {
+      hiddenBusIds.value.add(data.id);
+    }
+  } else if (data.type === 'line') {
+    // Click en una línea - toggle todas las guaguas de esa línea
+    const lineBuses = buses.value.filter(b => b.line === data.line && b.company === data.company);
+    const allHidden = lineBuses.every(b => hiddenBusIds.value.has(b.id));
+    
+    lineBuses.forEach(bus => {
+      if (allHidden) {
+        hiddenBusIds.value.delete(bus.id);
+      } else {
+        hiddenBusIds.value.add(bus.id);
+      }
+    });
+  } else if (data.type === 'company') {
+    // Click en una empresa - toggle todas las guaguas de esa empresa
+    const companyBuses = buses.value.filter(b => b.company === data.id);
+    const allHidden = companyBuses.every(b => hiddenBusIds.value.has(b.id));
+    
+    companyBuses.forEach(bus => {
+      if (allHidden) {
+        hiddenBusIds.value.delete(bus.id);
+      } else {
+        hiddenBusIds.value.add(bus.id);
+      }
+    });
+  }
+  
+  // Forzar reactividad
+  hiddenBusIds.value = new Set(hiddenBusIds.value);
+};
+
 // Simular movimiento realista de guaguas siguiendo rutas reales
 const updateBusPositions = () => {
   buses.value = buses.value.filter(bus => {
@@ -437,8 +607,17 @@ const updateBusPositions = () => {
 };
 
 const filteredBuses = computed(() => {
-  if (!selectedLine.value) return buses.value;
-  return buses.value.filter(bus => bus.line === selectedLine.value);
+  let filtered = buses.value;
+  
+  // Filtrar por línea si está seleccionada
+  if (selectedLine.value) {
+    filtered = filtered.filter(bus => bus.line === selectedLine.value);
+  }
+  
+  // Excluir guaguas ocultas del árbol
+  filtered = filtered.filter(bus => !hiddenBusIds.value.has(bus.id));
+  
+  return filtered;
 });
 
 const activeBuses = computed(() => buses.value);
@@ -556,5 +735,66 @@ onUnmounted(() => {
 
 :deep(.leaflet-popup-content) {
   margin: 12px;
+}
+
+/* Transición del árbol lateral */
+.slide-enter-active,
+.slide-leave-active {
+  transition: transform 0.3s ease;
+}
+
+.slide-enter-from {
+  transform: translateX(100%);
+}
+
+.slide-leave-to {
+  transform: translateX(100%);
+}
+
+/* Estilos para el árbol de Element Plus */
+:deep(.el-tree) {
+  background: transparent !important;
+  color: white !important;
+}
+
+:deep(.el-tree-node__content) {
+  background: transparent !important;
+  color: white !important;
+  padding: 8px 0;
+  transition: background-color 0.2s;
+}
+
+:deep(.el-tree-node__content:hover) {
+  background: rgba(75, 85, 99, 0.5) !important;
+}
+
+:deep(.el-tree-node__expand-icon) {
+  color: #9ca3af !important;
+}
+
+:deep(.el-tree-node.is-expanded > .el-tree-node__content .el-tree-node__expand-icon) {
+  color: white !important;
+}
+
+:deep(.el-tree-node__label) {
+  color: white !important;
+}
+
+/* Scrollbar personalizado para el árbol */
+.overflow-y-auto::-webkit-scrollbar {
+  width: 8px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: #1f2937;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 4px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 </style>
