@@ -192,11 +192,9 @@ import InfoBanner from '../../components/InfoBanner.vue';
 import { useBusMap } from '../../composables/useBusMap';
 import { useBusSchedule } from '../../composables/useBusSchedule';
 
-// Composables
-const { mapOptions, getResponsiveZoom, isWithinBounds, createBusIcon, getCompanyLabel, getBusTypeLabel } = useBusMap();
-const { isNightTime, isInService } = useBusSchedule();
-
-// Importar íconos de Leaflet localmente
+    // Composables
+    const { mapOptions, getResponsiveZoom, isWithinBounds, createBusIcon, getCompanyLabel, getBusTypeLabel, BOUNDS } = useBusMap();
+    const { isNightTime, isInService } = useBusSchedule();// Importar íconos de Leaflet localmente
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
@@ -360,8 +358,8 @@ const generateBuses = () => {
       let finalLng = baseLng + (Math.random() - 0.5) * 0.002;
       
       // Asegurar que está dentro de los límites de Gran Canaria
-      finalLat = Math.max(GRAN_CANARIA_BOUNDS.south, Math.min(GRAN_CANARIA_BOUNDS.north, finalLat));
-      finalLng = Math.max(GRAN_CANARIA_BOUNDS.west, Math.min(GRAN_CANARIA_BOUNDS.east, finalLng));
+      finalLat = Math.max(BOUNDS.south, Math.min(BOUNDS.north, finalLat));
+      finalLng = Math.max(BOUNDS.west, Math.min(BOUNDS.east, finalLng));
       
       // Calcular dirección basada en la ruta
       const direction = Math.atan2(lng2 - lng1, lat2 - lat1) * (180 / Math.PI);
