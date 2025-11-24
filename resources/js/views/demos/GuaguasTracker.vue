@@ -121,7 +121,16 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
+
+// Configurar los íconos de Leaflet
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
+  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
+  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+});
 
 // Centro de Gran Canaria (Las Palmas)
 const center = ref([28.1235, -15.4362]);
@@ -204,7 +213,6 @@ const generateBuses = () => {
   });
   
   return allBuses;
-};
 };
 
 // Simular movimiento realista de guaguas
