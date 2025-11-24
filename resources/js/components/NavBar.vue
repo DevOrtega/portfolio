@@ -6,7 +6,7 @@
           DevOrtega
         </router-link>
         
-        <div class="hidden md:flex space-x-8">
+        <div class="hidden md:flex space-x-8 items-center">
           <router-link 
             v-for="item in navItems" 
             :key="item.path" 
@@ -14,11 +14,12 @@
             class="text-gray-300 hover:text-white hover:bg-gray-700/50 px-3 py-2 rounded-md transition-all duration-200 text-sm font-medium"
             active-class="text-indigo-400 bg-gray-800"
           >
-            {{ item.name }}
+            {{ $t(item.name) }}
           </router-link>
           <a href="/api/documentation" target="_blank" class="text-gray-300 hover:text-white hover:bg-gray-700/50 px-3 py-2 rounded-md transition-all duration-200 text-sm font-medium">
             API Docs
           </a>
+          <LanguageSwitcher />
         </div>
       </div>
     </div>
@@ -26,9 +27,11 @@
 </template>
 
 <script setup>
+import LanguageSwitcher from './LanguageSwitcher.vue';
+
 const navItems = [
-  { name: 'Home', path: '/' },
-  { name: 'Projects', path: '/projects' },
-  { name: 'Resume', path: '/resume' },
+  { name: 'nav.home', path: '/' },
+  { name: 'nav.projects', path: '/projects' },
+  { name: 'nav.experience', path: '/resume' },
 ];
 </script>
