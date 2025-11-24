@@ -133,9 +133,120 @@
               :icon-size="[40, 40]"
               :icon-anchor="[20, 20]"
             >
-              <div class="bus-marker" :class="getBusTypeClass(bus.company, bus.type)">
-                <div class="bus-number">{{ bus.line }}</div>
-                <svg v-if="bus.delayed" class="delay-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+              <div class="bus-icon-container">
+                <!-- SVG del autobús -->
+                <svg 
+                  v-if="bus.company === 'municipales'" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 64 64" 
+                  width="40" 
+                  height="40"
+                  class="bus-svg"
+                >
+                  <!-- Autobús amarillo para Municipales -->
+                  <g>
+                    <!-- Cuerpo del autobús -->
+                    <rect x="8" y="16" width="48" height="32" rx="4" fill="#FDB913" stroke="#D49400" stroke-width="2"/>
+                    <!-- Ventanas -->
+                    <rect x="12" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="24" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="36" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="48" y="20" width="6" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <!-- Parabrisas delantero -->
+                    <path d="M 48 20 L 54 16 L 54 32 L 48 32 Z" fill="#87CEEB" opacity="0.6"/>
+                    <!-- Ruedas -->
+                    <circle cx="16" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
+                    <circle cx="48" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
+                    <circle cx="16" cy="48" r="2" fill="#555"/>
+                    <circle cx="48" cy="48" r="2" fill="#555"/>
+                    <!-- Detalles -->
+                    <rect x="10" y="34" width="44" height="2" fill="#D49400"/>
+                    <!-- Faros -->
+                    <circle cx="54" cy="22" r="2" fill="#FFE4B5"/>
+                    <circle cx="54" cy="28" r="2" fill="#FFE4B5"/>
+                    <!-- Número de línea -->
+                    <rect x="20" y="38" width="24" height="8" rx="2" fill="white"/>
+                    <text x="32" y="44" font-family="Arial" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">{{ bus.line }}</text>
+                  </g>
+                </svg>
+                <svg 
+                  v-else-if="bus.company === 'global'" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 64 64" 
+                  width="40" 
+                  height="40"
+                  class="bus-svg"
+                >
+                  <!-- Autobús azul para Global -->
+                  <g>
+                    <!-- Cuerpo del autobús -->
+                    <rect x="8" y="16" width="48" height="32" rx="4" fill="#0066CC" stroke="#004C99" stroke-width="2"/>
+                    <!-- Ventanas -->
+                    <rect x="12" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="24" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="36" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="48" y="20" width="6" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <!-- Parabrisas delantero -->
+                    <path d="M 48 20 L 54 16 L 54 32 L 48 32 Z" fill="#87CEEB" opacity="0.6"/>
+                    <!-- Ruedas -->
+                    <circle cx="16" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
+                    <circle cx="48" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
+                    <circle cx="16" cy="48" r="2" fill="#555"/>
+                    <circle cx="48" cy="48" r="2" fill="#555"/>
+                    <!-- Detalles -->
+                    <rect x="10" y="34" width="44" height="2" fill="#004C99"/>
+                    <!-- Faros -->
+                    <circle cx="54" cy="22" r="2" fill="#FFE4B5"/>
+                    <circle cx="54" cy="28" r="2" fill="#FFE4B5"/>
+                    <!-- Número de línea -->
+                    <rect x="20" y="38" width="24" height="8" rx="2" fill="white"/>
+                    <text x="32" y="44" font-family="Arial" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">{{ bus.line }}</text>
+                  </g>
+                </svg>
+                <svg 
+                  v-else
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 64 64" 
+                  width="40" 
+                  height="40"
+                  class="bus-svg"
+                >
+                  <!-- Autobús morado para nocturnas -->
+                  <g>
+                    <!-- Cuerpo del autobús -->
+                    <rect x="8" y="16" width="48" height="32" rx="4" fill="#9933FF" stroke="#7722CC" stroke-width="2"/>
+                    <!-- Ventanas -->
+                    <rect x="12" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="24" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="36" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <rect x="48" y="20" width="6" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
+                    <!-- Parabrisas delantero -->
+                    <path d="M 48 20 L 54 16 L 54 32 L 48 32 Z" fill="#87CEEB" opacity="0.6"/>
+                    <!-- Ruedas -->
+                    <circle cx="16" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
+                    <circle cx="48" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
+                    <circle cx="16" cy="48" r="2" fill="#555"/>
+                    <circle cx="48" cy="48" r="2" fill="#555"/>
+                    <!-- Detalles -->
+                    <rect x="10" y="34" width="44" height="2" fill="#7722CC"/>
+                    <!-- Faros -->
+                    <circle cx="54" cy="22" r="2" fill="#FFE4B5"/>
+                    <circle cx="54" cy="28" r="2" fill="#FFE4B5"/>
+                    <!-- Número de línea -->
+                    <rect x="20" y="38" width="24" height="8" rx="2" fill="white"/>
+                    <text x="32" y="44" font-family="Arial" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">{{ bus.line }}</text>
+                  </g>
+                </svg>
+                <!-- Indicador de retraso -->
+                <svg 
+                  v-if="bus.delayed" 
+                  class="delay-indicator" 
+                  xmlns="http://www.w3.org/2000/svg" 
+                  viewBox="0 0 20 20" 
+                  fill="currentColor"
+                  width="16"
+                  height="16"
+                >
                   <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
                 </svg>
               </div>
@@ -683,44 +794,42 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.bus-marker {
+.bus-icon-container {
+  position: relative;
   width: 40px;
   height: 40px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  position: relative;
-  border: 3px solid white;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  animation: pulse 2s infinite;
 }
 
-.bus-number {
-  font-weight: bold;
-  font-size: 14px;
-  color: white;
-  z-index: 1;
+.bus-svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  transition: transform 0.2s ease;
 }
 
-.delay-icon {
+.bus-svg:hover {
+  transform: scale(1.1);
+}
+
+.delay-indicator {
   position: absolute;
-  top: -8px;
-  right: -8px;
-  width: 18px;
-  height: 18px;
+  top: -6px;
+  right: -6px;
   color: #FCD34D;
   background: white;
   border-radius: 50%;
   padding: 2px;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+  animation: pulse-warning 2s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-warning {
   0%, 100% {
-    transform: scale(1);
+    opacity: 1;
   }
   50% {
-    transform: scale(1.05);
+    opacity: 0.7;
   }
 }
 
