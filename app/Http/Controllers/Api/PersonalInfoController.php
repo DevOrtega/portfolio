@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PersonalInfo;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
+/**
+ * Personal Info Controller
+ * 
+ * Handles HTTP requests for personal information.
+ */
 class PersonalInfoController extends Controller
 {
     /**
@@ -18,11 +23,23 @@ class PersonalInfoController extends Controller
      *      @OA\Response(
      *          response=200,
      *          description="Successful operation"
+     *       ),
+     *      @OA\Response(
+     *          response=404,
+     *          description="Personal info not found"
      *       )
      * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(PersonalInfo::first());
+        $personalInfo = PersonalInfo::first();
+        
+        if (!$personalInfo) {
+            return response()->json([
+                'message' => 'Personal information not found'
+            ], 404);
+        }
+        
+        return response()->json($personalInfo);
     }
 }

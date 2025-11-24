@@ -3,6 +3,8 @@
     <div 
       class="animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"
       :class="sizeClass"
+      role="status"
+      aria-label="Loading"
     ></div>
   </div>
 </template>
@@ -10,7 +12,20 @@
 <script setup>
 import { computed } from 'vue';
 
+/**
+ * LoadingSpinner Component
+ * 
+ * Displays an animated loading spinner with configurable size.
+ * 
+ * @component
+ * @example
+ * <LoadingSpinner size="medium" />
+ */
 const props = defineProps({
+  /**
+   * Size of the spinner
+   * @values 'small', 'medium', 'large'
+   */
   size: {
     type: String,
     default: 'medium',

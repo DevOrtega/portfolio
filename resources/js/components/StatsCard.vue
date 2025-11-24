@@ -4,7 +4,7 @@
   >
     <div 
       class="text-2xl sm:text-3xl font-bold mb-1"
-      :class="colorClass || 'text-white'"
+      :class="colorClass"
     >
       {{ value }}
     </div>
@@ -15,18 +15,44 @@
 </template>
 
 <script setup>
+/**
+ * StatsCard Component
+ * 
+ * Displays a statistic card with a title, value, and optional color.
+ * Used for showing metrics in dashboards.
+ * 
+ * @component
+ * @example
+ * <StatsCard 
+ *   title="Active Users" 
+ *   :value="150" 
+ *   color-class="text-green-400" 
+ * />
+ */
 defineProps({
+  /**
+   * The label/title of the stat
+   */
   title: {
     type: String,
-    required: true
+    required: true,
+    validator: (value) => value.trim().length > 0
   },
+  /**
+   * The numeric or string value to display
+   */
   value: {
     type: [String, Number],
     required: true
   },
+  /**
+   * Tailwind color class for the value
+   * @example 'text-green-400', 'text-red-500'
+   */
   colorClass: {
     type: String,
-    default: 'text-white'
+    default: 'text-white',
+    validator: (value) => value.startsWith('text-')
   }
 });
 </script>

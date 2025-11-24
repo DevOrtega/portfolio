@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Skill;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
+/**
+ * Skill Controller
+ * 
+ * Handles HTTP requests for skills.
+ */
 class SkillController extends Controller
 {
     /**
@@ -21,8 +26,9 @@ class SkillController extends Controller
      *       )
      * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(Skill::all());
+        $skills = Skill::orderBy('category')->orderBy('name')->get();
+        return response()->json($skills);
     }
 }

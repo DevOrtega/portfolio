@@ -118,19 +118,19 @@
             :opacity="0.7"
           />
           
-          <!-- Marcadores de guaguas -->
+          <!-- Bus markers -->
           <l-marker
             v-for="bus in filteredBuses"
             :key="bus.id"
             :lat-lng="[bus.lat, bus.lng]"
             @click="selectBus(bus)"
-            :icon="getBusIcon(bus)"
+            :icon="createBusIcon(bus)"
           >
             <l-popup v-if="selectedBusId === bus.id">
               <div class="bus-popup">
                 <h3 class="font-bold text-lg mb-2">Línea {{ bus.line }}</h3>
                 <div class="space-y-1 text-sm">
-                  <p><strong>Empresa:</strong> {{ getBusCompanyLabel(bus.company) }}</p>
+                  <p><strong>Empresa:</strong> {{ getCompanyLabel(bus.company) }}</p>
                   <p><strong>Tipo:</strong> {{ getBusTypeLabel(bus.type) }}</p>
                   <p><strong>Desde:</strong> {{ bus.origin }}</p>
                   <p><strong>Hasta:</strong> {{ bus.destination }}</p>
@@ -181,14 +181,20 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { LMap, LTileLayer, LMarker, LPopup, LIcon, LPolyline } from '@vue-leaflet/vue-leaflet';
+import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { ElTree, ElButton, ElIcon } from 'element-plus';
+import { ElTree, ElIcon } from 'element-plus';
 import { ArrowRight, ArrowLeft } from '@element-plus/icons-vue';
 import 'element-plus/dist/index.css';
 import StatsCard from '../../components/StatsCard.vue';
 import InfoBanner from '../../components/InfoBanner.vue';
+import { useBusMap } from '../../composables/useBusMap';
+import { useBusSchedule } from '../../composables/useBusSchedule';
+
+// Composables
+const { mapOptions, getResponsiveZoom, isWithinBounds, createBusIcon, getCompanyLabel, getBusTypeLabel } = useBusMap();
+const { isNightTime, isInService } = useBusSchedule();
 
 // Importar íconos de Leaflet localmente
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
@@ -203,141 +209,47 @@ L.Icon.Default.mergeOptions({
   shadowUrl,
 });
 
-// Función para calcular zoom según el ancho de pantalla
-const getResponsiveZoom = () => {
-  if (typeof window === 'undefined') return 10.25;
-  const width = window.innerWidth;
-  if (width < 640) return 9.5;  // móvil
-  if (width < 768) return 9.75; // tablet pequeña
-  if (width < 1024) return 10;  // tablet
-  if (width < 1280) return 10.25; // laptop
-  return 10.5; // desktop grande
-};
-
-// Centro de Gran Canaria (punto medio de la isla)
+// Map state
 const center = ref([27.965, -15.60]);
 const zoom = ref(getResponsiveZoom());
-const mapOptions = {
-  zoomControl: true,
-  attributionControl: true,
-  maxBounds: [[27.70, -15.90], [28.20, -15.30]], // Límites para evitar scroll fuera de GC
-  maxBoundsViscosity: 0.8, // Hacer los límites flexibles pero con resistencia
-  minZoom: 9.5 // Zoom mínimo para mantener la isla visible
-};
 
-// Listener para ajustar zoom en resize
+// Handle window resize
 const handleResize = () => {
   zoom.value = getResponsiveZoom();
 };
 
-// Función para crear iconos de bus sin fondo
-const getBusIcon = (bus) => {
-  const color = bus.company === 'municipales' ? '#FDB913' : 
-                bus.company === 'global' ? '#0066CC' : '#9933FF';
-  const strokeColor = bus.company === 'municipales' ? '#D49400' : 
-                      bus.company === 'global' ? '#004C99' : '#7722CC';
-  const textColor = bus.company === 'municipales' ? '#333' : '#FFF';
-  
-  const svgIcon = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
-      <g>
-        <rect x="4" y="8" width="24" height="16" rx="2" fill="${color}" stroke="${strokeColor}" stroke-width="1.2"/>
-        <rect x="6" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
-        <rect x="13" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
-        <rect x="20" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
-        <circle cx="10" cy="24" r="2.5" fill="#2C2C2C"/>
-        <circle cx="22" cy="24" r="2.5" fill="#2C2C2C"/>
-        <text x="16" y="22" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="${textColor}" text-anchor="middle">${bus.line}</text>
-      </g>
-    </svg>
-  `;
-  
-  return L.divIcon({
-    html: svgIcon,
-    className: 'custom-bus-icon',
-    iconSize: [32, 32],
-    iconAnchor: [16, 16]
-  });
-};
-
-// Límites geográficos de Gran Canaria para mantener guaguas dentro del mapa
-const GRAN_CANARIA_BOUNDS = {
-  north: 28.18,    // Norte de Las Palmas
-  south: 27.75,    // Sur (Maspalomas/Mogán)
-  east: -15.35,    // Este (Telde)
-  west: -15.85     // Oeste (Agaete/La Aldea)
-};
-
-// Verificar si una coordenada está dentro de Gran Canaria
-const isWithinBounds = (lat, lng) => {
-  return lat >= GRAN_CANARIA_BOUNDS.south && 
-         lat <= GRAN_CANARIA_BOUNDS.north &&
-         lng >= GRAN_CANARIA_BOUNDS.west && 
-         lng <= GRAN_CANARIA_BOUNDS.east;
-};
-
-// Verificar si una guagua debe estar en servicio según la hora actual
-const isInService = (busType, lineNumber) => {
-  const now = new Date();
-  const hour = now.getHours();
-  const dayOfWeek = now.getDay(); // 0 = Domingo, 6 = Sábado
-  
-  // Líneas nocturnas (solo viernes, sábado y vísperas de festivo, 00:00-06:00)
-  if (busType === 'night') {
-    const isWeekendNight = dayOfWeek === 0 || dayOfWeek === 6 || dayOfWeek === 5;
-    return isWeekendNight && (hour >= 0 && hour < 6);
-  }
-  
-  // Líneas urbanas: 06:00 - 23:30
-  if (busType === 'urban') {
-    return hour >= 6 && hour < 24;
-  }
-  
-  // Líneas interurbanas: 05:30 - 22:00 (menos frecuencia fines de semana)
-  if (busType === 'interurban') {
-    if (dayOfWeek === 0) { // Domingo - servicio reducido
-      return hour >= 7 && hour < 22;
-    }
-    return hour >= 5 && hour < 23;
-  }
-  
-  return false;
-};
-
+// UI State
 const selectedLine = ref('');
 const selectedBusId = ref(null);
 const buses = ref([]);
 const updateInterval = ref(null);
 
-// Control del árbol lateral
+// Sidebar tree control
 const treeVisible = ref(true);
 const treeRef = ref(null);
-const selectedBusIds = ref(new Set()); // IDs de guaguas seleccionadas
-const hiddenBusIds = ref(new Set()); // IDs de guaguas ocultas
-const expandedKeys = ref(['municipales', 'global']); // Claves de nodos expandidos por defecto
+const selectedBusIds = ref(new Set());
+const hiddenBusIds = ref(new Set());
+const expandedKeys = ref(['municipales', 'global']);
 
-// Ruta seleccionada para mostrar en el mapa
+// Selected route visualization
 const selectedRoute = ref(null);
 const selectedRouteColor = ref('#FDB913');
 
-// Líneas disponibles - Municipales y Global
+// Available bus lines
 const busLines = [
-  // Guaguas Municipales (urbanas)
-  '1', '2', '11', '12', '13', '17', '25',
-  // Global (interurbanas) - usando sus números reales
-  '1', '5', '30', '32', '60', '80', '91',
-  // Nocturnas
-  'N1'
+  '1', '2', '11', '12', '13', '17', '25',  // Municipales (urban)
+  '1', '5', '30', '32', '60', '80', '91',  // Global (interurban)
+  'N1'                                      // Night line
 ];
 
-// Generar datos simulados basados en rutas reales
-// GUAGUAS MUNICIPALES: Líneas urbanas de Las Palmas (amarillas)
-// GLOBAL: Líneas interurbanas que conectan toda Gran Canaria (azules)
-// Datos obtenidos de https://www.guaguas.com y http://globalsu.net - Noviembre 2025
-// Nota: No existe GTFS público disponible para Gran Canaria
+/**
+ * Generate simulated buses based on real routes
+ * Data sourced from https://www.guaguas.com and http://globalsu.net
+ * Note: No public GTFS feed available for Gran Canaria
+ */
 const generateBuses = () => {
   const routes = [
-    // ========== GUAGUAS MUNICIPALES (Urbanas - Amarillas) ==========
+    // ========== GUAGUAS MUNICIPALES (Urban - Yellow) ==========
     { 
       line: '1', type: 'urban', company: 'municipales', origin: 'Santa Catalina', destination: 'San Telmo', 
       stops: ['Teatro', 'Parque San Telmo', 'Puerto'], color: '#FDB913',
@@ -711,30 +623,12 @@ const getBusTypeClass = (company, type) => {
   return 'bg-gray-500';
 };
 
-const getBusCompanyLabel = (company) => {
-  const labels = {
-    municipales: 'Guaguas Municipales',
-    global: 'Global'
-  };
-  return labels[company] || 'Desconocido';
-};
-
-const getBusTypeLabel = (type) => {
-  const labels = {
-    urban: 'Urbana',
-    interurban: 'Interurbana',
-    night: 'Nocturna'
-  };
-  return labels[type] || 'Desconocido';
-};
-
+/**
+ * Select a bus to view its details
+ * @param {Object} bus - Bus object
+ */
 const selectBus = (bus) => {
   selectedBusId.value = bus.id;
-};
-
-const isNightTime = () => {
-  const hour = new Date().getHours();
-  return hour >= 0 && hour < 6;
 };
 
 const onMapReady = () => {
@@ -744,7 +638,7 @@ const onMapReady = () => {
 onMounted(() => {
   buses.value = generateBuses();
   
-  // Actualizar posiciones cada 5 segundos
+  // Update bus positions every 5 seconds
   updateInterval.value = setInterval(() => {
     updateBusPositions();
   }, 5000);

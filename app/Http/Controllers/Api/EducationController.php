@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Education;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
+/**
+ * Education Controller
+ * 
+ * Handles HTTP requests for education records.
+ */
 class EducationController extends Controller
 {
     /**
@@ -21,8 +26,9 @@ class EducationController extends Controller
      *       )
      * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(Education::all());
+        $education = Education::orderBy('start_date', 'desc')->get();
+        return response()->json($education);
     }
 }

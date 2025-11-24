@@ -4,9 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Experience;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
+/**
+ * Experience Controller
+ * 
+ * Handles HTTP requests for work experiences.
+ */
 class ExperienceController extends Controller
 {
     /**
@@ -21,8 +26,9 @@ class ExperienceController extends Controller
      *       )
      * )
      */
-    public function index()
+    public function index(): JsonResponse
     {
-        return response()->json(Experience::all());
+        $experiences = Experience::orderBy('start_date', 'desc')->get();
+        return response()->json($experiences);
     }
 }
