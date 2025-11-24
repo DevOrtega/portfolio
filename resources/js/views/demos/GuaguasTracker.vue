@@ -11,33 +11,33 @@
         </div>
       </div>
 
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4">
-        <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Filtrar por línea</h3>
-          <select v-model="selectedLine" class="w-full bg-gray-700 text-white px-3 py-2 rounded">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-4">
+        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg col-span-2 md:col-span-3 lg:col-span-1">
+          <h3 class="text-xs sm:text-sm font-semibold mb-2">Filtrar por línea</h3>
+          <select v-model="selectedLine" class="w-full bg-gray-700 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded text-sm">
             <option value="">Todas las líneas</option>
             <option v-for="line in busLines" :key="line" :value="line">Línea {{ line }}</option>
           </select>
         </div>
         
-        <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Guaguas activas</h3>
-          <p class="text-2xl font-bold text-green-400">{{ activeBuses.length }}</p>
+        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
+          <h3 class="text-xs sm:text-sm font-semibold mb-2">Guaguas activas</h3>
+          <p class="text-xl sm:text-2xl font-bold text-green-400">{{ activeBuses.length }}</p>
         </div>
 
-        <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Municipales</h3>
-          <p class="text-2xl font-bold text-yellow-400">{{ municipalesBuses.length }}</p>
+        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
+          <h3 class="text-xs sm:text-sm font-semibold mb-2">Municipales</h3>
+          <p class="text-xl sm:text-2xl font-bold text-yellow-400">{{ municipalesBuses.length }}</p>
         </div>
 
-        <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Global</h3>
-          <p class="text-2xl font-bold text-blue-400">{{ globalBuses.length }}</p>
+        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
+          <h3 class="text-xs sm:text-sm font-semibold mb-2">Global</h3>
+          <p class="text-xl sm:text-2xl font-bold text-blue-400">{{ globalBuses.length }}</p>
         </div>
 
-        <div class="bg-gray-800 p-4 rounded-lg">
-          <h3 class="text-sm font-semibold mb-2">Con retrasos</h3>
-          <p class="text-2xl font-bold text-red-400">{{ delayedBuses.length }}</p>
+        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
+          <h3 class="text-xs sm:text-sm font-semibold mb-2">Con retrasos</h3>
+          <p class="text-xl sm:text-2xl font-bold text-red-400">{{ delayedBuses.length }}</p>
         </div>
       </div>
 
@@ -54,7 +54,7 @@
         <button 
           @click="treeVisible = !treeVisible"
           class="absolute top-4 right-4 z-[1000] bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-lg shadow-lg transition-all"
-          :class="{ 'right-[320px]': treeVisible }"
+          :class="{ 'right-4 sm:right-[280px] md:right-[320px]': treeVisible }"
         >
           <el-icon v-if="treeVisible"><ArrowRight /></el-icon>
           <el-icon v-else><ArrowLeft /></el-icon>
@@ -64,10 +64,10 @@
         <transition name="slide">
           <div 
             v-if="treeVisible"
-            class="absolute top-0 right-0 w-80 h-[600px] bg-gray-800 border-l border-gray-700 z-[999] overflow-y-auto rounded-r-lg shadow-xl"
+            class="absolute top-0 right-0 w-full sm:w-72 md:w-80 h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px] bg-gray-800 border-l border-gray-700 z-[999] overflow-y-auto rounded-r-lg shadow-xl"
           >
-            <div class="p-4 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
-              <h3 class="font-bold text-lg mb-1">Filtro de Guaguas</h3>
+            <div class="p-3 sm:p-4 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
+              <h3 class="font-bold text-base sm:text-lg mb-1">Filtro de Guaguas</h3>
               <p class="text-xs text-gray-400">Click para mostrar/ocultar en el mapa</p>
             </div>
             <div class="p-4">
@@ -76,7 +76,9 @@
                 :data="treeData"
                 :props="{ children: 'children', label: 'label' }"
                 node-key="id"
-                default-expand-all
+                :default-expanded-keys="expandedKeys"
+                @node-expand="handleNodeExpand"
+                @node-collapse="handleNodeCollapse"
                 @node-click="handleNodeClick"
                 class="bg-transparent text-white"
               >
@@ -109,7 +111,7 @@
           </div>
         </transition>
 
-        <div class="bg-gray-800 rounded-lg overflow-hidden" style="height: 600px;">
+        <div class="bg-gray-800 rounded-lg overflow-hidden h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px]">
         <l-map
           ref="map"
           :zoom="zoom"
@@ -122,136 +124,23 @@
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           
+          <!-- Ruta seleccionada -->
+          <l-polyline
+            v-if="selectedRoute"
+            :lat-lngs="selectedRoute"
+            :color="selectedRouteColor"
+            :weight="4"
+            :opacity="0.7"
+          />
+          
           <!-- Marcadores de guaguas -->
           <l-marker
             v-for="bus in filteredBuses"
             :key="bus.id"
             :lat-lng="[bus.lat, bus.lng]"
             @click="selectBus(bus)"
+            :icon="getBusIcon(bus)"
           >
-            <l-icon
-              :icon-size="[40, 40]"
-              :icon-anchor="[20, 20]"
-            >
-              <div class="bus-icon-container">
-                <!-- SVG del autobús -->
-                <svg 
-                  v-if="bus.company === 'municipales'" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 64 64" 
-                  width="40" 
-                  height="40"
-                  class="bus-svg"
-                >
-                  <!-- Autobús amarillo para Municipales -->
-                  <g>
-                    <!-- Cuerpo del autobús -->
-                    <rect x="8" y="16" width="48" height="32" rx="4" fill="#FDB913" stroke="#D49400" stroke-width="2"/>
-                    <!-- Ventanas -->
-                    <rect x="12" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="24" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="36" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="48" y="20" width="6" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <!-- Parabrisas delantero -->
-                    <path d="M 48 20 L 54 16 L 54 32 L 48 32 Z" fill="#87CEEB" opacity="0.6"/>
-                    <!-- Ruedas -->
-                    <circle cx="16" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
-                    <circle cx="48" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
-                    <circle cx="16" cy="48" r="2" fill="#555"/>
-                    <circle cx="48" cy="48" r="2" fill="#555"/>
-                    <!-- Detalles -->
-                    <rect x="10" y="34" width="44" height="2" fill="#D49400"/>
-                    <!-- Faros -->
-                    <circle cx="54" cy="22" r="2" fill="#FFE4B5"/>
-                    <circle cx="54" cy="28" r="2" fill="#FFE4B5"/>
-                    <!-- Número de línea -->
-                    <rect x="20" y="38" width="24" height="8" rx="2" fill="white"/>
-                    <text x="32" y="44" font-family="Arial" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">{{ bus.line }}</text>
-                  </g>
-                </svg>
-                <svg 
-                  v-else-if="bus.company === 'global'" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 64 64" 
-                  width="40" 
-                  height="40"
-                  class="bus-svg"
-                >
-                  <!-- Autobús azul para Global -->
-                  <g>
-                    <!-- Cuerpo del autobús -->
-                    <rect x="8" y="16" width="48" height="32" rx="4" fill="#0066CC" stroke="#004C99" stroke-width="2"/>
-                    <!-- Ventanas -->
-                    <rect x="12" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="24" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="36" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="48" y="20" width="6" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <!-- Parabrisas delantero -->
-                    <path d="M 48 20 L 54 16 L 54 32 L 48 32 Z" fill="#87CEEB" opacity="0.6"/>
-                    <!-- Ruedas -->
-                    <circle cx="16" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
-                    <circle cx="48" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
-                    <circle cx="16" cy="48" r="2" fill="#555"/>
-                    <circle cx="48" cy="48" r="2" fill="#555"/>
-                    <!-- Detalles -->
-                    <rect x="10" y="34" width="44" height="2" fill="#004C99"/>
-                    <!-- Faros -->
-                    <circle cx="54" cy="22" r="2" fill="#FFE4B5"/>
-                    <circle cx="54" cy="28" r="2" fill="#FFE4B5"/>
-                    <!-- Número de línea -->
-                    <rect x="20" y="38" width="24" height="8" rx="2" fill="white"/>
-                    <text x="32" y="44" font-family="Arial" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">{{ bus.line }}</text>
-                  </g>
-                </svg>
-                <svg 
-                  v-else
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 64 64" 
-                  width="40" 
-                  height="40"
-                  class="bus-svg"
-                >
-                  <!-- Autobús morado para nocturnas -->
-                  <g>
-                    <!-- Cuerpo del autobús -->
-                    <rect x="8" y="16" width="48" height="32" rx="4" fill="#9933FF" stroke="#7722CC" stroke-width="2"/>
-                    <!-- Ventanas -->
-                    <rect x="12" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="24" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="36" y="20" width="10" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <rect x="48" y="20" width="6" height="12" rx="2" fill="#87CEEB" opacity="0.8"/>
-                    <!-- Parabrisas delantero -->
-                    <path d="M 48 20 L 54 16 L 54 32 L 48 32 Z" fill="#87CEEB" opacity="0.6"/>
-                    <!-- Ruedas -->
-                    <circle cx="16" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
-                    <circle cx="48" cy="48" r="5" fill="#2C2C2C" stroke="#000" stroke-width="1"/>
-                    <circle cx="16" cy="48" r="2" fill="#555"/>
-                    <circle cx="48" cy="48" r="2" fill="#555"/>
-                    <!-- Detalles -->
-                    <rect x="10" y="34" width="44" height="2" fill="#7722CC"/>
-                    <!-- Faros -->
-                    <circle cx="54" cy="22" r="2" fill="#FFE4B5"/>
-                    <circle cx="54" cy="28" r="2" fill="#FFE4B5"/>
-                    <!-- Número de línea -->
-                    <rect x="20" y="38" width="24" height="8" rx="2" fill="white"/>
-                    <text x="32" y="44" font-family="Arial" font-size="8" font-weight="bold" fill="#333" text-anchor="middle">{{ bus.line }}</text>
-                  </g>
-                </svg>
-                <!-- Indicador de retraso -->
-                <svg 
-                  v-if="bus.delayed" 
-                  class="delay-indicator" 
-                  xmlns="http://www.w3.org/2000/svg" 
-                  viewBox="0 0 20 20" 
-                  fill="currentColor"
-                  width="16"
-                  height="16"
-                >
-                  <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
-                </svg>
-              </div>
-            </l-icon>
-            
             <l-popup v-if="selectedBusId === bus.id">
               <div class="bus-popup">
                 <h3 class="font-bold text-lg mb-2">Línea {{ bus.line }}</h3>
@@ -307,30 +196,81 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import { LMap, LTileLayer, LMarker, LPopup, LIcon } from '@vue-leaflet/vue-leaflet';
+import { LMap, LTileLayer, LMarker, LPopup, LIcon, LPolyline } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ElTree, ElButton, ElIcon } from 'element-plus';
 import { ArrowRight, ArrowLeft } from '@element-plus/icons-vue';
 import 'element-plus/dist/index.css';
 
-// Configurar los íconos de Leaflet
+// Importar íconos de Leaflet localmente
+import iconUrl from 'leaflet/dist/images/marker-icon.png';
+import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
+import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
+
+// Configurar los íconos de Leaflet con assets locales
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon-2x.png',
-  iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-icon.png',
-  shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png',
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
 });
+
+// Función para calcular zoom según el ancho de pantalla
+const getResponsiveZoom = () => {
+  if (typeof window === 'undefined') return 10.25;
+  const width = window.innerWidth;
+  if (width < 640) return 9.5;  // móvil
+  if (width < 768) return 9.75; // tablet pequeña
+  if (width < 1024) return 10;  // tablet
+  if (width < 1280) return 10.25; // laptop
+  return 10.5; // desktop grande
+};
 
 // Centro de Gran Canaria (punto medio de la isla)
 const center = ref([27.965, -15.60]);
-const zoom = ref(10.25);
+const zoom = ref(getResponsiveZoom());
 const mapOptions = {
   zoomControl: true,
   attributionControl: true,
   maxBounds: [[27.70, -15.90], [28.20, -15.30]], // Límites para evitar scroll fuera de GC
   maxBoundsViscosity: 0.8, // Hacer los límites flexibles pero con resistencia
   minZoom: 9.5 // Zoom mínimo para mantener la isla visible
+};
+
+// Listener para ajustar zoom en resize
+const handleResize = () => {
+  zoom.value = getResponsiveZoom();
+};
+
+// Función para crear iconos de bus sin fondo
+const getBusIcon = (bus) => {
+  const color = bus.company === 'municipales' ? '#FDB913' : 
+                bus.company === 'global' ? '#0066CC' : '#9933FF';
+  const strokeColor = bus.company === 'municipales' ? '#D49400' : 
+                      bus.company === 'global' ? '#004C99' : '#7722CC';
+  const textColor = bus.company === 'municipales' ? '#333' : '#FFF';
+  
+  const svgIcon = `
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+      <g>
+        <rect x="4" y="8" width="24" height="16" rx="2" fill="${color}" stroke="${strokeColor}" stroke-width="1.2"/>
+        <rect x="6" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
+        <rect x="13" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
+        <rect x="20" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
+        <circle cx="10" cy="24" r="2.5" fill="#2C2C2C"/>
+        <circle cx="22" cy="24" r="2.5" fill="#2C2C2C"/>
+        <text x="16" y="22" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="${textColor}" text-anchor="middle">${bus.line}</text>
+      </g>
+    </svg>
+  `;
+  
+  return L.divIcon({
+    html: svgIcon,
+    className: 'custom-bus-icon',
+    iconSize: [32, 32],
+    iconAnchor: [16, 16]
+  });
 };
 
 // Límites geográficos de Gran Canaria para mantener guaguas dentro del mapa
@@ -387,6 +327,11 @@ const treeVisible = ref(true);
 const treeRef = ref(null);
 const selectedBusIds = ref(new Set()); // IDs de guaguas seleccionadas
 const hiddenBusIds = ref(new Set()); // IDs de guaguas ocultas
+const expandedKeys = ref(['municipales', 'global']); // Claves de nodos expandidos por defecto
+
+// Ruta seleccionada para mostrar en el mapa
+const selectedRoute = ref(null);
+const selectedRouteColor = ref('#FDB913');
 
 // Líneas disponibles - Municipales y Global
 const busLines = [
@@ -489,7 +434,7 @@ const generateBuses = () => {
 
   // Generar múltiples guaguas por línea solo si están en servicio
   const allBuses = [];
-  routes.forEach((route, routeIndex) => {
+  routes.forEach((route, lineIndex) => {
     // Verificar si la línea debe estar en servicio
     if (!isInService(route.type, route.line)) {
       return; // Saltar esta línea si no está en servicio
@@ -525,7 +470,7 @@ const generateBuses = () => {
       const delayed = Math.random() > 0.75;
       
       allBuses.push({
-        id: `bus-${routeIndex}-${i}`,
+        id: `bus-${lineIndex}-${i}`,
         line: route.line,
         type: route.type,
         company: route.company, // 'municipales' o 'global'
@@ -613,11 +558,22 @@ const treeData = computed(() => {
 // Manejar clicks en el árbol
 const handleNodeClick = (data, node) => {
   if (data.type === 'bus') {
-    // Click en una guagua individual
-    if (hiddenBusIds.value.has(data.id)) {
-      hiddenBusIds.value.delete(data.id);
-    } else {
-      hiddenBusIds.value.add(data.id);
+    // Click en una guagua individual - mostrar solo esta guagua y su ruta
+    const bus = buses.value.find(b => b.id === data.id);
+    if (bus) {
+      // Ocultar todas las demás guaguas
+      buses.value.forEach(b => {
+        if (b.id !== data.id) {
+          hiddenBusIds.value.add(b.id);
+        } else {
+          hiddenBusIds.value.delete(b.id);
+        }
+      });
+      
+      // Mostrar la ruta de esta guagua
+      selectedRoute.value = bus.routeCoords;
+      selectedRouteColor.value = bus.company === 'municipales' ? '#FDB913' : '#0066CC';
+      selectedBusId.value = bus.id;
     }
   } else if (data.type === 'line') {
     // Click en una línea - toggle todas las guaguas de esa línea
@@ -631,6 +587,9 @@ const handleNodeClick = (data, node) => {
         hiddenBusIds.value.add(bus.id);
       }
     });
+    
+    // Limpiar ruta seleccionada
+    selectedRoute.value = null;
   } else if (data.type === 'company') {
     // Click en una empresa - toggle todas las guaguas de esa empresa
     const companyBuses = buses.value.filter(b => b.company === data.id);
@@ -643,10 +602,25 @@ const handleNodeClick = (data, node) => {
         hiddenBusIds.value.add(bus.id);
       }
     });
+    
+    // Limpiar ruta seleccionada
+    selectedRoute.value = null;
   }
   
   // Forzar reactividad
   hiddenBusIds.value = new Set(hiddenBusIds.value);
+};
+
+// Manejar expansión de nodos del árbol
+const handleNodeExpand = (data, node) => {
+  if (!expandedKeys.value.includes(node.key)) {
+    expandedKeys.value.push(node.key);
+  }
+};
+
+// Manejar colapso de nodos del árbol
+const handleNodeCollapse = (data, node) => {
+  expandedKeys.value = expandedKeys.value.filter(k => k !== node.key);
 };
 
 // Simular movimiento realista de guaguas siguiendo rutas reales
@@ -787,53 +761,37 @@ onMounted(() => {
   updateInterval.value = setInterval(() => {
     updateBusPositions();
   }, 5000);
+  
+  // Agregar listener para resize
+  window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
   if (updateInterval.value) {
     clearInterval(updateInterval.value);
   }
+  
+  // Remover listener de resize
+  window.removeEventListener('resize', handleResize);
 });
 </script>
 
 <style scoped>
-.bus-icon-container {
-  position: relative;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+/* Estilo para iconos personalizados de bus sin fondo */
+:deep(.custom-bus-icon) {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
 }
 
-.bus-svg {
+:deep(.custom-bus-icon svg) {
+  display: block;
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
   transition: transform 0.2s ease;
 }
 
-.bus-svg:hover {
+:deep(.custom-bus-icon:hover svg) {
   transform: scale(1.1);
-}
-
-.delay-indicator {
-  position: absolute;
-  top: -6px;
-  right: -6px;
-  color: #FCD34D;
-  background: white;
-  border-radius: 50%;
-  padding: 2px;
-  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
-  animation: pulse-warning 2s infinite;
-}
-
-@keyframes pulse-warning {
-  0%, 100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
 }
 
 .bus-popup {
