@@ -19,7 +19,7 @@ class DatabaseSeeder extends Seeder
             [
                 'name' => 'Carlos Miguel Ortega Arencibia',
                 'headline' => 'Programador/Desarrollador de Aplicaciones Web',
-                'bio' => 'Me dirijo a usted con el propósito de expresar mi interés en formar parte de su equipo como Desarrollador de Aplicaciones Web. Soy un profesional con amplia experiencia en el desarrollo full-stack, especializado en Laravel, Vue.js y MySQL, y con una sólida trayectoria en la creación, migración y mantenimiento de aplicaciones web robustas y escalables. Durante mi experiencia en DESIC S.L., he liderado procesos de migración tecnológica, actualizando aplicaciones de Laravel 7 a Laravel 10 y de Vue.js 2 a Vue.js 3, además de implementar contenedores Docker y servicios web en Node.js y Java (Gradle).',
+                'bio' => 'Soy un profesional con amplia experiencia en el desarrollo full-stack, especializado en Laravel, Vue.js y MySQL, con una sólida trayectoria en la creación, migración y mantenimiento de aplicaciones web robustas y escalables. He liderado procesos de migración tecnológica, actualizando aplicaciones de Laravel 7 a Laravel 10 y de Vue.js 2 a Vue.js 3, además de implementar contenedores Docker y servicios web en Node.js y Java (Gradle). Actualmente estoy realizando una especialización en Big Data e Inteligencia Artificial, profundizando en análisis de datos, machine learning, procesamiento de grandes volúmenes de información y desarrollo de soluciones basadas en IA. Me apasiona el desarrollo de soluciones tecnológicas innovadoras y el aprendizaje continuo de nuevas tecnologías.',
                 'linkedin_url' => 'https://www.linkedin.com/in/carlosmortega/',
                 'github_url' => 'https://github.com/DevOrtega',
             ]
@@ -203,11 +203,18 @@ class DatabaseSeeder extends Seeder
                 'github_url' => 'https://github.com/DevOrtega/Fruits_Crud_Frontend'
             ],
             [
-                'title' => 'Vue Leaflet Demo',
-                'description' => 'Interactive map demonstration using Vue 3 and Leaflet. Features custom markers, popups, and geometric shapes.',
-                'tags' => ['Vue.js', 'Leaflet', 'Demo'],
-                'url' => '/projects/demo/map', // Internal link
-                'image_path' => '/images/map-preview.png' // Placeholder or we can use a generic map icon
+                'title' => 'Gestor de Cajeros Automáticos',
+                'description' => 'Sistema de gestión y visualización de cajeros automáticos en Gran Canaria. Incluye mapa interactivo con marcadores personalizados, información detallada y filtros por entidad bancaria.',
+                'tags' => ['Vue.js', 'Leaflet', 'Demo', 'Geolocalización'],
+                'url' => '/projects/demo/atm-manager',
+                'image_path' => '/images/atm-preview.png'
+            ],
+            [
+                'title' => 'Seguimiento de Guaguas en Tiempo Real',
+                'description' => 'Aplicación de seguimiento en tiempo real del transporte público de Gran Canaria. Visualiza la ubicación de las guaguas en el mapa, información de rutas, tiempos de llegada a las próximas paradas y estado de retrasos.',
+                'tags' => ['Vue.js', 'Leaflet', 'Real-time', 'API', 'Demo'],
+                'url' => '/projects/demo/guaguas-tracker',
+                'image_path' => '/images/guaguas-preview.png'
             ],
         ];
 

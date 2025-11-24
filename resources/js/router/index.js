@@ -15,9 +15,14 @@ const routes = [
         component: ProjectsView
     },
     {
-        path: '/projects/demo/map',
-        name: 'map-demo',
+        path: '/projects/demo/atm-manager',
+        name: 'atm-manager',
         component: () => import('../views/MapDemoView.vue')
+    },
+    {
+        path: '/projects/demo/guaguas-tracker',
+        name: 'guaguas-tracker',
+        component: () => import('../views/demos/GuaguasTracker.vue')
     },
     {
         path: '/resume',
