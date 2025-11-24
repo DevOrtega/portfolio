@@ -4,11 +4,11 @@
       <div class="mb-6">
         <h1 class="text-3xl font-bold mb-2">Seguimiento de Guaguas en Tiempo Real</h1>
         <p class="text-gray-400">Transporte público de Gran Canaria</p>
-        <div class="mt-2 bg-yellow-900/30 border border-yellow-700 text-yellow-200 px-4 py-2 rounded text-sm">
+        <InfoBanner type="info" class="mt-2">
           ℹ️ Demo con simulación basada en rutas y horarios reales de <strong>Guaguas Municipales</strong> (amarillo - urbanas) y <strong>Global</strong> (azul - interurbanas). 
           Las guaguas solo aparecen dentro de sus horarios operativos y se mueven por rutas geográficamente precisas de Gran Canaria.
-          <br><small class="text-yellow-300/80">Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos son simulados con máxima fidelidad a la realidad.</small>
-        </div>
+          <br><small class="opacity-80">Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos son simulados con máxima fidelidad a la realidad.</small>
+        </InfoBanner>
       </div>
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-4">
@@ -20,33 +20,18 @@
           </select>
         </div>
         
-        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
-          <h3 class="text-xs sm:text-sm font-semibold mb-2">Guaguas activas</h3>
-          <p class="text-xl sm:text-2xl font-bold text-green-400">{{ activeBuses.length }}</p>
-        </div>
-
-        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
-          <h3 class="text-xs sm:text-sm font-semibold mb-2">Municipales</h3>
-          <p class="text-xl sm:text-2xl font-bold text-yellow-400">{{ municipalesBuses.length }}</p>
-        </div>
-
-        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
-          <h3 class="text-xs sm:text-sm font-semibold mb-2">Global</h3>
-          <p class="text-xl sm:text-2xl font-bold text-blue-400">{{ globalBuses.length }}</p>
-        </div>
-
-        <div class="bg-gray-800 p-3 sm:p-4 rounded-lg">
-          <h3 class="text-xs sm:text-sm font-semibold mb-2">Con retrasos</h3>
-          <p class="text-xl sm:text-2xl font-bold text-red-400">{{ delayedBuses.length }}</p>
-        </div>
+        <StatsCard title="Guaguas activas" :value="activeBuses.length" color-class="text-green-400" />
+        <StatsCard title="Municipales" :value="municipalesBuses.length" color-class="text-yellow-400" />
+        <StatsCard title="Global" :value="globalBuses.length" color-class="text-blue-400" />
+        <StatsCard title="Con retrasos" :value="delayedBuses.length" color-class="text-red-400" />
       </div>
 
       <!-- Mensaje cuando no hay servicio -->
-      <div v-if="activeBuses.length === 0" class="mb-4 bg-orange-900/30 border border-orange-700 text-orange-200 px-4 py-3 rounded text-sm">
+      <InfoBanner v-if="activeBuses.length === 0" type="warning" class="mb-4">
         🌙 No hay guaguas en servicio en este momento. 
         <span v-if="isNightTime()">Las líneas urbanas operan de 06:00-23:30 y las interurbanas de 05:30-22:00.</span>
         <span v-else>Las líneas nocturnas (N1) solo operan viernes y sábados de 00:00-06:00.</span>
-      </div>
+      </InfoBanner>
 
       <!-- Contenedor del mapa y árbol lateral -->
       <div class="relative">
@@ -202,6 +187,8 @@ import 'leaflet/dist/leaflet.css';
 import { ElTree, ElButton, ElIcon } from 'element-plus';
 import { ArrowRight, ArrowLeft } from '@element-plus/icons-vue';
 import 'element-plus/dist/index.css';
+import StatsCard from '../../components/StatsCard.vue';
+import InfoBanner from '../../components/InfoBanner.vue';
 
 // Importar íconos de Leaflet localmente
 import iconUrl from 'leaflet/dist/images/marker-icon.png';

@@ -1,6 +1,9 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import axios from 'axios';
+import LoadingSpinner from '../components/LoadingSpinner.vue';
+import SectionHeader from '../components/SectionHeader.vue';
+import TimelineItem from '../components/TimelineItem.vue';
 
 const skills = ref([]);
 const experiences = ref([]);
@@ -37,17 +40,12 @@ const skillsByCategory = computed(() => {
   <div class="max-w-4xl mx-auto px-4">
     <h1 class="text-4xl font-bold mb-12 text-center bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 to-cyan-400">Resume</h1>
 
-    <div v-if="loading" class="flex justify-center">
-       <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div>
-    </div>
+    <LoadingSpinner v-if="loading" />
 
     <div v-else class="space-y-16">
       <!-- Skills Section -->
       <section>
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-          <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg>
-          Skills
-        </h2>
+        <SectionHeader title="Skills" default-icon="skills" />
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
           <div v-for="(categorySkills, category) in skillsByCategory" :key="category" class="bg-gray-800 rounded-xl p-6 border border-gray-700">
             <h3 class="text-lg font-semibold text-indigo-300 mb-4">{{ category }}</h3>
@@ -68,43 +66,33 @@ const skillsByCategory = computed(() => {
 
       <!-- Experience Section -->
       <section v-if="experiences.length > 0">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-          <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
-          Experience
-        </h2>
+        <SectionHeader title="Experience" default-icon="experience" />
         <div class="space-y-8 border-l-2 border-gray-700 ml-3 pl-8 relative">
-          <div v-for="exp in experiences" :key="exp.id" class="relative">
-            <span class="absolute -left-[41px] top-1 h-5 w-5 rounded-full border-4 border-gray-900 bg-indigo-500"></span>
-            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-indigo-500 transition-colors">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <h3 class="text-xl font-bold text-white">{{ exp.role }}</h3>
-                <span class="text-indigo-300 text-sm font-medium bg-indigo-500/10 px-3 py-1 rounded-full">{{ exp.start_date }} - {{ exp.end_date || 'Present' }}</span>
-              </div>
-              <h4 class="text-lg text-gray-400 mb-4">{{ exp.company }}</h4>
-              <p class="text-gray-300 leading-relaxed whitespace-pre-line">{{ exp.description }}</p>
-            </div>
-          </div>
+          <TimelineItem
+            v-for="exp in experiences"
+            :key="exp.id"
+            :title="exp.role"
+            :subtitle="exp.company"
+            :date-range="`${exp.start_date} - ${exp.end_date || 'Present'}`"
+            :description="exp.description"
+            color="indigo"
+          />
         </div>
       </section>
 
       <!-- Education Section -->
       <section v-if="education.length > 0">
-        <h2 class="text-2xl font-bold text-white mb-6 flex items-center gap-2">
-          <svg class="w-6 h-6 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 14l9-5-9-5-9 5 9 5z" /><path d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5zm0 0l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14zm-4 6v-7.5l4-2.222" /></svg>
-          Education
-        </h2>
+        <SectionHeader title="Education" default-icon="education" />
         <div class="space-y-8 border-l-2 border-gray-700 ml-3 pl-8 relative">
-          <div v-for="edu in education" :key="edu.id" class="relative">
-            <span class="absolute -left-[41px] top-1 h-5 w-5 rounded-full border-4 border-gray-900 bg-cyan-500"></span>
-            <div class="bg-gray-800 rounded-xl p-6 border border-gray-700 hover:border-cyan-500 transition-colors">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <h3 class="text-xl font-bold text-white">{{ edu.degree }}</h3>
-                <span class="text-cyan-300 text-sm font-medium bg-cyan-500/10 px-3 py-1 rounded-full">{{ edu.start_date }} - {{ edu.end_date || 'Present' }}</span>
-              </div>
-              <h4 class="text-lg text-gray-400 mb-2">{{ edu.institution }}</h4>
-              <p v-if="edu.description" class="text-gray-300 leading-relaxed">{{ edu.description }}</p>
-            </div>
-          </div>
+          <TimelineItem
+            v-for="edu in education"
+            :key="edu.id"
+            :title="edu.degree"
+            :subtitle="edu.institution"
+            :date-range="`${edu.start_date} - ${edu.end_date || 'Present'}`"
+            :description="edu.description || ''"
+            color="cyan"
+          />
         </div>
       </section>
       

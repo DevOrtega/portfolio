@@ -44,18 +44,9 @@
       
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-2 mb-6">
-        <div class="bg-gray-800 p-3 rounded-lg text-center border border-gray-700">
-          <div class="text-2xl font-bold text-green-400">{{ stats.active }}</div>
-          <div class="text-[10px] text-gray-400 uppercase tracking-wider">Active</div>
-        </div>
-        <div class="bg-gray-800 p-3 rounded-lg text-center border border-gray-700">
-          <div class="text-2xl font-bold text-orange-400">{{ stats.maintenance }}</div>
-          <div class="text-[10px] text-gray-400 uppercase tracking-wider">Maint.</div>
-        </div>
-        <div class="bg-gray-800 p-3 rounded-lg text-center border border-gray-700">
-          <div class="text-2xl font-bold text-red-400">{{ stats.inactive }}</div>
-          <div class="text-[10px] text-gray-400 uppercase tracking-wider">Down</div>
-        </div>
+        <StatsCard title="Active" :value="stats.active" color-class="text-green-400" />
+        <StatsCard title="Maint." :value="stats.maintenance" color-class="text-orange-400" />
+        <StatsCard title="Down" :value="stats.inactive" color-class="text-red-400" />
       </div>
 
       <!-- Activity Log -->
@@ -83,6 +74,7 @@
 import "leaflet/dist/leaflet.css";
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "@vue-leaflet/vue-leaflet";
+import StatsCard from './StatsCard.vue';
 
 const zoom = ref(11);
 const center = ref([28.0000, -15.5500]); // Center of Gran Canaria
