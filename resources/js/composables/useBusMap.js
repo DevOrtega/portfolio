@@ -8,12 +8,13 @@ import L from 'leaflet';
 export function useBusMap() {
   /**
    * Geographic bounds of Gran Canaria
+   * Adjusted to keep buses within the island
    */
   const BOUNDS = {
-    north: 28.18,   // Las Palmas (North)
-    south: 27.75,   // Maspalomas/Mogán (South)
-    east: -15.35,   // Telde (East)
-    west: -15.85    // Agaete/La Aldea (West)
+    north: 28.18,   // Norte de Las Palmas
+    south: 27.74,   // Sur de Maspalomas
+    east: -15.35,   // Este (Telde/Jinámar)
+    west: -15.60    // Oeste (hasta Maspalomas/Puerto Rico, evitando el océano)
   };
 
   /**

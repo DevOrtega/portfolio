@@ -109,7 +109,7 @@
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           />
           
-          <!-- Ruta seleccionada -->
+          <!-- Ruta seleccionada siguiendo carreteras reales -->
           <l-polyline
             v-if="selectedRoute"
             :lat-lngs="selectedRoute"
@@ -208,7 +208,7 @@ L.Icon.Default.mergeOptions({
 });
 
 // Map state
-const center = ref([27.965, -15.60]);
+const center = ref([28.050, -15.450]); // Centrado en zona media de Gran Canaria
 const zoom = ref(getResponsiveZoom());
 
 // Handle window resize
@@ -248,84 +248,754 @@ const busLines = [
 const generateBuses = () => {
   const routes = [
     // ========== GUAGUAS MUNICIPALES (Urban - Yellow) ==========
+    // Línea 1: Teatro - Puerto (por León y Castillo)
     { 
-      line: '1', type: 'urban', company: 'municipales', origin: 'Santa Catalina', destination: 'San Telmo', 
-      stops: ['Teatro', 'Parque San Telmo', 'Puerto'], color: '#FDB913',
-      routeCoords: [[28.135, -15.431], [28.124, -15.430], [28.109, -15.416]]
+      line: '1', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Puerto', 
+      stops: ['San Telmo', 'Usos Múltiples', 'León y Castillo', 'Mesa y López', 'Santa Catalina'], color: '#FDB913',
+      routeCoords: [
+        [28.1094, -15.4131], // Teatro Pérez Galdós
+        [28.1080, -15.4155],
+        [28.1066, -15.4191], // San Telmo
+        [28.1072, -15.4200],
+        [28.1083, -15.4221], // Venegas (Usos Múltiples)
+        [28.1090, -15.4235],
+        [28.1102, -15.4251], // León y Castillo, 22
+        [28.1108, -15.4259],
+        [28.1115, -15.4268], // León y Castillo, 50
+        [28.1123, -15.4275],
+        [28.1131, -15.4282], // León y Castillo (Metropole)
+        [28.1145, -15.4295],
+        [28.1158, -15.4308],
+        [28.1170, -15.4318], // León y Castillo (Oficinas Municipales)
+        [28.1182, -15.4330],
+        [28.1195, -15.4343],
+        [28.1209, -15.4355], // León y Castillo (Torre Las Palmas)
+        [28.1222, -15.4367],
+        [28.1235, -15.4378], // León y Castillo (Club Náutico)
+        [28.1246, -15.4390],
+        [28.1258, -15.4401], // Mesa y López
+        [28.1270, -15.4390],
+        [28.1284, -15.4378],
+        [28.1298, -15.4365], // Juan Manuel Durán (Base Naval)
+        [28.1310, -15.4348],
+        [28.1320, -15.4335],
+        [28.1330, -15.4320], // Juan Manuel Durán (Galicia)
+        [28.1342, -15.4308],
+        [28.1353, -15.4297],
+        [28.1365, -15.4285], // Tomás Miller (Canteras)
+        [28.1375, -15.4275],
+        [28.1383, -15.4268],
+        [28.1390, -15.4260], // Alfredo L. Jones
+        [28.1397, -15.4248],
+        [28.1405, -15.4235], // Woermann
+        [28.1410, -15.4240],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1423, -15.4230],
+        [28.1432, -15.4210], // Castillo de La Luz
+        [28.1440, -15.4198],
+        [28.1447, -15.4188],
+        [28.1454, -15.4180]  // Manuel Becerra (Puerto)
+      ]
     },
+    // Línea 2: Guiniguada - Puerto (por Tomás Morales)
     { 
-      line: '2', type: 'urban', company: 'municipales', origin: 'Puerto', destination: 'Escaleritas', 
-      stops: ['Vegueta', 'San José', 'Escaleritas'], color: '#FDB913',
-      routeCoords: [[28.109, -15.416], [28.100, -15.415], [28.089, -15.442]]
+      line: '2', type: 'urban', company: 'municipales', origin: 'Guiniguada', destination: 'Puerto', 
+      stops: ['Primero de Mayo', 'Obelisco', 'Tomás Morales', 'Pío XII', 'Mercado Central', 'Santa Catalina'], color: '#FDB913',
+      routeCoords: [
+        [28.0970, -15.4130], // Guiniguada
+        [28.0975, -15.4135],
+        [28.0980, -15.4140],
+        [28.0985, -15.4145], // Primero de Mayo, 6
+        [28.0990, -15.4148],
+        [28.0995, -15.4151],
+        [28.1000, -15.4155], // Primero de Mayo (Correos)
+        [28.1010, -15.4160],
+        [28.1020, -15.4165],
+        [28.1030, -15.4170],
+        [28.1040, -15.4175],
+        [28.1050, -15.4180],
+        [28.1055, -15.4185], // Plaza Constitución (Obelisco)
+        [28.1062, -15.4195],
+        [28.1070, -15.4205],
+        [28.1078, -15.4215],
+        [28.1085, -15.4225],
+        [28.1090, -15.4230], // Tomás Morales, 69
+        [28.1098, -15.4240],
+        [28.1105, -15.4250],
+        [28.1113, -15.4260],
+        [28.1120, -15.4268],
+        [28.1125, -15.4275], // Tomás Morales, 120
+        [28.1135, -15.4285],
+        [28.1145, -15.4295],
+        [28.1155, -15.4305],
+        [28.1165, -15.4315], // Emilio Ley (Piscinas Julio Navarro)
+        [28.1175, -15.4325],
+        [28.1185, -15.4335],
+        [28.1195, -15.4345],
+        [28.1205, -15.4355], // Pío XII (Colegio Teresiano)
+        [28.1218, -15.4365],
+        [28.1230, -15.4375],
+        [28.1242, -15.4383],
+        [28.1250, -15.4390], // Pío XII (Estadio Insular)
+        [28.1262, -15.4385],
+        [28.1274, -15.4378],
+        [28.1284, -15.4370],
+        [28.1290, -15.4365], // Galicia (Mercado Central)
+        [28.1298, -15.4358],
+        [28.1306, -15.4350],
+        [28.1314, -15.4343],
+        [28.1320, -15.4335], // Galicia, 32
+        [28.1330, -15.4320],
+        [28.1340, -15.4308],
+        [28.1350, -15.4297],
+        [28.1358, -15.4290],
+        [28.1365, -15.4285], // Tomás Miller (Canteras)
+        [28.1373, -15.4278],
+        [28.1380, -15.4270],
+        [28.1386, -15.4264],
+        [28.1390, -15.4260], // Alfredo L. Jones
+        [28.1396, -15.4252],
+        [28.1401, -15.4244],
+        [28.1405, -15.4235], // Woermann
+        [28.1409, -15.4239],
+        [28.1412, -15.4243],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1423, -15.4238],
+        [28.1430, -15.4228],
+        [28.1437, -15.4218],
+        [28.1444, -15.4208],
+        [28.1450, -15.4194],
+        [28.1454, -15.4180]  // Manuel Becerra (Puerto)
+      ]
     },
+    // Línea 11: Teatro - Hospital Dr. Negrín (por La Feria)
     { 
-      line: '12', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Tamaraceite', 
-      stops: ['León y Castillo', 'Cruz del Señor', 'Tamaraceite Alto'], color: '#FDB913',
-      routeCoords: [[28.109, -15.413], [28.125, -15.455], [28.145, -15.480]]
+      line: '11', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Hospital Dr. Negrín', 
+      stops: ['Barranquillo Don Zoilo', 'Altavista', 'La Feria', 'El Pilar'], color: '#FDB913',
+      routeCoords: [
+        [28.1094, -15.4131], // Teatro
+        [28.1088, -15.4155],
+        [28.1082, -15.4178],
+        [28.1076, -15.4200],
+        [28.1070, -15.4220],
+        [28.1064, -15.4238],
+        [28.1058, -15.4245],
+        [28.1050, -15.4250], // Barranquillo Don Zoilo
+        [28.1052, -15.4265],
+        [28.1054, -15.4280],
+        [28.1056, -15.4295],
+        [28.1058, -15.4308],
+        [28.1060, -15.4320], // Altavista
+        [28.1064, -15.4338],
+        [28.1068, -15.4355],
+        [28.1072, -15.4370],
+        [28.1076, -15.4385],
+        [28.1080, -15.4400], // Las Chumberas
+        [28.1086, -15.4418],
+        [28.1092, -15.4435],
+        [28.1098, -15.4450],
+        [28.1104, -15.4465],
+        [28.1110, -15.4480], // La Feria
+        [28.1117, -15.4498],
+        [28.1124, -15.4515],
+        [28.1130, -15.4530],
+        [28.1136, -15.4542],
+        [28.1140, -15.4550], // El Pilar
+        [28.1150, -15.4568],
+        [28.1160, -15.4585],
+        [28.1170, -15.4600],
+        [28.1180, -15.4615],
+        [28.1190, -15.4628],
+        [28.1200, -15.4640],
+        [28.1210, -15.4652],
+        [28.1220, -15.4664],
+        [28.1230, -15.4675],
+        [28.1240, -15.4685],
+        [28.1250, -15.4695],
+        [28.1260, -15.4703],
+        [28.1270, -15.4710]  // Hospital Dr. Negrín
+      ]
     },
+    // Línea 12: Puerto - Hoya de La Plata (Cono Sur)
     { 
-      line: '17', type: 'urban', company: 'municipales', origin: 'Santa Catalina', destination: 'Jinámar', 
-      stops: ['Miller Bajo', 'Cruz de Piedra', 'Jinámar Centro'], color: '#FDB913',
-      routeCoords: [[28.135, -15.431], [28.121, -15.395], [28.105, -15.375]]
+      line: '12', type: 'urban', company: 'municipales', origin: 'Puerto', destination: 'Hoya de La Plata', 
+      stops: ['León y Castillo', 'Oficinas Municipales', 'Ciudad Justicia', 'Blas Cabrera'], color: '#FDB913',
+      routeCoords: [
+        [28.1454, -15.4180], // Puerto
+        [28.1447, -15.4188],
+        [28.1440, -15.4198],
+        [28.1435, -15.4205],
+        [28.1432, -15.4210],
+        [28.1425, -15.4222],
+        [28.1420, -15.4232],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1405, -15.4260],
+        [28.1395, -15.4272],
+        [28.1385, -15.4282],
+        [28.1375, -15.4292],
+        [28.1365, -15.4300],
+        [28.1355, -15.4308],
+        [28.1345, -15.4314],
+        [28.1335, -15.4318],
+        [28.1330, -15.4320],
+        [28.1310, -15.4340],
+        [28.1290, -15.4360],
+        [28.1275, -15.4378],
+        [28.1258, -15.4401], // Mesa y López
+        [28.1240, -15.4385],
+        [28.1225, -15.4370],
+        [28.1209, -15.4355],
+        [28.1192, -15.4340],
+        [28.1180, -15.4328],
+        [28.1170, -15.4318], // León y Castillo (Oficinas Municipales)
+        [28.1155, -15.4305],
+        [28.1140, -15.4290],
+        [28.1125, -15.4275],
+        [28.1110, -15.4262],
+        [28.1100, -15.4250],
+        [28.1080, -15.4243],
+        [28.1060, -15.4238],
+        [28.1040, -15.4232],
+        [28.1020, -15.4228],
+        [28.1000, -15.4224],
+        [28.0990, -15.4220], // San José
+        [28.0970, -15.4216],
+        [28.0950, -15.4212],
+        [28.0930, -15.4208],
+        [28.0910, -15.4203],
+        [28.0900, -15.4205],
+        [28.0880, -15.4195],
+        [28.0860, -15.4192],
+        [28.0840, -15.4190],
+        [28.0820, -15.4190], // Blas Cabrera
+        [28.0800, -15.4189],
+        [28.0780, -15.4188],
+        [28.0760, -15.4188],
+        [28.0740, -15.4189],
+        [28.0720, -15.4191],
+        [28.0705, -15.4192]  // Hoya de La Plata
+      ]
     },
+    // Línea 13: Mercado de Vegueta - Tres Palmas (Cono Sur)
     { 
-      line: '25', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Ciudad del Campo', 
-      stops: ['Schamann', 'San Cristóbal', 'Dragonal'], color: '#FDB913',
-      routeCoords: [[28.109, -15.413], [28.130, -15.440], [28.155, -15.460]]
+      line: '13', type: 'urban', company: 'municipales', origin: 'Mercado Vegueta', destination: 'Tres Palmas', 
+      stops: ['Dr. Hernán Pérez', 'Paseo San José', 'Blas Cabrera Felipe', 'Hoya de La Plata'], color: '#FDB913',
+      routeCoords: [
+        [28.0980, -15.4140], // Mercado de Vegueta
+        [28.0975, -15.4145],
+        [28.0970, -15.4150],
+        [28.0965, -15.4155], // Alcalde Díaz Saavedra
+        [28.0960, -15.4158],
+        [28.0955, -15.4162],
+        [28.0950, -15.4166],
+        [28.0945, -15.4170], // Dr. Hernán Pérez de Grado, 6
+        [28.0940, -15.4173],
+        [28.0935, -15.4176],
+        [28.0930, -15.4178],
+        [28.0925, -15.4180], // Dr. Hernán Pérez (La Portadilla)
+        [28.0920, -15.4183],
+        [28.0915, -15.4186],
+        [28.0910, -15.4188],
+        [28.0905, -15.4190], // Paseo San José (Iglesia San José)
+        [28.0900, -15.4191],
+        [28.0895, -15.4193],
+        [28.0890, -15.4194],
+        [28.0885, -15.4195], // Paseo San José, 170
+        [28.0880, -15.4196],
+        [28.0875, -15.4198],
+        [28.0870, -15.4199],
+        [28.0865, -15.4200], // Paseo San José, 214
+        [28.0860, -15.4201],
+        [28.0855, -15.4202],
+        [28.0850, -15.4202],
+        [28.0845, -15.4202], // Paseo San José, 264
+        [28.0840, -15.4201],
+        [28.0835, -15.4201],
+        [28.0830, -15.4200],
+        [28.0825, -15.4200], // Paseo San José, 290
+        [28.0820, -15.4199],
+        [28.0815, -15.4197],
+        [28.0810, -15.4196],
+        [28.0805, -15.4195], // Blas Cabrera Felipe (Iglesia Sta. Clara)
+        [28.0800, -15.4193],
+        [28.0795, -15.4192],
+        [28.0790, -15.4191],
+        [28.0785, -15.4190], // Blas Cabrera Felipe (parking hosp. Materno)
+        [28.0780, -15.4188],
+        [28.0775, -15.4187],
+        [28.0770, -15.4186],
+        [28.0765, -15.4185], // Ciudad Deportiva Gran Canaria
+        [28.0760, -15.4184],
+        [28.0755, -15.4183],
+        [28.0750, -15.4183],
+        [28.0745, -15.4182], // Blas Cabrera Felipe, 14
+        [28.0740, -15.4183],
+        [28.0735, -15.4184],
+        [28.0730, -15.4185],
+        [28.0725, -15.4185], // Blas Cabrera Felipe (Carrefour)
+        [28.0720, -15.4187],
+        [28.0715, -15.4189],
+        [28.0710, -15.4191],
+        [28.0705, -15.4192], // Hoya de la Plata
+        [28.0700, -15.4194],
+        [28.0695, -15.4196],
+        [28.0690, -15.4197],
+        [28.0685, -15.4198]  // Tres Palmas
+      ]
     },
+    // Línea 17: Teatro - Auditorio (Zona Comercial)
     { 
-      line: '11', type: 'urban', company: 'municipales', origin: 'Puerto', destination: 'Guanarteme', 
-      stops: ['Alcaravaneras', 'Rehoyas', 'Escaleritas'], color: '#FDB913',
-      routeCoords: [[28.109, -15.416], [28.120, -15.440], [28.132, -15.456]]
+      line: '17', type: 'urban', company: 'municipales', origin: 'Teatro', destination: 'Auditorio', 
+      stops: ['Triana', 'Mesa y López', 'El Rincón'], color: '#FDB913',
+      routeCoords: [
+        [28.1094, -15.4131], // Teatro Pérez Galdós
+        [28.1088, -15.4145],
+        [28.1082, -15.4158],
+        [28.1076, -15.4172],
+        [28.1070, -15.4182],
+        [28.1066, -15.4191], // Triana (San Telmo)
+        [28.1072, -15.4205],
+        [28.1078, -15.4218],
+        [28.1085, -15.4230],
+        [28.1092, -15.4241],
+        [28.1102, -15.4251], // León y Castillo
+        [28.1112, -15.4262],
+        [28.1122, -15.4273],
+        [28.1132, -15.4283],
+        [28.1142, -15.4292],
+        [28.1150, -15.4300],
+        [28.1162, -15.4312],
+        [28.1174, -15.4324],
+        [28.1186, -15.4336],
+        [28.1198, -15.4347],
+        [28.1209, -15.4355],
+        [28.1221, -15.4366],
+        [28.1233, -15.4377],
+        [28.1245, -15.4389],
+        [28.1258, -15.4401], // Mesa y López
+        [28.1266, -15.4393],
+        [28.1274, -15.4386],
+        [28.1282, -15.4378],
+        [28.1285, -15.4375], // Juan Rejón
+        [28.1295, -15.4364],
+        [28.1305, -15.4353],
+        [28.1315, -15.4342],
+        [28.1325, -15.4331],
+        [28.1330, -15.4320],
+        [28.1340, -15.4307],
+        [28.1350, -15.4295],
+        [28.1360, -15.4283],
+        [28.1370, -15.4276],
+        [28.1380, -15.4270], // Las Canteras
+        [28.1390, -15.4260],
+        [28.1400, -15.4248],
+        [28.1408, -15.4236],
+        [28.1416, -15.4228],
+        [28.1420, -15.4220],
+        [28.1423, -15.4225],
+        [28.1426, -15.4232],
+        [28.1430, -15.4240], // Alcaravaneras
+        [28.1436, -15.4230],
+        [28.1442, -15.4220],
+        [28.1448, -15.4210],
+        [28.1454, -15.4205],
+        [28.1460, -15.4200]  // Auditorio Alfredo Kraus
+      ]
     },
+    // Línea 25: Auditorio - Campus Universitario (Tafira)
     { 
-      line: '13', type: 'urban', company: 'municipales', origin: 'San Telmo', destination: 'Las Rehoyas', 
-      stops: ['Schamann', 'Vegueta', 'Lugo'], color: '#FDB913',
-      routeCoords: [[28.109, -15.416], [28.100, -15.415], [28.125, -15.448]]
+      line: '25', type: 'urban', company: 'municipales', origin: 'Auditorio', destination: 'Campus Universitario', 
+      stops: ['Pío XII', 'Tomás Morales', 'Guanarteme', 'Tafira'], color: '#FDB913',
+      routeCoords: [
+        [28.1460, -15.4200], // Auditorio Alfredo Kraus
+        [28.1454, -15.4215],
+        [28.1448, -15.4228],
+        [28.1442, -15.4240],
+        [28.1436, -15.4252],
+        [28.1430, -15.4263],
+        [28.1424, -15.4274],
+        [28.1420, -15.4280], // Guanarteme
+        [28.1412, -15.4292],
+        [28.1405, -15.4302],
+        [28.1398, -15.4312],
+        [28.1391, -15.4322],
+        [28.1385, -15.4328],
+        [28.1380, -15.4330],
+        [28.1370, -15.4338],
+        [28.1360, -15.4346],
+        [28.1350, -15.4354],
+        [28.1340, -15.4361],
+        [28.1330, -15.4365],
+        [28.1320, -15.4366],
+        [28.1310, -15.4366],
+        [28.1300, -15.4365],
+        [28.1290, -15.4365],
+        [28.1280, -15.4368],
+        [28.1270, -15.4372],
+        [28.1260, -15.4378],
+        [28.1250, -15.4390], // Pío XII
+        [28.1240, -15.4385],
+        [28.1230, -15.4378],
+        [28.1220, -15.4368],
+        [28.1210, -15.4360],
+        [28.1205, -15.4355],
+        [28.1195, -15.4345],
+        [28.1185, -15.4335],
+        [28.1175, -15.4325],
+        [28.1165, -15.4315],
+        [28.1155, -15.4305],
+        [28.1145, -15.4293],
+        [28.1135, -15.4283],
+        [28.1125, -15.4275], // Tomás Morales
+        [28.1110, -15.4295],
+        [28.1095, -15.4318],
+        [28.1080, -15.4340],
+        [28.1065, -15.4355],
+        [28.1050, -15.4368],
+        [28.1040, -15.4360],
+        [28.1020, -15.4385],
+        [28.1000, -15.4408],
+        [28.0980, -15.4428],
+        [28.0960, -15.4450],
+        [28.0940, -15.4468],
+        [28.0920, -15.4485],
+        [28.0900, -15.4500],
+        [28.0880, -15.4510],
+        [28.0860, -15.4520],
+        [28.0840, -15.4530],
+        [28.0820, -15.4540],
+        [28.0800, -15.4548],
+        [28.0780, -15.4556],
+        [28.0760, -15.4550],
+        [28.0740, -15.4565],
+        [28.0720, -15.4568],
+        [28.0700, -15.4570],
+        [28.0680, -15.4570],
+        [28.0660, -15.4570],
+        [28.0640, -15.4570]  // Campus Universitario
+      ]
     },
     
     // ========== GLOBAL (Interurbanas - Azules) ==========
+    // Línea 1: Las Palmas - Maspalomas (GC-1 por la costa este)
     { 
       line: '1', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Maspalomas', 
-      stops: ['Ingenio', 'Vecindario', 'Playa del Inglés'], color: '#0066CC',
-      routeCoords: [[28.109, -15.416], [27.958, -15.452], [27.845, -15.565], [27.760, -15.586]]
+      stops: ['Telde', 'Vecindario', 'Maspalomas'], color: '#0066CC',
+      routeCoords: [
+        [28.1094, -15.4131], // Las Palmas (Teatro)
+        [28.1000, -15.4140],
+        [28.0900, -15.4145],
+        [28.0800, -15.4148],
+        [28.0700, -15.4150],
+        [28.0600, -15.4152],
+        [28.0500, -15.4155],
+        [28.0400, -15.4160],
+        [28.0300, -15.4168],
+        [28.0200, -15.4178],
+        [28.0100, -15.4188],
+        [28.0000, -15.4195],
+        [27.9920, -15.4198], // Telde
+        [27.9840, -15.4200],
+        [27.9760, -15.4205],
+        [27.9680, -15.4212],
+        [27.9600, -15.4222],
+        [27.9520, -15.4235],
+        [27.9440, -15.4250],
+        [27.9360, -15.4268],
+        [27.9280, -15.4288],
+        [27.9200, -15.4310],
+        [27.9120, -15.4335],
+        [27.9040, -15.4362],
+        [27.8960, -15.4392],
+        [27.8880, -15.4424],
+        [27.8800, -15.4458],
+        [27.8720, -15.4488],
+        [27.8697, -15.4500], // Vecindario
+        [27.8620, -15.4530],
+        [27.8540, -15.4565],
+        [27.8460, -15.4605],
+        [27.8380, -15.4650],
+        [27.8300, -15.4700],
+        [27.8220, -15.4755],
+        [27.8140, -15.4815],
+        [27.8060, -15.4880],
+        [27.7980, -15.4950],
+        [27.7900, -15.5025],
+        [27.7820, -15.5105],
+        [27.7750, -15.5190],
+        [27.7690, -15.5280],
+        [27.7640, -15.5375],
+        [27.7600, -15.5475],
+        [27.7570, -15.5580],
+        [27.7550, -15.5685],
+        [27.7530, -15.5750],
+        [27.7500, -15.5800],
+        [27.7470, -15.5830],
+        [27.7437, -15.5860]  // Maspalomas/Faro
+      ]
     },
+    // Línea 30: Las Palmas - Maspalomas Directo (Superfaro)
     { 
-      line: '5', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Gáldar', 
-      stops: ['Arucas', 'Moya', 'Guía'], color: '#0066CC',
-      routeCoords: [[28.109, -15.416], [28.115, -15.515], [28.135, -15.595], [28.148, -15.655]]
+      line: '30', type: 'interurban', company: 'global', origin: 'Santa Catalina', destination: 'Maspalomas', 
+      stops: ['Aeropuerto', 'Vecindario', 'Maspalomas'], color: '#0066CC',
+      routeCoords: [
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1350, -15.4260],
+        [28.1280, -15.4272],
+        [28.1210, -15.4285],
+        [28.1140, -15.4300],
+        [28.1094, -15.4131],
+        [28.1020, -15.4145],
+        [28.0950, -15.4152],
+        [28.0880, -15.4158],
+        [28.0810, -15.4163],
+        [28.0750, -15.4150],
+        [28.0680, -15.4155],
+        [28.0610, -15.4160],
+        [28.0540, -15.4163],
+        [28.0470, -15.4165],
+        [28.0400, -15.4165],
+        [28.0330, -15.4170],
+        [28.0260, -15.4175],
+        [28.0190, -15.4178],
+        [28.0120, -15.4180],
+        [28.0050, -15.4180],
+        [27.9985, -15.4188],
+        [27.9920, -15.4198], // Telde
+        [27.9850, -15.4185],
+        [27.9780, -15.4170],
+        [27.9710, -15.4158],
+        [27.9650, -15.4150],
+        [27.9590, -15.4130],
+        [27.9530, -15.4105],
+        [27.9480, -15.4075],
+        [27.9450, -15.4050],
+        [27.9410, -15.4020],
+        [27.9370, -15.3990],
+        [27.9340, -15.3950],
+        [27.9320, -15.3910],
+        [27.9318, -15.3863], // Aeropuerto
+        [27.9300, -15.3920],
+        [27.9270, -15.3990],
+        [27.9230, -15.4060],
+        [27.9180, -15.4140],
+        [27.9150, -15.4100],
+        [27.9100, -15.4180],
+        [27.9050, -15.4250],
+        [27.9000, -15.4310],
+        [27.8950, -15.4360],
+        [27.8900, -15.4300],
+        [27.8840, -15.4380],
+        [27.8780, -15.4445],
+        [27.8720, -15.4500],
+        [27.8697, -15.4500], // Vecindario
+        [27.8630, -15.4570],
+        [27.8560, -15.4650],
+        [27.8490, -15.4730],
+        [27.8420, -15.4810],
+        [27.8350, -15.4880],
+        [27.8280, -15.4950],
+        [27.8210, -15.5020],
+        [27.8140, -15.5090],
+        [27.8070, -15.5160],
+        [27.8000, -15.5230],
+        [27.7930, -15.5295],
+        [27.7860, -15.5350],
+        [27.7800, -15.5350],
+        [27.7730, -15.5420],
+        [27.7660, -15.5495],
+        [27.7600, -15.5600],
+        [27.7550, -15.5680],
+        [27.7500, -15.5750],
+        [27.7470, -15.5800],
+        [27.7450, -15.5830],
+        [27.7437, -15.5860]  // Maspalomas
+      ]
     },
+    // Línea 60: Las Palmas - Aeropuerto (Directo)
     { 
-      line: '30', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Puerto Rico', 
-      stops: ['Arguineguín', 'Patalavaca', 'Amadores'], color: '#0066CC',
-      routeCoords: [[28.109, -15.416], [27.920, -15.560], [27.790, -15.685]]
+      line: '60', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Aeropuerto', 
+      stops: ['Santa Catalina', 'Telde', 'Terminal Sur'], color: '#0066CC',
+      routeCoords: [
+        [28.1094, -15.4131], // Las Palmas (Teatro)
+        [28.1150, -15.4155],
+        [28.1205, -15.4178],
+        [28.1250, -15.4180],
+        [28.1298, -15.4198],
+        [28.1345, -15.4216],
+        [28.1380, -15.4232],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1350, -15.4250],
+        [28.1280, -15.4240],
+        [28.1210, -15.4228],
+        [28.1140, -15.4215],
+        [28.1070, -15.4205],
+        [28.1000, -15.4195],
+        [28.0930, -15.4188],
+        [28.0860, -15.4182],
+        [28.0790, -15.4178],
+        [28.0720, -15.4175],
+        [28.0650, -15.4172],
+        [28.0580, -15.4170],
+        [28.0510, -15.4170],
+        [28.0440, -15.4170],
+        [28.0370, -15.4172],
+        [28.0300, -15.4175],
+        [28.0230, -15.4178],
+        [28.0160, -15.4182],
+        [28.0090, -15.4188],
+        [28.0020, -15.4192],
+        [27.9950, -15.4195],
+        [27.9920, -15.4198], // Telde
+        [27.9880, -15.4195],
+        [27.9840, -15.4190],
+        [27.9800, -15.4182],
+        [27.9760, -15.4172],
+        [27.9720, -15.4160],
+        [27.9680, -15.4145],
+        [27.9640, -15.4128],
+        [27.9600, -15.4110],
+        [27.9560, -15.4090],
+        [27.9520, -15.4068],
+        [27.9480, -15.4044],
+        [27.9440, -15.4018],
+        [27.9400, -15.3990],
+        [27.9360, -15.3960],
+        [27.9330, -15.3930],
+        [27.9318, -15.3863]  // Aeropuerto
+      ]
     },
+    // Línea 80: Las Palmas - Telde (Directo)
     { 
-      line: '32', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Mogán', 
-      stops: ['Puerto Rico', 'Tauro', 'Puerto de Mogán'], color: '#0066CC',
-      routeCoords: [[28.109, -15.416], [27.790, -15.685], [27.815, -15.765]]
+      line: '80', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Telde', 
+      stops: ['Santa Catalina', 'Jinámar', 'Telde Centro'], color: '#0066CC',
+      routeCoords: [
+        [28.1094, -15.4131], // Las Palmas (Teatro)
+        [28.1120, -15.4140],
+        [28.1145, -15.4150],
+        [28.1170, -15.4160],
+        [28.1195, -15.4170],
+        [28.1200, -15.4180],
+        [28.1230, -15.4195],
+        [28.1260, -15.4208],
+        [28.1285, -15.4220],
+        [28.1300, -15.4220],
+        [28.1330, -15.4228],
+        [28.1360, -15.4236],
+        [28.1390, -15.4242],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1350, -15.4245],
+        [28.1280, -15.4238],
+        [28.1210, -15.4225],
+        [28.1140, -15.4210],
+        [28.1070, -15.4198],
+        [28.1000, -15.4188],
+        [28.0930, -15.4180],
+        [28.0860, -15.4172],
+        [28.0790, -15.4165],
+        [28.0720, -15.4158],
+        [28.0650, -15.4152],
+        [28.0580, -15.4148],
+        [28.0520, -15.4115],
+        [28.0507, -15.4050], // Jinámar
+        [28.0460, -15.4080],
+        [28.0410, -15.4105],
+        [28.0360, -15.4125],
+        [28.0310, -15.4140],
+        [28.0260, -15.4152],
+        [28.0210, -15.4162],
+        [28.0160, -15.4170],
+        [28.0110, -15.4178],
+        [28.0060, -15.4185],
+        [28.0010, -15.4192],
+        [27.9960, -15.4196],
+        [27.9920, -15.4198]  // Telde
+      ]
     },
+    // Línea 91: Santa Catalina - Maspalomas (Directo)
     { 
-      line: '60', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Agaete', 
-      stops: ['Gáldar', 'San Pedro', 'Puerto de las Nieves'], color: '#0066CC',
-      routeCoords: [[28.109, -15.416], [28.148, -15.655], [28.095, -15.695]]
-    },
-    { 
-      line: '80', type: 'interurban', company: 'global', origin: 'Las Palmas', destination: 'Aeropuerto', 
-      stops: ['Telde', 'Ingenio', 'Terminal Sur'], color: '#0066CC',
-      routeCoords: [[28.109, -15.416], [27.991, -15.412], [27.932, -15.386]]
-    },
-    { 
-      line: '91', type: 'interurban', company: 'global', origin: 'Maspalomas', destination: 'Puerto Rico', 
-      stops: ['San Agustín', 'Arguineguín', 'Patalavaca'], color: '#0066CC',
-      routeCoords: [[27.760, -15.586], [27.845, -15.565], [27.790, -15.685]]
+      line: '91', type: 'interurban', company: 'global', origin: 'Santa Catalina', destination: 'Maspalomas', 
+      stops: ['Telde', 'Vecindario', 'Maspalomas'], color: '#0066CC',
+      routeCoords: [
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1350, -15.4255],
+        [28.1280, -15.4260],
+        [28.1210, -15.4252],
+        [28.1140, -15.4238],
+        [28.1094, -15.4131],
+        [28.1020, -15.4140],
+        [28.0950, -15.4145],
+        [28.0880, -15.4148],
+        [28.0810, -15.4150],
+        [28.0750, -15.4150],
+        [28.0680, -15.4152],
+        [28.0610, -15.4155],
+        [28.0540, -15.4158],
+        [28.0470, -15.4162],
+        [28.0400, -15.4165],
+        [28.0330, -15.4168],
+        [28.0260, -15.4172],
+        [28.0190, -15.4176],
+        [28.0120, -15.4178],
+        [28.0050, -15.4180],
+        [27.9985, -15.4188],
+        [27.9920, -15.4198], // Telde
+        [27.9850, -15.4205],
+        [27.9780, -15.4212],
+        [27.9710, -15.4218],
+        [27.9650, -15.4220],
+        [27.9580, -15.4230],
+        [27.9510, -15.4242],
+        [27.9445, -15.4254],
+        [27.9380, -15.4260],
+        [27.9310, -15.4275],
+        [27.9240, -15.4292],
+        [27.9170, -15.4310],
+        [27.9110, -15.4320],
+        [27.9040, -15.4340],
+        [27.8970, -15.4365],
+        [27.8900, -15.4385],
+        [27.8840, -15.4400],
+        [27.8770, -15.4430],
+        [27.8730, -15.4465],
+        [27.8697, -15.4500], // Vecindario
+        [27.8620, -15.4560],
+        [27.8550, -15.4630],
+        [27.8480, -15.4700],
+        [27.8400, -15.4700],
+        [27.8320, -15.4780],
+        [27.8240, -15.4865],
+        [27.8160, -15.4940],
+        [27.8100, -15.4950],
+        [27.8020, -15.5030],
+        [27.7940, -15.5115],
+        [27.7860, -15.5195],
+        [27.7800, -15.5250],
+        [27.7720, -15.5340],
+        [27.7640, -15.5430],
+        [27.7600, -15.5550],
+        [27.7550, -15.5640],
+        [27.7500, -15.5720],
+        [27.7470, -15.5780],
+        [27.7450, -15.5820],
+        [27.7437, -15.5860]  // Maspalomas
+      ]
     },
     
     // ========== LÍNEAS NOCTURNAS - Guaguas Municipales ==========
     { 
-      line: 'N1', type: 'night', company: 'municipales', origin: 'Santa Catalina', destination: 'Escaleritas', 
-      stops: ['Teatro', 'Vegueta', 'Alcaravaneras'], color: '#9933FF',
-      routeCoords: [[28.135, -15.431], [28.109, -15.413], [28.100, -15.415], [28.089, -15.442]]
+      line: 'N1', type: 'night', company: 'municipales', origin: 'Teatro', destination: 'Cono Sur', 
+      stops: ['San Telmo', 'Vegueta', 'San José', 'Hoya de La Plata'], color: '#9933FF',
+      routeCoords: [
+        [28.109, -15.413], // Teatro
+        [28.106, -15.419], // San Telmo
+        [28.100, -15.415], // Vegueta
+        [28.094, -15.418], // Paseo San José
+        [28.088, -15.419],
+        [28.082, -15.419],
+        [28.076, -15.418],
+        [28.072, -15.419]  // Hoya de La Plata
+      ]
     }
   ];
 
@@ -452,8 +1122,45 @@ const treeData = computed(() => {
   ];
 });
 
+/**
+ * Obtener ruta real usando OSRM (Open Source Routing Machine)
+ * Convierte puntos simples en una ruta que sigue carreteras reales
+ */
+const getRouteFromOSRM = async (coordinates) => {
+  try {
+    // OSRM espera formato: lon,lat;lon,lat;...
+    const coordString = coordinates
+      .map(([lat, lng]) => `${lng},${lat}`)
+      .join(';');
+    
+    // API pública de OSRM - routing profile "driving"
+    const url = `https://router.project-osrm.org/route/v1/driving/${coordString}?overview=full&geometries=geojson`;
+    
+    const response = await fetch(url);
+    const data = await response.json();
+    
+    if (data.code === 'Ok' && data.routes && data.routes[0]) {
+      // Convertir coordenadas GeoJSON [lng, lat] a Leaflet [lat, lng]
+      const routeCoordinates = data.routes[0].geometry.coordinates.map(
+        ([lng, lat]) => [lat, lng]
+      );
+      return routeCoordinates;
+    }
+    
+    // Si falla OSRM, devolver coordenadas originales
+    return coordinates;
+  } catch (error) {
+    console.warn('Error obteniendo ruta de OSRM:', error);
+    // Si hay error, devolver coordenadas originales
+    return coordinates;
+  }
+};
+
+// Cache de rutas para evitar llamadas repetidas a OSRM
+const routeCache = new Map();
+
 // Manejar clicks en el árbol
-const handleNodeClick = (data, node) => {
+const handleNodeClick = async (data, node) => {
   if (data.type === 'bus') {
     // Click en una guagua individual - mostrar solo esta guagua y su ruta
     const bus = buses.value.find(b => b.id === data.id);
@@ -467,8 +1174,27 @@ const handleNodeClick = (data, node) => {
         }
       });
       
-      // Mostrar la ruta de esta guagua
-      selectedRoute.value = bus.routeCoords;
+      // Obtener ruta real de OSRM
+      const cacheKey = `${bus.company}-${bus.line}`;
+      let realRoute;
+      
+      if (routeCache.has(cacheKey)) {
+        // Usar ruta cacheada
+        realRoute = routeCache.get(cacheKey);
+      } else {
+        // Obtener ruta real usando solo puntos clave (inicio y fin)
+        const keyPoints = [
+          bus.routeCoords[0], // Origen
+          bus.routeCoords[Math.floor(bus.routeCoords.length / 2)], // Punto medio
+          bus.routeCoords[bus.routeCoords.length - 1] // Destino
+        ];
+        
+        realRoute = await getRouteFromOSRM(keyPoints);
+        routeCache.set(cacheKey, realRoute);
+      }
+      
+      // Mostrar la ruta real de esta guagua
+      selectedRoute.value = realRoute;
       selectedRouteColor.value = bus.company === 'municipales' ? '#FDB913' : '#0066CC';
       selectedBusId.value = bus.id;
     }
