@@ -16,6 +16,17 @@
                 ],
                 "summary": "Get list of education",
                 "operationId": "getEducation",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter education by year",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -30,6 +41,17 @@
                 ],
                 "summary": "Get list of experiences",
                 "operationId": "getExperiences",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter experiences by year",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation"
@@ -47,6 +69,9 @@
                 "responses": {
                     "200": {
                         "description": "Successful operation"
+                    },
+                    "404": {
+                        "description": "Personal info not found"
                     }
                 }
             }
@@ -72,6 +97,17 @@
                 ],
                 "summary": "Get list of skills",
                 "operationId": "getSkills",
+                "parameters": [
+                    {
+                        "name": "year",
+                        "in": "query",
+                        "description": "Filter skills by year (based on experience descriptions)",
+                        "required": false,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "Successful operation"

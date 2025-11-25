@@ -17,7 +17,7 @@
             {{ $t(item.name) }}
           </router-link>
           <a href="/api/documentation" target="_blank" class="text-gray-300 hover:text-white hover:bg-gray-700/50 px-3 py-2 rounded-md transition-all duration-200 text-sm font-medium">
-            API Docs
+            {{ $t('nav.apiDocs') }}
           </a>
           <LanguageSwitcher />
         </div>

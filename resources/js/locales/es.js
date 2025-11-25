@@ -9,7 +9,13 @@ export default {
     experience: 'Experiencia',
     education: 'Educación',
     skills: 'Habilidades',
-    contact: 'Contacto'
+    contact: 'Contacto',
+    apiDocs: 'Documentación API'
+  },
+  home: {
+    greeting: 'Hola, soy',
+    portfolioYear: 'Portfolio 2025',
+    viewProjects: 'Ver Proyectos'
   },
   projects: {
     title: 'Proyectos',
@@ -17,7 +23,66 @@ export default {
     technologies: 'Tecnologías',
     viewProject: 'Ver proyecto',
     viewCode: 'Ver código',
-    noProjects: 'No hay proyectos disponibles'
+    noProjects: 'No hay proyectos disponibles',
+    upcomingDemos: 'Próximas Demos',
+    upcomingDescription: 'Proyectos en desarrollo que estarán disponibles próximamente',
+    inProgress: 'En proceso',
+    erpSystem: 'Sistema ERP',
+    erpDescription: 'Gestión empresarial integral con módulos de inventario, ventas y recursos humanos',
+    researchPortal: 'Portal de Investigadores',
+    researchDescription: 'Plataforma colaborativa para gestión de proyectos de investigación universitaria',
+    chatbot: 'Chatbot con Google Assistant',
+    chatbotDescription: 'Asistente virtual integrado con Google Assistant para automatización de tareas'
+  },
+  resume: {
+    title: 'Currículum',
+    present: 'Actual',
+    notAvailable: 'Los detalles de experiencia aún no están disponibles.'
+  },
+  mapDemo: {
+    backToProjects: 'Volver a Proyectos',
+    title: 'Integración de Vue Leaflet',
+    description: 'Una demostración de mapas interactivos usando Vue 3 y Leaflet.',
+    featuresTitle: 'Características Implementadas',
+    feature1: 'Mosaicos interactivos de OpenStreetMap',
+    feature2: 'Marcadores personalizados con popups',
+    feature3: 'Formas geométricas (Círculos, Polígonos)',
+    feature4: 'Contenedor responsivo',
+    feature5: 'Integración con Vue 3 Composition API',
+    techStack: 'Stack Tecnológico'
+  },
+  guaguas: {
+    title: 'Seguimiento de Guaguas en Tiempo Real',
+    subtitle: 'Transporte público de Gran Canaria',
+    filterByLine: 'Filtrar por línea',
+    allLines: 'Todas las líneas',
+    line: 'Línea',
+    activeBuses: 'Guaguas activas',
+    municipales: 'Municipales',
+    global: 'Global',
+    delayed: 'Con retrasos',
+    noService: 'No hay guaguas en servicio en este momento.',
+    nightSchedule: 'Las líneas urbanas operan de 06:00-23:30 y las interurbanas de 05:30-22:00.',
+    nightLinesSchedule: 'Las líneas nocturnas (N1) solo operan viernes y sábados de 00:00-06:00.',
+    filterTitle: 'Filtro de Guaguas',
+    filterDescription: 'Click para mostrar/ocultar en el mapa',
+    company: 'Empresa',
+    type: 'Tipo',
+    from: 'Desde',
+    to: 'Hasta',
+    nextStop: 'Próxima parada',
+    estimatedTime: 'Tiempo estimado',
+    delay: 'Retraso',
+    minutes: 'minutos',
+    lastUpdate: 'Última actualización',
+    legend: 'Leyenda',
+    municipalesUrban: 'Guaguas Municipales (Urbanas)',
+    globalInterurban: 'Global (Interurbanas)',
+    nightLines: 'Líneas Nocturnas',
+    withDelay: 'Con retraso',
+    urban: 'Urbana',
+    interurban: 'Interurbana',
+    night: 'Nocturna'
   },
   experience: {
     title: 'Experiencia Laboral',
@@ -35,7 +100,7 @@ export default {
     noEducation: 'No hay formación disponible'
   },
   skills: {
-    title: 'Habilidades',
+    title: 'Aptitudes',
     category: 'Categoría',
     proficiency: 'Nivel',
     backend: 'Backend',
@@ -44,7 +109,10 @@ export default {
     devops: 'DevOps',
     tools: 'Herramientas',
     methodology: 'Metodología',
-    noSkills: 'No hay habilidades disponibles'
+    noSkills: 'No hay aptitudes disponibles',
+    filterByYear: 'Filtrar por año',
+    allYears: 'Todos los años',
+    showingSkillsFor: 'Mostrando aptitudes usadas en'
   },
   contact: {
     title: 'Contacto',

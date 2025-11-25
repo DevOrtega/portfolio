@@ -34,16 +34,17 @@ Este proyecto es un portfolio personal moderno y profesional desarrollado con la
 
 ## ✨ Características Principales
 
--   **🎨 Diseño Premium**: Interfaz oscura moderna y totalmente responsiva con animaciones suaves y gradientes
+-   **🎨 Interfaz Moderna**: Diseño oscuro totalmente responsivo con animaciones suaves y gradientes
 -   **🔌 API RESTful**: Backend robusto con endpoints para proyectos, experiencia, habilidades y educación
 -   **📚 Documentación API**: Swagger UI integrado en `/api/documentation`
 -   **🧪 Testing Completo**: 110 tests (21 backend + 89 frontend) con cobertura completa
 -   **🏗️ Arquitectura Hexagonal**: Código limpio, mantenible y escalable siguiendo principios SOLID
--   **🌐 Internacionalización**: Soporte multiidioma con Vue i18n
+-   **🌐 Internacionalización**: Soporte multiidioma (ES/EN) con Vue i18n
 -   **📱 SPA**: Navegación fluida sin recargas gracias a Vue Router
 -   **🗺️ Demos Interactivas**: Proyectos destacados con mapas interactivos y funcionalidades avanzadas
 -   **⚡ Rendimiento**: Optimizado con Vite y lazy loading
 -   **🔒 Type Safety**: PHP 8.3 con tipos estrictos y JavaScript moderno con mejores prácticas
+-   **🔍 Filtrado Avanzado**: Filtros por año en aptitudes, experiencia y formación académica
 
 ## 🛠️ Instalación y Puesta en Marcha
 
@@ -120,13 +121,13 @@ Documentación completa disponible en [http://localhost:8000/api/documentation](
 
 ### Endpoints Principales
 
-| Método | Endpoint | Descripción |
-|--------|----------|-------------|
-| GET | `/api/personal-info` | Información personal (bio, contacto, redes sociales) |
-| GET | `/api/projects` | Lista de proyectos destacados con detalles completos |
-| GET | `/api/experiences` | Historial laboral ordenado por fecha |
-| GET | `/api/education` | Formación académica y certificaciones |
-| GET | `/api/skills` | Habilidades técnicas categorizadas con niveles |
+| Método | Endpoint | Parámetros | Descripción |
+|--------|----------|------------|-------------|
+| GET | `/api/personal-info` | - | Información personal (bio, contacto, redes sociales) |
+| GET | `/api/projects` | - | Lista de proyectos destacados con detalles completos |
+| GET | `/api/experiences` | `?year=2023` (opcional) | Historial laboral ordenado por fecha, filtrable por año |
+| GET | `/api/education` | `?year=2023` (opcional) | Formación académica, filtrable por año |
+| GET | `/api/skills` | `?year=2023` (opcional) | Aptitudes técnicas categorizadas, filtrables por año de experiencia |
 
 ### Ejemplo de Respuesta
 
@@ -418,8 +419,7 @@ Full Stack Developer | Laravel & Vue.js Specialist
 
 -   🌐 **Portfolio**: [carlosmortega.dev](https://carlosmortega.dev)
 -   💼 **LinkedIn**: [linkedin.com/in/carlosmortega](https://www.linkedin.com/in/carlosmortega/)
--   🐙 **GitHub**: [github.com/DevOrtega](https://github.com/DevOrtega)
--   📧 **Email**: contact@carlosmortega.dev
+-   📧 **Email**: carloso2103@gmail.com
 
 ## 🙏 Agradecimientos
 
@@ -431,6 +431,6 @@ Full Stack Developer | Laravel & Vue.js Specialist
 ---
 
 <div align="center">
-  <p>Hecho con ❤️ por Carlos Miguel Ortega Arencibia</p>
+  <p>Hecho por Carlos Miguel Ortega Arencibia</p>
   <p>© 2025 - Todos los derechos reservados</p>
 </div>

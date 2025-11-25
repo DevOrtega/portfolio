@@ -2,8 +2,8 @@
   <div class="guaguas-tracker min-h-screen bg-gray-900 text-white">
     <div class="container mx-auto px-4 py-8">
       <div class="mb-6">
-        <h1 class="text-3xl font-bold mb-2">Seguimiento de Guaguas en Tiempo Real</h1>
-        <p class="text-gray-400">Transporte público de Gran Canaria</p>
+        <h1 class="text-3xl font-bold mb-2">{{ $t('guaguas.title') }}</h1>
+        <p class="text-gray-400">{{ $t('guaguas.subtitle') }}</p>
         <InfoBanner type="info" class="mt-2">
           ℹ️ Demo con simulación basada en rutas y horarios reales de <strong>Guaguas Municipales</strong> (amarillo - urbanas) y <strong>Global</strong> (azul - interurbanas). 
           Las guaguas solo aparecen dentro de sus horarios operativos y se mueven por rutas geográficamente precisas de Gran Canaria.
@@ -13,24 +13,24 @@
 
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-4">
         <div class="bg-gray-800 p-3 sm:p-4 rounded-lg col-span-2 md:col-span-3 lg:col-span-1">
-          <h3 class="text-xs sm:text-sm font-semibold mb-2">Filtrar por línea</h3>
+          <h3 class="text-xs sm:text-sm font-semibold mb-2">{{ $t('guaguas.filterByLine') }}</h3>
           <select v-model="selectedLine" class="w-full bg-gray-700 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded text-sm">
-            <option value="">Todas las líneas</option>
-            <option v-for="line in busLines" :key="line" :value="line">Línea {{ line }}</option>
+            <option value="">{{ $t('guaguas.allLines') }}</option>
+            <option v-for="line in busLines" :key="line" :value="line">{{ $t('guaguas.line') }} {{ line }}</option>
           </select>
         </div>
         
-        <StatsCard title="Guaguas activas" :value="activeBuses.length" color-class="text-green-400" />
-        <StatsCard title="Municipales" :value="municipalesBuses.length" color-class="text-yellow-400" />
-        <StatsCard title="Global" :value="globalBuses.length" color-class="text-blue-400" />
-        <StatsCard title="Con retrasos" :value="delayedBuses.length" color-class="text-red-400" />
+        <StatsCard :title="$t('guaguas.activeBuses')" :value="activeBuses.length" color-class="text-green-400" />
+        <StatsCard :title="$t('guaguas.municipales')" :value="municipalesBuses.length" color-class="text-yellow-400" />
+        <StatsCard :title="$t('guaguas.global')" :value="globalBuses.length" color-class="text-blue-400" />
+        <StatsCard :title="$t('guaguas.delayed')" :value="delayedBuses.length" color-class="text-red-400" />
       </div>
 
       <!-- Mensaje cuando no hay servicio -->
       <InfoBanner v-if="activeBuses.length === 0" type="warning" class="mb-4">
-        🌙 No hay guaguas en servicio en este momento. 
-        <span v-if="isNightTime()">Las líneas urbanas operan de 06:00-23:30 y las interurbanas de 05:30-22:00.</span>
-        <span v-else>Las líneas nocturnas (N1) solo operan viernes y sábados de 00:00-06:00.</span>
+        🌙 {{ $t('guaguas.noService') }} 
+        <span v-if="isNightTime()">{{ $t('guaguas.nightSchedule') }}</span>
+        <span v-else>{{ $t('guaguas.nightLinesSchedule') }}</span>
       </InfoBanner>
 
       <!-- Contenedor del mapa y árbol lateral -->
@@ -52,8 +52,8 @@
             class="absolute top-0 right-0 w-full sm:w-72 md:w-80 h-[400px] sm:h-[500px] md:h-[600px] lg:h-[700px] xl:h-[800px] bg-gray-800 border-l border-gray-700 z-[999] overflow-y-auto rounded-r-lg shadow-xl"
           >
             <div class="p-3 sm:p-4 border-b border-gray-700 sticky top-0 bg-gray-800 z-10">
-              <h3 class="font-bold text-base sm:text-lg mb-1">Filtro de Guaguas</h3>
-              <p class="text-xs text-gray-400">Click para mostrar/ocultar en el mapa</p>
+              <h3 class="font-bold text-base sm:text-lg mb-1">{{ $t('guaguas.filterTitle') }}</h3>
+              <p class="text-xs text-gray-400">{{ $t('guaguas.filterDescription') }}</p>
             </div>
             <div class="p-4">
               <el-tree
@@ -128,22 +128,22 @@
           >
             <l-popup v-if="selectedBusId === bus.id">
               <div class="bus-popup">
-                <h3 class="font-bold text-lg mb-2">Línea {{ bus.line }}</h3>
+                <h3 class="font-bold text-lg mb-2">{{ $t('guaguas.line') }} {{ bus.line }}</h3>
                 <div class="space-y-1 text-sm">
-                  <p><strong>Empresa:</strong> {{ getCompanyLabel(bus.company) }}</p>
-                  <p><strong>Tipo:</strong> {{ getBusTypeLabel(bus.type) }}</p>
-                  <p><strong>Desde:</strong> {{ bus.origin }}</p>
-                  <p><strong>Hasta:</strong> {{ bus.destination }}</p>
-                  <p><strong>Próxima parada:</strong> {{ bus.nextStop }}</p>
-                  <p><strong>Tiempo estimado:</strong> 
+                  <p><strong>{{ $t('guaguas.company') }}:</strong> {{ getCompanyLabel(bus.company) }}</p>
+                  <p><strong>{{ $t('guaguas.type') }}:</strong> {{ getBusTypeLabel(bus.type) }}</p>
+                  <p><strong>{{ $t('guaguas.from') }}:</strong> {{ bus.origin }}</p>
+                  <p><strong>{{ $t('guaguas.to') }}:</strong> {{ bus.destination }}</p>
+                  <p><strong>{{ $t('guaguas.nextStop') }}:</strong> {{ bus.nextStop }}</p>
+                  <p><strong>{{ $t('guaguas.estimatedTime') }}:</strong> 
                     <span :class="bus.delayed ? 'text-yellow-500' : 'text-green-500'">
-                      {{ bus.timeToNext }} min
+                      {{ bus.timeToNext }} {{ $t('guaguas.minutes') }}
                     </span>
                   </p>
                   <p v-if="bus.delayed" class="text-yellow-500">
-                    ⚠️ Retraso: {{ bus.delayMinutes }} minutos
+                    ⚠️ {{ $t('guaguas.delay') }}: {{ bus.delayMinutes }} {{ $t('guaguas.minutes') }}
                   </p>
-                  <p class="text-gray-500">Última actualización: {{ bus.lastUpdate }}</p>
+                  <p class="text-gray-500">{{ $t('guaguas.lastUpdate') }}: {{ bus.lastUpdate }}</p>
                 </div>
               </div>
             </l-popup>
@@ -153,25 +153,25 @@
       </div><!-- Fin contenedor relativo -->
 
       <div class="mt-4 bg-gray-800 p-4 rounded-lg">
-        <h3 class="font-semibold mb-2">Leyenda</h3>
+        <h3 class="font-semibold mb-2">{{ $t('guaguas.legend') }}</h3>
         <div class="flex flex-wrap gap-4 text-sm">
           <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded bg-yellow-500"></div>
-            <span>Guaguas Municipales (Urbanas)</span>
+            <span>{{ $t('guaguas.municipalesUrban') }}</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded bg-blue-600"></div>
-            <span>Global (Interurbanas)</span>
+            <span>{{ $t('guaguas.globalInterurban') }}</span>
           </div>
           <div class="flex items-center gap-2">
             <div class="w-6 h-6 rounded bg-purple-500"></div>
-            <span>Líneas Nocturnas</span>
+            <span>{{ $t('guaguas.nightLines') }}</span>
           </div>
           <div class="flex items-center gap-2">
             <svg class="w-5 h-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
               <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd" />
             </svg>
-            <span>Con retraso</span>
+            <span>{{ $t('guaguas.withDelay') }}</span>
           </div>
         </div>
       </div>

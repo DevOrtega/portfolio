@@ -9,7 +9,13 @@ export default {
     experience: 'Experience',
     education: 'Education',
     skills: 'Skills',
-    contact: 'Contact'
+    contact: 'Contact',
+    apiDocs: 'API Docs'
+  },
+  home: {
+    greeting: "Hello, I'm",
+    portfolioYear: 'Portfolio 2025',
+    viewProjects: 'View Projects'
   },
   projects: {
     title: 'Projects',
@@ -17,7 +23,66 @@ export default {
     technologies: 'Technologies',
     viewProject: 'View project',
     viewCode: 'View code',
-    noProjects: 'No projects available'
+    noProjects: 'No projects available',
+    upcomingDemos: 'Upcoming Demos',
+    upcomingDescription: 'Projects in development that will be available soon',
+    inProgress: 'In progress',
+    erpSystem: 'ERP System',
+    erpDescription: 'Comprehensive business management with inventory, sales and human resources modules',
+    researchPortal: 'Research Portal',
+    researchDescription: 'Collaborative platform for university research project management',
+    chatbot: 'Chatbot with Google Assistant',
+    chatbotDescription: 'Virtual assistant integrated with Google Assistant for task automation'
+  },
+  resume: {
+    title: 'Resume',
+    present: 'Present',
+    notAvailable: 'Experience details not available yet.'
+  },
+  mapDemo: {
+    backToProjects: 'Back to Projects',
+    title: 'Vue Leaflet Integration',
+    description: 'A demonstration of interactive maps using Vue 3 and Leaflet.',
+    featuresTitle: 'Features Implemented',
+    feature1: 'Interactive OpenStreetMap tiles',
+    feature2: 'Custom markers with popups',
+    feature3: 'Geometric shapes (Circles, Polygons)',
+    feature4: 'Responsive container',
+    feature5: 'Vue 3 Composition API integration',
+    techStack: 'Tech Stack'
+  },
+  guaguas: {
+    title: 'Real-Time Bus Tracking',
+    subtitle: 'Gran Canaria Public Transport',
+    filterByLine: 'Filter by line',
+    allLines: 'All lines',
+    line: 'Line',
+    activeBuses: 'Active buses',
+    municipales: 'Municipal',
+    global: 'Global',
+    delayed: 'Delayed',
+    noService: 'No buses in service at this time.',
+    nightSchedule: 'Urban lines operate from 06:00-23:30 and interurban from 05:30-22:00.',
+    nightLinesSchedule: 'Night lines (N1) only operate Friday and Saturday from 00:00-06:00.',
+    filterTitle: 'Bus Filter',
+    filterDescription: 'Click to show/hide on map',
+    company: 'Company',
+    type: 'Type',
+    from: 'From',
+    to: 'To',
+    nextStop: 'Next stop',
+    estimatedTime: 'Estimated time',
+    delay: 'Delay',
+    minutes: 'minutes',
+    lastUpdate: 'Last update',
+    legend: 'Legend',
+    municipalesUrban: 'Municipal Buses (Urban)',
+    globalInterurban: 'Global (Interurban)',
+    nightLines: 'Night Lines',
+    withDelay: 'With delay',
+    urban: 'Urban',
+    interurban: 'Interurban',
+    night: 'Night'
   },
   experience: {
     title: 'Work Experience',
@@ -44,7 +109,10 @@ export default {
     devops: 'DevOps',
     tools: 'Tools',
     methodology: 'Methodology',
-    noSkills: 'No skills available'
+    noSkills: 'No skills available',
+    filterByYear: 'Filter by year',
+    allYears: 'All years',
+    showingSkillsFor: 'Showing skills used in'
   },
   contact: {
     title: 'Contact',
