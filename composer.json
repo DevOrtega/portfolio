@@ -6,7 +6,7 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.3",
+        "php": "^8.2|^8.3",
         "darkaonline/l5-swagger": "^9.0",
         "laravel-lang/common": "^6.7",
         "laravel-lang/lang": "^15.26",
@@ -17,6 +17,7 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
+        "fly-apps/dockerfile-laravel": "^1.0",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
         "laravel/sail": "^1.41",

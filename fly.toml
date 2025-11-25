@@ -1,41 +1,46 @@
-# Fly.io configuration file
-app = "portfolio-carlos"
-primary_region = "mad" # Madrid - el más cercano a Canarias
+# fly.toml app configuration file generated for portfolio-carlos on 2025-11-25T14:14:41Z
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'portfolio-carlos'
+primary_region = 'lhr'
+console_command = 'php /var/www/html/artisan tinker'
 
 [build]
   [build.args]
-    NODE_VERSION = "20"
-    PHP_VERSION = "8.2"
+    NODE_VERSION = '18'
+    PHP_VERSION = '8.3'
 
 [env]
-  APP_ENV = "production"
-  LOG_CHANNEL = "stderr"
-  LOG_LEVEL = "info"
-  LOG_STDERR_FORMATTER = "Monolog\\Formatter\\JsonFormatter"
-  SESSION_DRIVER = "cookie"
-  SESSION_SECURE_COOKIE = "true"
-  DB_CONNECTION = "sqlite"
+  APP_ENV = 'production'
+  DB_CONNECTION = 'sqlite'
+  LOG_CHANNEL = 'stderr'
+  LOG_LEVEL = 'info'
+  LOG_STDERR_FORMATTER = 'Monolog\Formatter\JsonFormatter'
+  SESSION_DRIVER = 'cookie'
+  SESSION_SECURE_COOKIE = 'true'
 
 [http_service]
   internal_port = 8080
   force_https = true
-  auto_stop_machines = true
+  auto_stop_machines = 'stop'
   auto_start_machines = true
   min_machines_running = 0
-  processes = ["app"]
+  processes = ['app']
 
   [[http_service.checks]]
-    grace_period = "10s"
-    interval = "30s"
-    method = "GET"
-    timeout = "5s"
-    path = "/up"
+    interval = '30s'
+    timeout = '5s'
+    grace_period = '10s'
+    method = 'GET'
+    path = '/up'
 
 [[vm]]
-  cpu_kind = "shared"
+  memory = '512mb'
+  cpu_kind = 'shared'
   cpus = 1
-  memory_mb = 256
 
 [[statics]]
-  guest_path = "/var/www/html/public"
-  url_prefix = "/"
+  guest_path = '/var/www/html/public'
+  url_prefix = '/'

@@ -1,11 +1,12 @@
-FROM serversideup/php:8.2-fpm-nginx as base
+FROM serversideup/php:8.3-fpm-nginx as base
 
 # Switch to root to install packages
 USER root
 
-# Install Node.js
+# Install Node.js and required PHP extensions
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs && \
+    apt-get install -y nodejs libicu-dev && \
+    docker-php-ext-install bcmath intl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
