@@ -24,7 +24,9 @@ final class PersonalInfo extends Model
     protected $fillable = [
         'name',
         'headline',
+        'headline_en',
         'bio',
+        'bio_en',
         'email',
         'linkedin_url',
         'github_url',
@@ -39,5 +41,24 @@ final class PersonalInfo extends Model
             'bio' => 'string',
             'email' => 'string',
         ];
+    }
+
+    /**
+     * Get localized data based on current locale
+     */
+    public function toArray(): array
+    {
+        $locale = app()->getLocale();
+        $data = parent::toArray();
+
+        if ($locale === 'en') {
+            $data['headline'] = $this->headline_en ?? $this->headline;
+            $data['bio'] = $this->bio_en ?? $this->bio;
+        }
+
+        // Remove _en fields from response
+        unset($data['headline_en'], $data['bio_en']);
+
+        return $data;
     }
 }

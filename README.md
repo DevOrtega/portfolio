@@ -39,12 +39,13 @@ Este proyecto es un portfolio personal moderno y profesional desarrollado con la
 -   **📚 Documentación API**: Swagger UI integrado en `/api/documentation`
 -   **🧪 Testing Completo**: 110 tests (21 backend + 89 frontend) con cobertura completa
 -   **🏗️ Arquitectura Hexagonal**: Código limpio, mantenible y escalable siguiendo principios SOLID
--   **🌐 Internacionalización**: Soporte multiidioma (ES/EN) con Vue i18n
+-   **🌐 Internacionalización**: Soporte multiidioma completo (ES/EN) con Vue i18n para UI y contenido de base de datos
 -   **📱 SPA**: Navegación fluida sin recargas gracias a Vue Router
 -   **🗺️ Demos Interactivas**: Proyectos destacados con mapas interactivos y funcionalidades avanzadas
 -   **⚡ Rendimiento**: Optimizado con Vite y lazy loading
 -   **🔒 Type Safety**: PHP 8.3 con tipos estrictos y JavaScript moderno con mejores prácticas
 -   **🔍 Filtrado Avanzado**: Filtros por año en aptitudes, experiencia y formación académica
+-   **🐳 Docker Ready**: Dockerfile multi-stage optimizado para producción con PHP-FPM + Nginx
 
 ## 🛠️ Instalación y Puesta en Marcha
 
@@ -151,17 +152,19 @@ Documentación completa disponible en [http://localhost:8000/api/documentation](
 El portfolio incluye demos funcionales de proyectos reales:
 
 ### Seguimiento de Guaguas en Tiempo Real
-- **Ruta**: `/demo/guaguas-tracker`
-- **Tecnologías**: Vue 3, Leaflet, Composables
+- **Ruta**: `/projects/demo/guaguas-tracker`
+- **Tecnologías**: Vue 3, Leaflet, OSRM API, Composables
 - **Características**:
-  - Mapa interactivo de Gran Canaria
+  - Mapa interactivo de Gran Canaria con rutas reales
+  - Movimiento de buses siguiendo carreteras usando OSRM (Open Source Routing Machine)
   - Iconos personalizados de guaguas por compañía
   - Horarios de servicio (urbano/interurbano/nocturno)
   - Sistema responsive con zoom adaptativo
   - Detección de límites geográficos
+  - Interpolación suave de movimiento entre puntos de ruta
 
 ### Gestor de Cajeros Automáticos
-- **Ruta**: `/demo/atm-manager`
+- **Ruta**: `/projects/demo/atm-manager`
 - **Tecnologías**: Vue 3, Element Plus, Pinia
 - **Características**: (En desarrollo)
 
@@ -390,10 +393,36 @@ npm run test:coverage   # Tests con cobertura
 
 ## 🚀 Despliegue
 
+### En Producción
+
+El proyecto está desplegado en **Fly.io**: [portfolio-carlos.fly.dev](https://portfolio-carlos.fly.dev)
+
+**Características del deployment:**
+- 🌍 Región: London (lhr)
+- 🐘 PHP 8.3 con FPM + Nginx
+- 📦 SQLite como base de datos
+- 🔒 SSL automático con certificados gestionados por Fly.io
+- ⚡ Auto-start/stop para optimizar recursos del free tier
+- 🔄 Health checks automáticos en `/up`
+
+### Otras Plataformas Soportadas
+
 El proyecto está preparado para despliegue en:
-- **Backend**: Laravel Forge, AWS, DigitalOcean, Heroku
+- **Backend**: Fly.io, Laravel Forge, AWS, DigitalOcean, Heroku
 - **Frontend**: Vercel, Netlify, GitHub Pages
-- **Database**: MySQL, PostgreSQL, SQLite
+- **Database**: SQLite, MySQL, PostgreSQL
+
+### Deployment en Fly.io
+
+Ver la guía completa en [FLY_DEPLOYMENT.md](FLY_DEPLOYMENT.md)
+
+```bash
+# Desplegar con un solo comando
+flyctl deploy
+
+# O usar el script incluido
+./deploy.sh
+```
 
 ### Build para Producción
 ```bash
@@ -417,7 +446,7 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 Full Stack Developer | Laravel & Vue.js Specialist
 
--   🌐 **Portfolio**: [carlosmortega.dev](https://carlosmortega.dev)
+-   🌐 **Portfolio**: [portfolio-carlos.fly.dev](https://portfolio-carlos.fly.dev)
 -   💼 **LinkedIn**: [linkedin.com/in/carlosmortega](https://www.linkedin.com/in/carlosmortega/)
 -   📧 **Email**: carloso2103@gmail.com
 

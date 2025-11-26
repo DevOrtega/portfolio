@@ -43,7 +43,7 @@ onMounted(async () => {
           <p class="text-2xl md:text-3xl text-gray-300 font-light">{{ personalInfo.headline }}</p>
         </div>
         
-        <div class="text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 space-y-4">
+        <div class="text-lg text-gray-400 max-w-2xl mx-auto lg:mx-0 space-y-6">
           <p v-for="(paragraph, index) in personalInfo.bio.split('\n').filter(p => p.trim())" 
              :key="index" 
              class="leading-relaxed">
@@ -81,9 +81,6 @@ onMounted(async () => {
             </div>
             <div class="absolute top-1/2 -right-8 bg-gray-800 border border-gray-700 p-2 rounded-lg shadow-xl animate-float delay-1000 z-20">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Laravel.svg" class="w-8 h-8" alt="Laravel">
-            </div>
-            <div class="absolute -bottom-4 -left-4 bg-gray-800 border border-gray-700 p-2 rounded-lg shadow-xl animate-float delay-2000 z-20">
-                <span class="text-2xl">🚀</span>
             </div>
         </div>
       </div>

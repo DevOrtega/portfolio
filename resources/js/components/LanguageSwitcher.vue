@@ -29,6 +29,9 @@ const changeLanguage = (lang) => {
   locale.value = lang;
   localStorage.setItem('locale', lang);
   document.documentElement.lang = lang;
+  
+  // Force full page reload to fetch data with new locale
+  window.location.reload();
 };
 </script>
 
