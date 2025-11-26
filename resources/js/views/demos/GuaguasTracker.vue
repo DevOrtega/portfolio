@@ -1050,6 +1050,7 @@ const generateBuses = () => {
         direction: direction,
         routeCoords: route.routeCoords,
         currentRouteIndex: routeIndex,
+        routeProgress: 0, // Progreso entre dos puntos (0 a 1)
         timeToNext: Math.floor(Math.random() * 8) + 2,
         delayed: delayed,
         delayMinutes: delayed ? Math.floor(Math.random() * 12) + 3 : 0,
@@ -1255,43 +1256,37 @@ const updateBusPositions = () => {
     }
     return true;
   }).map(bus => {
-    // Movimiento a lo largo de la ruta predefinida
-    const radians = (bus.direction * Math.PI) / 180;
-    let newLat = bus.lat + Math.cos(radians) * bus.speed;
-    let newLng = bus.lng + Math.sin(radians) * bus.speed;
+    // Movimiento interpolado a lo largo de los puntos OSRM
+    const currentIndex = bus.currentRouteIndex || 0;
+    const progress = bus.routeProgress || 0; // 0 a 1 entre dos puntos
     
-    // Si sale de los límites de Gran Canaria, rebotar o reiniciar en la ruta
-    if (!isWithinBounds(newLat, newLng)) {
-      // Volver al inicio de la ruta
-      const [startLat, startLng] = bus.routeCoords[0];
-      newLat = startLat;
-      newLng = startLng;
+    // Velocidad adaptada a la granularidad de OSRM (más puntos = movimiento más suave)
+    const speedFactor = 0.02; // Ajustar según necesidad
+    
+    let newProgress = progress + speedFactor;
+    let newIndex = currentIndex;
+    
+    // Si completó el segmento actual, avanzar al siguiente punto
+    if (newProgress >= 1.0) {
+      newProgress = 0;
+      newIndex = currentIndex + 1;
       
-      // Recalcular dirección hacia el siguiente punto
-      const [nextLat, nextLng] = bus.routeCoords[1] || bus.routeCoords[0];
-      bus.direction = Math.atan2(nextLng - startLng, nextLat - startLat) * (180 / Math.PI);
-      bus.currentRouteIndex = 0;
-    } else {
-      // Verificar si llegó cerca del siguiente punto de ruta
-      const nextIndex = Math.min(bus.currentRouteIndex + 1, bus.routeCoords.length - 1);
-      const [targetLat, targetLng] = bus.routeCoords[nextIndex];
-      const distance = Math.sqrt(Math.pow(newLat - targetLat, 2) + Math.pow(newLng - targetLng, 2));
-      
-      if (distance < 0.005 && nextIndex < bus.routeCoords.length - 1) {
-        // Avanzar al siguiente segmento de ruta
-        bus.currentRouteIndex = nextIndex;
-        const [nextNextLat, nextNextLng] = bus.routeCoords[nextIndex + 1] || bus.routeCoords[nextIndex];
-        bus.direction = Math.atan2(nextNextLng - targetLng, nextNextLat - targetLat) * (180 / Math.PI);
-      } else if (nextIndex === bus.routeCoords.length - 1 && distance < 0.005) {
-        // Llegó al final, volver al inicio
-        bus.currentRouteIndex = 0;
-        const [startLat, startLng] = bus.routeCoords[0];
-        newLat = startLat;
-        newLng = startLng;
-        const [nextLat, nextLng] = bus.routeCoords[1];
-        bus.direction = Math.atan2(nextLng - startLng, nextLat - startLat) * (180 / Math.PI);
+      // Si llegó al final de la ruta, volver al inicio
+      if (newIndex >= bus.routeCoords.length - 1) {
+        newIndex = 0;
       }
     }
+    
+    // Interpolar posición entre dos puntos consecutivos
+    const [lat1, lng1] = bus.routeCoords[newIndex];
+    const nextIndex = Math.min(newIndex + 1, bus.routeCoords.length - 1);
+    const [lat2, lng2] = bus.routeCoords[nextIndex];
+    
+    const newLat = lat1 + (lat2 - lat1) * newProgress;
+    const newLng = lng1 + (lng2 - lng1) * newProgress;
+    
+    // Calcular dirección del movimiento para orientar el icono
+    const direction = Math.atan2(lng2 - lng1, lat2 - lat1) * (180 / Math.PI);
     
     // Actualizar tiempo a próxima parada
     let newTime = bus.timeToNext;
@@ -1306,6 +1301,9 @@ const updateBusPositions = () => {
       ...bus,
       lat: newLat,
       lng: newLng,
+      currentRouteIndex: newIndex,
+      routeProgress: newProgress,
+      direction: direction,
       timeToNext: newTime,
       lastUpdate: new Date().toLocaleTimeString('es-ES')
     };
