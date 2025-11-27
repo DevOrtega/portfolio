@@ -424,6 +424,55 @@ chmod +x deploy-compose.sh
 - ✅ Red aislada para seguridad
 - ✅ Variables de entorno configurables
 - ✅ Puerto 80 expuesto (mapea a 8080 interno)
+- ✅ Límites de recursos (CPU y RAM)
+
+### Comandos Útiles Docker Compose
+
+```bash
+# Gestión del contenedor
+docker compose ps                    # Ver estado de servicios
+docker compose logs -f              # Ver logs en tiempo real
+docker compose logs -f --tail 50    # Ver últimos 50 logs
+docker compose restart              # Reiniciar servicios
+docker compose down                 # Parar y eliminar contenedores
+docker compose down -v              # Parar y eliminar volúmenes
+
+# Ejecutar comandos dentro del contenedor
+docker compose exec portfolio bash                           # Abrir shell interactiva
+docker compose exec portfolio php artisan migrate           # Ejecutar migraciones
+docker compose exec portfolio php artisan cache:clear       # Limpiar cache
+docker compose exec portfolio php artisan config:cache      # Cachear configuración
+docker compose exec portfolio php artisan route:list        # Listar rutas
+docker compose exec portfolio php artisan tinker            # Abrir REPL de Laravel
+docker compose exec portfolio php artisan test              # Ejecutar tests
+docker compose exec portfolio composer install              # Instalar dependencias
+docker compose exec portfolio tail -f storage/logs/laravel.log  # Ver logs de Laravel
+
+# Inspección y debugging
+docker compose exec portfolio env                           # Ver variables de entorno
+docker compose exec portfolio cat .env                      # Ver archivo .env
+docker compose exec portfolio ls -la storage/logs          # Listar archivos de logs
+docker compose exec portfolio php -v                        # Ver versión de PHP
+docker compose exec portfolio node -v                       # Ver versión de Node.js
+
+# Gestión de recursos
+docker compose top                   # Ver procesos corriendo
+docker stats portfolio              # Ver uso de CPU/RAM en tiempo real
+```
+
+### Script de Despliegue Automatizado
+
+El proyecto incluye `deploy-compose.sh` para facilitar operaciones comunes:
+
+```bash
+chmod +x deploy-compose.sh
+
+./deploy-compose.sh build    # Construir y lanzar (primera vez o tras cambios)
+./deploy-compose.sh restart  # Reinicio rápido sin rebuild
+./deploy-compose.sh logs     # Ver logs en tiempo real
+./deploy-compose.sh stop     # Parar servicios
+./deploy-compose.sh clean    # Eliminar todo (contenedores, volúmenes, imágenes)
+```
 
 ### Despliegue con Docker (Sin Compose)
 
