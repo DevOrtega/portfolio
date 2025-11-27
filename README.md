@@ -6,6 +6,9 @@
 [![Node.js](https://img.shields.io/badge/Node.js-24.11.1-339933?style=flat&logo=node.js)](https://nodejs.org)
 [![Tests](https://img.shields.io/badge/Tests-110%20passing-success?style=flat)](https://github.com)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Website](https://img.shields.io/badge/Website-devortega.com-blue?style=flat&logo=googlechrome)](https://devortega.com)
+
+> 🌐 **Demo en vivo**: [https://devortega.com](https://devortega.com)
 
 Este proyecto es un portfolio personal moderno y profesional desarrollado con las últimas tecnologías del ecosistema PHP y JavaScript. Muestra mi experiencia, habilidades, educación y proyectos destacados, siguiendo arquitectura hexagonal y principios SOLID.
 
