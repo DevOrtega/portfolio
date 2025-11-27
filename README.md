@@ -537,6 +537,7 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 Full Stack Developer | Laravel & Vue.js Specialist
 
+-   🌐 **Web**: [devortega.com](https://www.devortega.com)
 -   💼 **LinkedIn**: [linkedin.com/in/carlosmortega](https://www.linkedin.com/in/carlosmortega/)
 -   📧 **Email**: carloso2103@gmail.com
 -   🐙 **GitHub**: [github.com/DevOrtega](https://github.com/DevOrtega)
