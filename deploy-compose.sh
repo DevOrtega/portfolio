@@ -14,27 +14,27 @@ set -e
 case "$1" in
   build)
     echo "🔨 Building and starting services..."
-    docker-compose up -d --build
+    docker compose up -d --build
     echo "✅ Services started. Checking health..."
     sleep 5
-    docker-compose ps
+    docker compose ps
     ;;
     
   restart)
     echo "🔄 Restarting services..."
-    docker-compose restart
+    docker compose restart
     echo "✅ Services restarted"
-    docker-compose ps
+    docker compose ps
     ;;
     
   logs)
     echo "📋 Showing logs (Ctrl+C to exit)..."
-    docker-compose logs -f
+    docker compose logs -f
     ;;
     
   stop)
     echo "🛑 Stopping services..."
-    docker-compose down
+    docker compose down
     echo "✅ Services stopped"
     ;;
     
@@ -43,7 +43,7 @@ case "$1" in
     read -p "This will remove containers, volumes, and images. Continue? (y/N) " -n 1 -r
     echo
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      docker-compose down -v --rmi all
+      docker compose down -v --rmi all
       echo "✅ Cleanup complete"
     else
       echo "❌ Cleanup cancelled"

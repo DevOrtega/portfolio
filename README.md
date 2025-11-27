@@ -399,16 +399,16 @@ El proyecto incluye `docker-compose.yml` para un despliegue simple y rápido:
 
 ```bash
 # Construir y lanzar (primera vez o después de cambios)
-docker-compose up -d --build
+docker compose up -d --build
 
 # Reiniciar sin reconstruir
-docker-compose restart
+docker compose restart
 
 # Ver logs en tiempo real
-docker-compose logs -f
+docker compose logs -f
 
 # Parar servicios
-docker-compose down
+docker compose down
 
 # O usar el script incluido
 chmod +x deploy-compose.sh
