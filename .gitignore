@@ -26,8 +26,7 @@ Thumbs.db
 # Deployment Scripts
 deploy.sh
 
-# Fly.io
-.fly/secrets/
+secrets/
 
 # Database
 /database/*.sqlite

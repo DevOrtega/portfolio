@@ -393,36 +393,43 @@ npm run test:coverage   # Tests con cobertura
 
 ## 🚀 Despliegue
 
-### En Producción
+### Despliegue con Docker
 
-El proyecto está desplegado en **Fly.io**: [portfolio-carlos.fly.dev](https://portfolio-carlos.fly.dev)
-
-**Características del deployment:**
-- 🌍 Región: London (lhr)
-- 🐘 PHP 8.3 con FPM + Nginx
-- 📦 SQLite como base de datos
-- 🔒 SSL automático con certificados gestionados por Fly.io
-- ⚡ Auto-start/stop para optimizar recursos del free tier
-- 🔄 Health checks automáticos en `/up`
-
-### Otras Plataformas Soportadas
-
-El proyecto está preparado para despliegue en:
-- **Backend**: Fly.io, Laravel Forge, AWS, DigitalOcean, Heroku
-- **Frontend**: Vercel, Netlify, GitHub Pages
-- **Database**: SQLite, MySQL, PostgreSQL
-
-### Deployment en Fly.io
-
-Ver la guía completa en [FLY_DEPLOYMENT.md](FLY_DEPLOYMENT.md)
+El proyecto incluye un Dockerfile optimizado para producción que configura automáticamente el entorno:
 
 ```bash
-# Desplegar con un solo comando
-flyctl deploy
+# Construir la imagen
+docker build -t portfolio .
 
-# O usar el script incluido
-./deploy.sh
+# Ejecutar el contenedor
+docker run -d -p 80:8080 \
+  --name portfolio \
+  --health-cmd="curl -f http://localhost:8080/up || exit 1" \
+  --health-interval=30s \
+  --health-timeout=10s \
+  --health-retries=3 \
+  portfolio
 ```
+
+**El Dockerfile incluye:**
+- ✅ PHP 8.3 con FPM + Nginx (serversideup/php:8.3-fpm-nginx)
+- ✅ Node.js 20 para build de assets
+- ✅ Extensiones PHP necesarias (bcmath, intl)
+- ✅ Generación automática de APP_KEY
+- ✅ Migraciones y seeders automáticos
+- ✅ Build de assets optimizado para producción
+- ✅ Caché de configuración (config, routes, views)
+- ✅ Health check en `/up`
+- ✅ Permisos correctos para www-data
+
+### Plataformas Soportadas
+
+El proyecto está preparado para despliegue en:
+- **Contenedores**: Docker, Kubernetes, Proxmox LXC
+- **Cloud**: AWS, DigitalOcean, Google Cloud, Azure
+- **PaaS**: Laravel Forge, Railway, Render
+- **Self-hosted**: VPS con Docker, Cloudflare Tunnel
+- **Database**: SQLite (incluida), MySQL, PostgreSQL
 
 ### Build para Producción
 ```bash
@@ -446,9 +453,9 @@ Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para
 
 Full Stack Developer | Laravel & Vue.js Specialist
 
--   🌐 **Portfolio**: [portfolio-carlos.fly.dev](https://portfolio-carlos.fly.dev)
 -   💼 **LinkedIn**: [linkedin.com/in/carlosmortega](https://www.linkedin.com/in/carlosmortega/)
 -   📧 **Email**: carloso2103@gmail.com
+-   🐙 **GitHub**: [github.com/DevOrtega](https://github.com/DevOrtega)
 
 ## 🙏 Agradecimientos
 
