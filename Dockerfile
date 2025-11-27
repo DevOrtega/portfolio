@@ -31,6 +31,9 @@ COPY . .
 # Setup environment and generate key as root
 USER root
 
+# Generate optimized autoload files first
+RUN composer dump-autoload --optimize
+
 # Copy .env.example to .env if .env doesn't exist, then generate key
 RUN if [ ! -f .env ]; then \
         cp .env.example .env; \
@@ -44,9 +47,6 @@ RUN php artisan migrate:fresh --seed --force
 
 # Build frontend assets
 RUN npm run build
-
-# Generate optimized autoload files
-RUN composer dump-autoload --optimize
 
 # Cache configuration for production
 RUN php artisan config:cache && \
