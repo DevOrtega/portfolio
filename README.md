@@ -393,9 +393,41 @@ npm run test:coverage   # Tests con cobertura
 
 ## 🚀 Despliegue
 
-### Despliegue con Docker
+### Despliegue con Docker Compose (Recomendado)
 
-El proyecto incluye un Dockerfile optimizado para producción que configura automáticamente el entorno:
+El proyecto incluye `docker-compose.yml` para un despliegue simple y rápido:
+
+```bash
+# Construir y lanzar (primera vez o después de cambios)
+docker-compose up -d --build
+
+# Reiniciar sin reconstruir
+docker-compose restart
+
+# Ver logs en tiempo real
+docker-compose logs -f
+
+# Parar servicios
+docker-compose down
+
+# O usar el script incluido
+chmod +x deploy-compose.sh
+./deploy-compose.sh build    # Primera vez
+./deploy-compose.sh restart  # Reinicio rápido
+./deploy-compose.sh logs     # Ver logs
+```
+
+**Características del docker-compose.yml:**
+- ✅ Volúmenes persistentes para storage y database
+- ✅ Health checks automáticos
+- ✅ Restart automático si el contenedor falla
+- ✅ Red aislada para seguridad
+- ✅ Variables de entorno configurables
+- ✅ Puerto 80 expuesto (mapea a 8080 interno)
+
+### Despliegue con Docker (Sin Compose)
+
+También puedes usar Docker directamente:
 
 ```bash
 # Construir la imagen
