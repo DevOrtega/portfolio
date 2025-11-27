@@ -9,13 +9,13 @@
         <h1 class="text-3xl font-bold mb-2">{{ $t('guaguas.title') }}</h1>
         <p class="text-gray-400">{{ $t('guaguas.subtitle') }}</p>
         <InfoBanner type="info" class="mt-2">
-          ℹ️ Demo con simulación basada en rutas y horarios reales de <strong>Guaguas Municipales</strong> (amarillo - urbanas) y <strong>Global</strong> (azul - interurbanas). 
+          ℹ️ Demo con simulación basada en rutas y horarios reales de <strong>Guaguas Municipales</strong> (amarillo - urbanas), <strong>Global</strong> (azul - interurbanas) y <strong>Líneas Nocturnas</strong> (morado - L1, L2, L3, 64, 65). 
           Las guaguas solo aparecen dentro de sus horarios operativos y se mueven por rutas geográficamente precisas de Gran Canaria.
           <br><small class="opacity-80">Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos son simulados con máxima fidelidad a la realidad.</small>
         </InfoBanner>
       </div>
 
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4 mb-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4 mb-4">
         <div class="bg-gray-800 p-3 sm:p-4 rounded-lg col-span-2 md:col-span-3 lg:col-span-1">
           <h3 class="text-xs sm:text-sm font-semibold mb-2">{{ $t('guaguas.filterByLine') }}</h3>
           <select v-model="selectedLine" class="w-full bg-gray-700 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded text-sm">
@@ -27,6 +27,7 @@
         <StatsCard :title="$t('guaguas.activeBuses')" :value="activeBuses.length" color-class="text-green-400" />
         <StatsCard :title="$t('guaguas.municipales')" :value="municipalesBuses.length" color-class="text-yellow-400" />
         <StatsCard :title="$t('guaguas.global')" :value="globalBuses.length" color-class="text-blue-400" />
+        <StatsCard :title="$t('guaguas.nightLines')" :value="nightBuses.length" color-class="text-purple-400" />
         <StatsCard :title="$t('guaguas.delayed')" :value="delayedBuses.length" color-class="text-red-400" />
       </div>
 
@@ -241,7 +242,7 @@ const selectedRouteColor = ref('#FDB913');
 const busLines = [
   '1', '2', '11', '12', '13', '17', '25',  // Municipales (urban)
   '1', '5', '30', '32', '60', '80', '91',  // Global (interurban)
-  'N1'                                      // Night line
+  'L1', 'L2', 'L3', '64', '65'             // Night lines
 ];
 
 /**
@@ -987,18 +988,119 @@ const generateBuses = () => {
     },
     
     // ========== LÍNEAS NOCTURNAS - Guaguas Municipales ==========
+    // L1: Puerto - Hoya de La Plata (nocturna)
     { 
-      line: 'N1', type: 'night', company: 'municipales', origin: 'Teatro', destination: 'Cono Sur', 
-      stops: ['San Telmo', 'Vegueta', 'San José', 'Hoya de La Plata'], color: '#9933FF',
+      line: 'L1', type: 'night', company: 'municipales', origin: 'Puerto', destination: 'Hoya de La Plata', 
+      stops: ['Santa Catalina', 'León y Castillo', 'San José', 'Hoya de La Plata'], color: '#9933FF',
       routeCoords: [
-        [28.109, -15.413], // Teatro
-        [28.106, -15.419], // San Telmo
-        [28.100, -15.415], // Vegueta
-        [28.094, -15.418], // Paseo San José
-        [28.088, -15.419],
-        [28.082, -15.419],
-        [28.076, -15.418],
-        [28.072, -15.419]  // Hoya de La Plata
+        [28.1454, -15.4180], // Puerto
+        [28.1440, -15.4198],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1380, -15.4270],
+        [28.1330, -15.4320],
+        [28.1258, -15.4401], // Mesa y López
+        [28.1170, -15.4318], // León y Castillo
+        [28.1100, -15.4250],
+        [28.1066, -15.4191],
+        [28.1000, -15.4155],
+        [28.0920, -15.4185],
+        [28.0820, -15.4190], // San José
+        [28.0720, -15.4191],
+        [28.0705, -15.4192]  // Hoya de La Plata
+      ]
+    },
+    // L2: Teatro - Santa Catalina (nocturna por Rehoyas, Schamann, Escaleritas)
+    { 
+      line: 'L2', type: 'night', company: 'municipales', origin: 'Teatro', destination: 'Santa Catalina', 
+      stops: ['Rehoyas', 'Cruz de Piedra', 'Schamann', 'Escaleritas', 'Hospital Dr. Negrín', 'Mesa y López'], color: '#9933FF',
+      routeCoords: [
+        [28.1094, -15.4131], // Teatro
+        [28.1050, -15.4180],
+        [28.1040, -15.4220], // Rehoyas
+        [28.1035, -15.4280],
+        [28.1040, -15.4340], // Cruz de Piedra
+        [28.1055, -15.4380],
+        [28.1070, -15.4420], // Schamann
+        [28.1090, -15.4460],
+        [28.1110, -15.4500], // Escaleritas
+        [28.1140, -15.4540],
+        [28.1180, -15.4600],
+        [28.1220, -15.4660],
+        [28.1270, -15.4710], // Hospital Dr. Negrín
+        [28.1300, -15.4680],
+        [28.1340, -15.4620],
+        [28.1380, -15.4560],
+        [28.1400, -15.4480],
+        [28.1410, -15.4400],
+        [28.1420, -15.4320],
+        [28.1416, -15.4246]  // Santa Catalina
+      ]
+    },
+    // L3: Teatro - Tamaraceite (nocturna por Don Zoilo, Escaleritas, La Feria, Siete Palmas)
+    { 
+      line: 'L3', type: 'night', company: 'municipales', origin: 'Teatro', destination: 'Tamaraceite', 
+      stops: ['Don Zoilo', 'Escaleritas', 'La Feria', 'Siete Palmas', 'Tamaraceite'], color: '#9933FF',
+      routeCoords: [
+        [28.1094, -15.4131], // Teatro
+        [28.1050, -15.4250], // Don Zoilo
+        [28.1060, -15.4320],
+        [28.1080, -15.4400],
+        [28.1110, -15.4480], // Escaleritas
+        [28.1110, -15.4550], // La Feria
+        [28.1130, -15.4620],
+        [28.1160, -15.4680],
+        [28.1200, -15.4720], // Siete Palmas
+        [28.1240, -15.4740],
+        [28.1280, -15.4760],
+        [28.1320, -15.4780],
+        [28.1360, -15.4800],
+        [28.1400, -15.4820],
+        [28.1440, -15.4840],
+        [28.1470, -15.4860]  // Tamaraceite
+      ]
+    },
+    // 64: Medianoche Teatro - Cono Sur
+    { 
+      line: '64', type: 'night', company: 'municipales', origin: 'Teatro', destination: 'Cono Sur', 
+      stops: ['Vegueta', 'El Lasso', 'Casablanca', 'Pedro Hidalgo', 'Tres Palmas'], color: '#9933FF',
+      routeCoords: [
+        [28.1094, -15.4131], // Teatro
+        [28.1066, -15.4191], // San Telmo
+        [28.0980, -15.4140], // Vegueta
+        [28.0920, -15.4180],
+        [28.0860, -15.4195],
+        [28.0800, -15.4190], // El Lasso
+        [28.0740, -15.4189],
+        [28.0700, -15.4188], // Casablanca
+        [28.0660, -15.4190],
+        [28.0620, -15.4195], // Pedro Hidalgo
+        [28.0580, -15.4200],
+        [28.0540, -15.4205],
+        [28.0500, -15.4210]  // Tres Palmas
+      ]
+    },
+    // 65: Medianoche Puerto - Tamaraceite
+    { 
+      line: '65', type: 'night', company: 'municipales', origin: 'Puerto', destination: 'Tamaraceite', 
+      stops: ['Santa Catalina', 'Mesa y López', 'Juan Carlos I', 'Siete Palmas'], color: '#9933FF',
+      routeCoords: [
+        [28.1454, -15.4180], // Puerto
+        [28.1440, -15.4198],
+        [28.1416, -15.4246], // Santa Catalina
+        [28.1380, -15.4280],
+        [28.1340, -15.4320],
+        [28.1300, -15.4360],
+        [28.1258, -15.4401], // Mesa y López
+        [28.1230, -15.4450],
+        [28.1210, -15.4520], // Juan Carlos I
+        [28.1200, -15.4600],
+        [28.1200, -15.4680],
+        [28.1210, -15.4740], // Siete Palmas
+        [28.1250, -15.4780],
+        [28.1300, -15.4810],
+        [28.1350, -15.4830],
+        [28.1400, -15.4850],
+        [28.1470, -15.4860]  // Tamaraceite
       ]
     }
   ];
@@ -1069,8 +1171,9 @@ const generateBuses = () => {
 
 // Generar estructura de árbol para Element Plus
 const treeData = computed(() => {
-  const municipalesBuses = buses.value.filter(b => b.company === 'municipales');
+  const municipalesBuses = buses.value.filter(b => b.company === 'municipales' && b.type !== 'night');
   const globalBuses = buses.value.filter(b => b.company === 'global');
+  const nightBusesList = buses.value.filter(b => b.type === 'night');
   
   // Agrupar por línea
   const groupByLine = (busList) => {
@@ -1086,6 +1189,7 @@ const treeData = computed(() => {
   
   const municipalesGrouped = groupByLine(municipalesBuses);
   const globalGrouped = groupByLine(globalBuses);
+  const nightGrouped = groupByLine(nightBusesList);
   
   return [
     {
@@ -1116,6 +1220,24 @@ const treeData = computed(() => {
         type: 'line',
         line: line,
         company: 'global',
+        children: busList.map((bus, idx) => ({
+          id: bus.id,
+          label: `Guagua ${line}-${idx + 1} → ${bus.destination}`,
+          type: 'bus',
+          bus: bus
+        }))
+      }))
+    },
+    {
+      id: 'night',
+      label: `Líneas Nocturnas (${nightBusesList.length})`,
+      type: 'company',
+      children: Object.entries(nightGrouped).map(([line, busList]) => ({
+        id: `night-line-${line}`,
+        label: `Línea ${line} (${busList.length})`,
+        type: 'line',
+        line: line,
+        company: 'municipales',
         children: busList.map((bus, idx) => ({
           id: bus.id,
           label: `Guagua ${line}-${idx + 1} → ${bus.destination}`,
@@ -1337,9 +1459,11 @@ const activeBuses = computed(() => buses.value);
 
 const delayedBuses = computed(() => buses.value.filter(bus => bus.delayed));
 
-const municipalesBuses = computed(() => buses.value.filter(bus => bus.company === 'municipales'));
+const municipalesBuses = computed(() => buses.value.filter(bus => bus.company === 'municipales' && bus.type !== 'night'));
 
 const globalBuses = computed(() => buses.value.filter(bus => bus.company === 'global'));
+
+const nightBuses = computed(() => buses.value.filter(bus => bus.type === 'night'));
 
 // Cambiar a usar company en lugar de type para el color
 const getBusTypeClass = (company, type) => {
