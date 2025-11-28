@@ -60,7 +60,35 @@ Este proyecto es un portfolio personal moderno y profesional desarrollado con la
 -   Composer
 -   SQLite o MySQL/PostgreSQL
 
-### Pasos de Instalación
+### Instalación Rápida (Recomendado)
+
+```bash
+# 1. Clonar el repositorio
+git clone https://github.com/DevOrtega/portfolio.git
+cd portfolio
+
+# 2. Ejecutar setup completo (instala todo y configura BD)
+composer setup
+
+# 3. Levantar entorno de desarrollo
+composer dev
+```
+
+¡Listo! Abre [http://localhost:8000](http://localhost:8000) en tu navegador.
+
+### Scripts Disponibles
+
+| Comando | Cuándo usarlo |
+|---------|---------------|
+| `composer setup` | Primera instalación tras clonar el proyecto |
+| `composer dev` | Levantar entorno de desarrollo (servidor + vite + logs + queue) |
+| `composer refresh` | Tras `git pull` con cambios en dependencias, migraciones o seeders |
+| `composer test` | Ejecutar tests de backend |
+
+### Instalación Manual (Paso a Paso)
+
+<details>
+<summary>Click para expandir instalación manual</summary>
 
 1.  **Clonar el repositorio**
     ```bash
@@ -118,6 +146,8 @@ Este proyecto es un portfolio personal moderno y profesional desarrollado con la
 
 9.  **Ver el proyecto**
     Abre tu navegador en [http://localhost:8000](http://localhost:8000).
+
+</details>
 
 ## 📚 Endpoints de la API
 
@@ -419,6 +449,28 @@ chmod +x deploy-compose.sh
 ./deploy-compose.sh restart  # Reinicio rápido
 ./deploy-compose.sh logs     # Ver logs
 ```
+
+### 🔄 Actualizar Despliegue tras git pull
+
+Cuando traes cambios del repositorio a tu servidor/VM:
+
+```bash
+# 1. Traer los cambios
+git pull
+
+# 2. Reconstruir y reiniciar (siempre seguro)
+docker compose up -d --build
+```
+
+| Tipo de cambio | Comando necesario |
+|----------------|-------------------|
+| Solo código PHP (sin dependencias) | `docker compose restart` (rápido) |
+| Nuevas dependencias composer/npm | `docker compose up -d --build` |
+| Cambios en migraciones | `docker compose up -d --build` |
+| Cambios en Dockerfile | `docker compose up -d --build` |
+| Cambios en .env | `docker compose up -d` |
+
+> 💡 **Consejo**: Ante la duda, usa siempre `docker compose up -d --build`. Tarda un poco más pero garantiza que todo está actualizado.
 
 **Características del docker-compose.yml:**
 - ✅ Volúmenes persistentes para storage y database
