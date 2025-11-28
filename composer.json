@@ -41,12 +41,22 @@
     },
     "scripts": {
         "setup": [
-            "composer install",
             "@php -r \"file_exists('.env') || copy('.env.example', '.env');\"",
-            "@php artisan key:generate",
-            "@php artisan migrate --force",
+            "@composer install",
+            "@php artisan key:generate --ansi",
+            "@php -r \"file_exists('database/database.sqlite') || touch('database/database.sqlite');\"",
+            "@php artisan migrate:fresh --seed --ansi",
+            "@php artisan l5-swagger:generate --ansi",
             "npm install",
-            "npm run build"
+            "npm run build",
+            "@php artisan optimize --ansi"
+        ],
+        "refresh": [
+            "@composer install",
+            "npm install",
+            "@php artisan migrate:fresh --seed --ansi",
+            "@php artisan l5-swagger:generate --ansi",
+            "@php artisan optimize:clear --ansi"
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
