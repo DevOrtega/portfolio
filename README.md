@@ -8,57 +8,57 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-devortega.com-blue?style=flat&logo=googlechrome)](https://devortega.com)
 
-> 🌐 **Demo en vivo**: [https://devortega.com](https://devortega.com)
+**Demo en vivo**: [https://devortega.com](https://devortega.com)
 
 Este proyecto es un portfolio personal moderno y profesional desarrollado con las últimas tecnologías del ecosistema PHP y JavaScript. Muestra mi experiencia, habilidades, educación y proyectos destacados, siguiendo arquitectura hexagonal y principios SOLID.
 
-## 🚀 Stack Tecnológico
+## Stack Tecnológico
 
 ### Backend
--   **PHP**: 8.3.28 (Latest stable)
--   **Laravel**: 12.39.0 (Framework)
--   **Pest**: 3.8.4 (Testing Framework)
--   **L5-Swagger**: 9.0.1 (API Documentation)
--   **SQLite/MySQL**: Database (configurable)
+- **PHP**: 8.3.28 (Latest stable)
+- **Laravel**: 12.39.0 (Framework)
+- **Pest**: 3.8.4 (Testing Framework)
+- **L5-Swagger**: 9.0.1 (API Documentation)
+- **SQLite/MySQL**: Database (configurable)
 
 ### Frontend
--   **Vue.js**: 3.5.25 (Composition API)
--   **Node.js**: 24.11.1 LTS (Krypton)
--   **npm**: 11.6.3
--   **Vite**: 7.2.4 (Build tool)
--   **Vitest**: 4.0.13 (Testing)
--   **TailwindCSS**: 4.1.17 (Styling)
--   **Vue Router**: 4.6.3 (SPA routing)
--   **Pinia**: 3.0.4 (State management)
--   **Vue i18n**: 11.2.1 (Internationalization)
--   **Element Plus**: 2.11.8 (UI Components)
--   **Leaflet**: 1.9.4 (Maps - for demos)
--   **Axios**: 1.13.2 (HTTP client)
+- **Vue.js**: 3.5.25 (Composition API)
+- **Node.js**: 24.11.1 LTS (Krypton)
+- **npm**: 11.6.3
+- **Vite**: 7.2.4 (Build tool)
+- **Vitest**: 4.0.13 (Testing)
+- **TailwindCSS**: 4.1.17 (Styling)
+- **Vue Router**: 4.6.3 (SPA routing)
+- **Pinia**: 3.0.4 (State management)
+- **Vue i18n**: 11.2.1 (Internationalization)
+- **Element Plus**: 2.11.8 (UI Components)
+- **Leaflet**: 1.9.4 (Maps - for demos)
+- **Axios**: 1.13.2 (HTTP client)
 
-## ✨ Características Principales
+## Características Principales
 
--   **🎨 Interfaz Moderna**: Diseño oscuro totalmente responsivo con animaciones suaves y gradientes
--   **🔌 API RESTful**: Backend robusto con endpoints para proyectos, experiencia, habilidades y educación
--   **📚 Documentación API**: Swagger UI integrado en `/api/documentation`
--   **🧪 Testing Completo**: 110 tests (21 backend + 89 frontend) con cobertura completa
--   **🏗️ Arquitectura Hexagonal**: Código limpio, mantenible y escalable siguiendo principios SOLID
--   **🌐 Internacionalización**: Soporte multiidioma completo (ES/EN) con Vue i18n para UI y contenido de base de datos
--   **📱 SPA**: Navegación fluida sin recargas gracias a Vue Router
--   **🗺️ Demos Interactivas**: Proyectos destacados con mapas interactivos y funcionalidades avanzadas
--   **⚡ Rendimiento**: Optimizado con Vite y lazy loading
--   **🔒 Type Safety**: PHP 8.3 con tipos estrictos y JavaScript moderno con mejores prácticas
--   **🔍 Filtrado Avanzado**: Filtros por año en aptitudes, experiencia y formación académica
--   **🐳 Docker Ready**: Dockerfile multi-stage optimizado para producción con PHP-FPM + Nginx
+- **Interfaz Moderna**: Diseño oscuro totalmente responsivo con animaciones suaves y gradientes
+- **API RESTful**: Backend robusto con endpoints para proyectos, experiencia, habilidades y educación
+- **Documentación API**: Swagger UI integrado en `/api/documentation`
+- **Testing Completo**: 110 tests (21 backend + 89 frontend) con cobertura completa
+- **Arquitectura Hexagonal**: Código limpio, mantenible y escalable siguiendo principios SOLID
+- **Internacionalización**: Soporte multiidioma completo (ES/EN) con Vue i18n para UI y contenido de base de datos
+- **SPA**: Navegación fluida sin recargas gracias a Vue Router
+- **Demos Interactivas**: Proyectos destacados con mapas interactivos y funcionalidades avanzadas
+- **Rendimiento**: Optimizado con Vite y lazy loading
+- **Type Safety**: PHP 8.3 con tipos estrictos y JavaScript moderno con mejores prácticas
+- **Filtrado Avanzado**: Filtros por año en aptitudes, experiencia y formación académica
+- **Docker Ready**: Dockerfile multi-stage optimizado para producción con PHP-FPM + Nginx
 
-## 🛠️ Instalación y Puesta en Marcha
+## Instalación y Puesta en Marcha
 
 ### Prerrequisitos
 
--   PHP >= 8.3
--   Node.js >= 24.x LTS
--   npm >= 11.x
--   Composer
--   SQLite o MySQL/PostgreSQL
+- PHP >= 8.3
+- Node.js >= 24.x LTS
+- npm >= 11.x
+- Composer
+- SQLite o MySQL/PostgreSQL
 
 ### Instalación Rápida (Recomendado)
 
@@ -74,7 +74,7 @@ composer setup
 composer dev
 ```
 
-¡Listo! Abre [http://localhost:8000](http://localhost:8000) en tu navegador.
+Abre [http://localhost:8000](http://localhost:8000) en tu navegador.
 
 ### Scripts Disponibles
 
@@ -90,66 +90,66 @@ composer dev
 <details>
 <summary>Click para expandir instalación manual</summary>
 
-1.  **Clonar el repositorio**
-    ```bash
-    git clone https://github.com/DevOrtega/portfolio.git
-    cd portfolio
-    ```
+1. **Clonar el repositorio**
+   ```bash
+   git clone https://github.com/DevOrtega/portfolio.git
+   cd portfolio
+   ```
 
-2.  **Instalar dependencias de PHP**
-    ```bash
-    composer install
-    ```
+2. **Instalar dependencias de PHP**
+   ```bash
+   composer install
+   ```
 
-3.  **Instalar dependencias de JavaScript**
-    ```bash
-    npm install
-    ```
+3. **Instalar dependencias de JavaScript**
+   ```bash
+   npm install
+   ```
 
-4.  **Configurar entorno**
-    ```bash
-    cp .env.example .env
-    php artisan key:generate
-    ```
+4. **Configurar entorno**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-5.  **Base de Datos**
-    Configura tu base de datos en el archivo `.env` (por defecto usa SQLite). Luego ejecuta las migraciones y los seeders:
-    ```bash
-    touch database/database.sqlite # Si usas SQLite
-    php artisan migrate:fresh --seed
-    ```
+5. **Base de Datos**
+   Configura tu base de datos en el archivo `.env` (por defecto usa SQLite). Luego ejecuta las migraciones y los seeders:
+   ```bash
+   touch database/database.sqlite # Si usas SQLite
+   php artisan migrate:fresh --seed
+   ```
 
-6.  **Generar documentación de la API**
-    ```bash
-    php artisan l5-swagger:generate
-    ```
+6. **Generar documentación de la API**
+   ```bash
+   php artisan l5-swagger:generate
+   ```
 
-7.  **Ejecutar tests (opcional pero recomendado)**
-    ```bash
-    php artisan test    # Backend tests
-    npm test           # Frontend tests
-    ```
+7. **Ejecutar tests (opcional pero recomendado)**
+   ```bash
+   php artisan test    # Backend tests
+   npm test           # Frontend tests
+   ```
 
-8.  **Ejecutar servidores de desarrollo**
-    
-    Necesitarás dos terminales:
+8. **Ejecutar servidores de desarrollo**
+   
+   Necesitarás dos terminales:
 
-    *Terminal 1 (Backend):*
-    ```bash
-    php artisan serve
-    ```
+   *Terminal 1 (Backend):*
+   ```bash
+   php artisan serve
+   ```
 
-    *Terminal 2 (Frontend):*
-    ```bash
-    npm run dev
-    ```
+   *Terminal 2 (Frontend):*
+   ```bash
+   npm run dev
+   ```
 
-9.  **Ver el proyecto**
-    Abre tu navegador en [http://localhost:8000](http://localhost:8000).
+9. **Ver el proyecto**
+   Abre tu navegador en [http://localhost:8000](http://localhost:8000).
 
 </details>
 
-## 📚 Endpoints de la API
+## Endpoints de la API
 
 Documentación completa disponible en [http://localhost:8000/api/documentation](http://localhost:8000/api/documentation)
 
@@ -180,7 +180,7 @@ Documentación completa disponible en [http://localhost:8000/api/documentation](
 ]
 ```
 
-## 🎮 Demos Interactivas
+## Demos Interactivas
 
 El portfolio incluye demos funcionales de proyectos reales:
 
@@ -206,13 +206,13 @@ El portfolio incluye demos funcionales de proyectos reales:
 - Portal de investigadores universitarios
 - Chatbot con Google Assistant
 
-## 🏗️ Arquitectura del Proyecto
+## Arquitectura del Proyecto
 
 Este proyecto sigue los principios **SOLID** y está estructurado usando **Arquitectura Hexagonal** (Ports & Adapters), lo que garantiza:
-- ✅ **Mantenibilidad**: Código organizado y fácil de entender
-- ✅ **Testabilidad**: Componentes desacoplados y fáciles de probar
-- ✅ **Escalabilidad**: Fácil de extender sin modificar código existente
-- ✅ **Flexibilidad**: Posibilidad de cambiar implementaciones sin afectar la lógica de negocio
+- **Mantenibilidad**: Código organizado y fácil de entender
+- **Testabilidad**: Componentes desacoplados y fáciles de probar
+- **Escalabilidad**: Fácil de extender sin modificar código existente
+- **Flexibilidad**: Posibilidad de cambiar implementaciones sin afectar la lógica de negocio
 
 ### Capas de la Arquitectura
 
@@ -265,28 +265,28 @@ app/
 
 ### Principios SOLID Aplicados
 
-#### 1. **Single Responsibility Principle (SRP)**
+#### 1. Single Responsibility Principle (SRP)
 Cada clase tiene una única responsabilidad:
 - **Controllers**: Solo manejan peticiones/respuestas HTTP
 - **Services**: Solo contienen lógica de negocio
 - **Repositories**: Solo gestionan persistencia de datos
 
-#### 2. **Open/Closed Principle (OCP)**
+#### 2. Open/Closed Principle (OCP)
 El código está abierto a extensión pero cerrado a modificación:
 - Nuevas implementaciones de repositorios pueden añadirse sin modificar servicios
 - Uso de interfaces permite cambiar implementaciones fácilmente
 
-#### 3. **Liskov Substitution Principle (LSP)**
+#### 3. Liskov Substitution Principle (LSP)
 Cualquier implementación de repositorio puede sustituir a otra:
 - `EloquentProjectRepository` puede reemplazarse por `MongoProjectRepository`
 - Los servicios funcionan con interfaces, no con implementaciones concretas
 
-#### 4. **Interface Segregation Principle (ISP)**
+#### 4. Interface Segregation Principle (ISP)
 Interfaces pequeñas y específicas:
 - `ProjectRepositoryInterface` solo define métodos relacionados con proyectos
 - No hay métodos innecesarios que los clientes no usen
 
-#### 5. **Dependency Inversion Principle (DIP)**
+#### 5. Dependency Inversion Principle (DIP)
 Módulos de alto nivel no dependen de módulos de bajo nivel:
 - `ProjectService` depende de `ProjectRepositoryInterface` (abstracción)
 - No depende directamente de `EloquentProjectRepository` (implementación)
@@ -310,16 +310,16 @@ ProjectModel::all()->map(fn($m) => $this->toDomain($m))
 // 6. Controller formatea la respuesta JSON
 ```
 
-## 🧪 Testing
+## Testing
 
 El proyecto cuenta con una suite completa de tests utilizando **PEST** (backend) y **Vitest** (frontend).
 
 ### Estadísticas de Tests
 
--   **Backend**: 21 tests, 155 assertions
--   **Frontend**: 89 tests (6 componentes + 2 composables)
--   **Total**: 110 tests pasando ✅
--   **Cobertura**: Alta cobertura en todas las capas
+- **Backend**: 21 tests, 155 assertions
+- **Frontend**: 89 tests (6 componentes + 2 composables)
+- **Total**: 110 tests pasando
+- **Cobertura**: Alta cobertura en todas las capas
 
 ### Ejecutar Tests
 
@@ -343,30 +343,30 @@ php artisan test && npm test
 #### Backend Tests (`tests/`)
 
 **Tests Unitarios** (`tests/Unit/`):
-- ✅ ProjectService: Lógica de negocio con mocks
+- ProjectService: Lógica de negocio con mocks
 
 **Tests de Integración** (`tests/Feature/Api/`):
-- ✅ PersonalInfoApiTest: GET endpoint, 404 handling
-- ✅ SkillApiTest: Ordering, empty arrays, proficiency
-- ✅ ExperienceApiTest: Date ordering, null handling
-- ✅ EducationApiTest: Ordering, ongoing education
-- ✅ ProjectApiTest: CRUD operations, data structure
+- PersonalInfoApiTest: GET endpoint, 404 handling
+- SkillApiTest: Ordering, empty arrays, proficiency
+- ExperienceApiTest: Date ordering, null handling
+- EducationApiTest: Ordering, ongoing education
+- ProjectApiTest: CRUD operations, data structure
 
 #### Frontend Tests (`resources/js/`)
 
 **Componentes** (`__tests__/`):
-- ✅ StatsCard: Props, color variants, hover effects
-- ✅ LoadingSpinner: Sizes, accessibility
-- ✅ InfoBanner: Types, icons, slots
-- ✅ ProjectCard: Images, links, RouterLink
-- ✅ TimelineItem: Colors, timeline dot
-- ✅ SectionHeader: Icons, styling
+- StatsCard: Props, color variants, hover effects
+- LoadingSpinner: Sizes, accessibility
+- InfoBanner: Types, icons, slots
+- ProjectCard: Images, links, RouterLink
+- TimelineItem: Colors, timeline dot
+- SectionHeader: Icons, styling
 
 **Composables** (`composables/__tests__/`):
-- ✅ useBusMap: Geographic bounds, Leaflet icons
-- ✅ useBusSchedule: Service schedules, time logic
+- useBusMap: Geographic bounds, Leaflet icons
+- useBusSchedule: Service schedules, time logic
 
-## 📋 Scripts Disponibles
+## Scripts Disponibles
 
 ### Backend (PHP)
 ```bash
@@ -389,42 +389,42 @@ npm run test:ui         # Tests con interfaz visual
 npm run test:coverage   # Tests con cobertura
 ```
 
-## 🔧 Tecnologías Modernas Utilizadas
+## Tecnologías Modernas Utilizadas
 
 ### PHP 8.3 Features
-- ✅ Typed properties en todos los modelos
-- ✅ Constructor property promotion
-- ✅ Readonly classes para inmutabilidad
-- ✅ Final classes para mejor rendimiento
-- ✅ Enums para valores constantes
-- ✅ Modern array functions
+- Typed properties en todos los modelos
+- Constructor property promotion
+- Readonly classes para inmutabilidad
+- Final classes para mejor rendimiento
+- Enums para valores constantes
+- Modern array functions
 
 ### JavaScript ES2024
-- ✅ Nullish coalescing operator (`??`)
-- ✅ Optional chaining (`?.`)
-- ✅ Async/await para operaciones asíncronas
-- ✅ ES Modules
-- ✅ Composition API de Vue 3
-- ✅ Reactive state management con Pinia
+- Nullish coalescing operator (`??`)
+- Optional chaining (`?.`)
+- Async/await para operaciones asíncronas
+- ES Modules
+- Composition API de Vue 3
+- Reactive state management con Pinia
 
-## 📈 Rendimiento
+## Rendimiento
 
-- ⚡ **First Contentful Paint**: < 1.5s
-- ⚡ **Time to Interactive**: < 3s
-- ⚡ **Lighthouse Score**: 95+
-- ⚡ **Build optimizado**: Code splitting automático
-- ⚡ **Lazy loading**: Componentes y rutas cargadas bajo demanda
+- **First Contentful Paint**: < 1.5s
+- **Time to Interactive**: < 3s
+- **Lighthouse Score**: 95+
+- **Build optimizado**: Code splitting automático
+- **Lazy loading**: Componentes y rutas cargadas bajo demanda
 
-## 🔐 Seguridad
+## Seguridad
 
-- ✅ CSRF Protection activado
-- ✅ XSS Prevention con sanitización
-- ✅ SQL Injection prevention con Eloquent ORM
-- ✅ Rate limiting en API endpoints
-- ✅ Secure headers configurados
-- ✅ Input validation en todos los endpoints
+- CSRF Protection activado
+- XSS Prevention con sanitización
+- SQL Injection prevention con Eloquent ORM
+- Rate limiting en API endpoints
+- Secure headers configurados
+- Input validation en todos los endpoints
 
-## 🚀 Despliegue
+## Despliegue
 
 ### Despliegue con Docker Compose (Recomendado)
 
@@ -450,7 +450,7 @@ chmod +x deploy-compose.sh
 ./deploy-compose.sh logs     # Ver logs
 ```
 
-### 🔄 Actualizar Despliegue tras git pull
+### Actualizar Despliegue tras git pull
 
 Cuando traes cambios del repositorio a tu servidor/VM:
 
@@ -470,16 +470,16 @@ docker compose up -d --build
 | Cambios en Dockerfile | `docker compose up -d --build` |
 | Cambios en .env | `docker compose up -d` |
 
-> 💡 **Consejo**: Ante la duda, usa siempre `docker compose up -d --build`. Tarda un poco más pero garantiza que todo está actualizado.
+**Nota**: Ante la duda, usa siempre `docker compose up -d --build`. Tarda un poco más pero garantiza que todo está actualizado.
 
 **Características del docker-compose.yml:**
-- ✅ Volúmenes persistentes para storage y database
-- ✅ Health checks automáticos
-- ✅ Restart automático si el contenedor falla
-- ✅ Red aislada para seguridad
-- ✅ Variables de entorno configurables
-- ✅ Puerto 80 expuesto (mapea a 8080 interno)
-- ✅ Límites de recursos (CPU y RAM)
+- Volúmenes persistentes para storage y database
+- Health checks automáticos
+- Restart automático si el contenedor falla
+- Red aislada para seguridad
+- Variables de entorno configurables
+- Puerto 80 expuesto (mapea a 8080 interno)
+- Límites de recursos (CPU y RAM)
 
 ### Comandos Útiles Docker Compose
 
@@ -548,15 +548,15 @@ docker run -d -p 80:8080 \
 ```
 
 **El Dockerfile incluye:**
-- ✅ PHP 8.3 con FPM + Nginx (serversideup/php:8.3-fpm-nginx)
-- ✅ Node.js 20 para build de assets
-- ✅ Extensiones PHP necesarias (bcmath, intl)
-- ✅ Generación automática de APP_KEY
-- ✅ Migraciones y seeders automáticos
-- ✅ Build de assets optimizado para producción
-- ✅ Caché de configuración (config, routes, views)
-- ✅ Health check en `/up`
-- ✅ Permisos correctos para www-data
+- PHP 8.3 con FPM + Nginx (serversideup/php:8.3-fpm-nginx)
+- Node.js 20 para build de assets
+- Extensiones PHP necesarias (bcmath, intl)
+- Generación automática de APP_KEY
+- Migraciones y seeders automáticos
+- Build de assets optimizado para producción
+- Caché de configuración (config, routes, views)
+- Health check en `/up`
+- Permisos correctos para www-data
 
 ### Plataformas Soportadas
 
@@ -579,22 +579,22 @@ php artisan view:cache
 npm run build
 ```
 
-## 📝 Licencia
+## Licencia
 
 Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
 
-## 👤 Autor
+## Autor
 
 **Carlos Miguel Ortega Arencibia**
 
 Full Stack Developer | Laravel & Vue.js Specialist
 
--   🌐 **Web**: [devortega.com](https://www.devortega.com)
--   💼 **LinkedIn**: [linkedin.com/in/carlosmortega](https://www.linkedin.com/in/carlosmortega/)
--   📧 **Email**: carloso2103@gmail.com
--   🐙 **GitHub**: [github.com/DevOrtega](https://github.com/DevOrtega)
+- **Web**: [devortega.com](https://www.devortega.com)
+- **LinkedIn**: [linkedin.com/in/carlosmortega](https://www.linkedin.com/in/carlosmortega/)
+- **Email**: carloso2103@gmail.com
+- **GitHub**: [github.com/DevOrtega](https://github.com/DevOrtega)
 
-## 🙏 Agradecimientos
+## Agradecimientos
 
 - Laravel Framework por proporcionar un ecosistema robusto
 - Vue.js por la reactividad y composición elegante
@@ -603,7 +603,6 @@ Full Stack Developer | Laravel & Vue.js Specialist
 
 ---
 
-<div align="center">
-  <p>Hecho por Carlos Miguel Ortega Arencibia</p>
-  <p>© 2025 - Todos los derechos reservados</p>
-</div>
+**Portfolio de Carlos Miguel Ortega Arencibia**
+
+© 2025 - Todos los derechos reservados
