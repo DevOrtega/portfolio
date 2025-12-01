@@ -13,6 +13,9 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // Run Admin User Seeder
+        $this->call(AdminUserSeeder::class);
+
         // Personal Info - Solo crear si no existe
         PersonalInfo::firstOrCreate(
             ['email' => 'carloso2103@gmail.com'],
