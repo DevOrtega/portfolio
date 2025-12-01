@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
             \App\Http\Middleware\SetLocale::class,
         ]);
         
+        // Register custom middleware aliases
+        $middleware->alias([
+            'admin' => \App\Http\Middleware\IsAdmin::class,
+        ]);
+        
         // Trust Cloudflare and other proxies
         $middleware->trustProxies(at: '*');
     })
