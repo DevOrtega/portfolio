@@ -1,47 +1,47 @@
-# 🛠️ Guía de Desarrollo - Portfolio
+# Guía de Desarrollo - Portfolio
 
 > **Referencia rápida para desarrolladores**: Guía completa para corregir fallos, añadir funcionalidades y realizar modificaciones de manera eficiente.
 
 ---
 
-## 📑 Índice de Navegación Rápida
+## Índice de Navegación Rápida
 
 | Tarea | Ir a sección |
 |-------|--------------|
-| Corregir un bug en el backend | [Debugging Backend](#-debugging-backend) |
-| Corregir un bug en el frontend | [Debugging Frontend](#-debugging-frontend) |
-| Añadir un nuevo endpoint API | [Añadir Endpoint](#-añadir-nuevo-endpoint-api) |
-| Añadir un nuevo componente Vue | [Añadir Componente](#-añadir-nuevo-componente-vue) |
-| Modificar modelo/entidad | [Modificar Entidad](#-modificar-una-entidadmodelo) |
-| Añadir una nueva vista/página | [Añadir Vista](#-añadir-nueva-vista) |
-| Añadir traducciones | [Traducciones](#-traducciones-i18n) |
-| Ejecutar tests | [Testing](#-testing-referencia-rápida) |
+| Corregir un bug en el backend | [Debugging Backend](#debugging-backend) |
+| Corregir un bug en el frontend | [Debugging Frontend](#debugging-frontend) |
+| Añadir un nuevo endpoint API | [Añadir Endpoint](#añadir-nuevo-endpoint-api) |
+| Añadir un nuevo componente Vue | [Añadir Componente](#añadir-nuevo-componente-vue) |
+| Modificar modelo/entidad | [Modificar Entidad](#modificar-una-entidadmodelo) |
+| Añadir una nueva vista/página | [Añadir Vista](#añadir-nueva-vista) |
+| Añadir traducciones | [Traducciones](#traducciones-i18n) |
+| Ejecutar tests | [Testing](#testing---referencia-rápida) |
 | Debuggear tests fallidos | [Tests Fallidos](#debuggear-tests-fallidos) |
-| Desplegar cambios | [Despliegue](#-despliegue) |
+| Desplegar cambios | [Despliegue](#despliegue) |
 
 ---
 
-## 🏗️ Estructura del Proyecto - Mapa Rápido
+## Estructura del Proyecto
 
 ```
 portfolio/
 ├── app/
-│   ├── Application/Portfolio/     # 🔧 LÓGICA DE NEGOCIO
+│   ├── Application/Portfolio/     # LÓGICA DE NEGOCIO
 │   │   ├── DTOs/                  # Data Transfer Objects
 │   │   └── Services/              # Servicios (ProjectService, etc.)
 │   │
-│   ├── Domain/Portfolio/          # 🎯 DOMINIO PURO
+│   ├── Domain/Portfolio/          # DOMINIO PURO
 │   │   ├── Entities/              # Entidades (Project, etc.)
 │   │   └── Repositories/          # Interfaces de repositorios
 │   │
-│   ├── Http/Controllers/Api/      # 🌐 CONTROLADORES API
+│   ├── Http/Controllers/Api/      # CONTROLADORES API
 │   │   ├── ProjectController.php
 │   │   ├── ExperienceController.php
 │   │   ├── SkillController.php
 │   │   ├── EducationController.php
 │   │   └── PersonalInfoController.php
 │   │
-│   ├── Infrastructure/Persistence/ # 🗄️ PERSISTENCIA
+│   ├── Infrastructure/Persistence/ # PERSISTENCIA
 │   │   └── Eloquent/
 │   │       ├── Models/            # Modelos Eloquent
 │   │       └── Repositories/      # Implementaciones
@@ -53,7 +53,7 @@ portfolio/
 │       ├── Education.php
 │       └── PersonalInfo.php
 │
-├── resources/js/                  # 🎨 FRONTEND VUE.JS
+├── resources/js/                  # FRONTEND VUE.JS
 │   ├── components/               # Componentes reutilizables
 │   ├── composables/              # Lógica reutilizable
 │   ├── views/                    # Vistas/Páginas
@@ -76,59 +76,61 @@ portfolio/
 
 ---
 
-## 🔥 Comandos Esenciales
+## Comandos Esenciales
 
 ### Primera Instalación (tras clonar)
 
 ```bash
 composer setup
 ```
-> Copia .env, instala dependencias PHP/npm, genera key, crea BD SQLite, ejecuta migraciones y seeders, genera docs API, hace build y optimiza.
+
+Copia .env, instala dependencias PHP/npm, genera key, crea BD SQLite, ejecuta migraciones y seeders, genera docs API, hace build y optimiza.
 
 ### Desarrollo Diario
 
 ```bash
-# Levantar todo el entorno con un solo comando:
 composer dev
 ```
-> Ejecuta en paralelo: servidor Laravel, queue worker, logs en tiempo real (pail), y Vite con HMR.
+
+Ejecuta en paralelo: servidor Laravel, queue worker, logs en tiempo real (pail), y Vite con HMR.
 
 ### Actualizar tras git pull
 
 ```bash
 composer refresh
 ```
-> Reinstala dependencias, resetea BD con seeders, regenera docs API y limpia caches.
+
+Reinstala dependencias, resetea BD con seeders, regenera docs API y limpia caches.
 
 ### Comandos Frecuentes
 
 ```bash
-# 🧪 Tests
+# Tests
 php artisan test                      # Todos los tests backend
 php artisan test --filter=ProjectApi  # Tests específicos
 npm test                              # Tests frontend
 npm run test:ui                       # Tests con interfaz visual
 
-# 🔄 Base de datos
+# Base de datos
 php artisan migrate                   # Ejecutar migraciones pendientes
 php artisan migrate:fresh --seed      # Resetear BD con datos
 
-# 📚 Documentación API
+# Documentación API
 php artisan l5-swagger:generate       # Regenerar Swagger docs
 
-# 🧹 Cache
+# Cache
 php artisan cache:clear
 php artisan config:clear
 php artisan route:clear
 php artisan view:clear
 
-# ✨ Formateo de código
+# Formateo de código
 ./vendor/bin/pint                     # Formatear PHP
 ```
 
 ---
 
-## 🐛 Debugging Backend
+## Debugging Backend
 
 ### Localización Rápida de Archivos
 
@@ -186,7 +188,7 @@ docker compose logs -f --tail 50
 
 ---
 
-## 🎨 Debugging Frontend
+## Debugging Frontend
 
 ### Localización Rápida de Archivos
 
@@ -227,19 +229,19 @@ console.table(array);    // Para arrays/objetos
 
 ---
 
-## ➕ Añadir Nuevo Endpoint API
+## Añadir Nuevo Endpoint API
 
-### Checklist Rápido
+### Checklist
 
 ```
-□ 1. Crear/modificar Controller en app/Http/Controllers/Api/
-□ 2. Añadir ruta en routes/api.php
-□ 3. Crear Service en app/Application/Portfolio/Services/ (si hay lógica)
-□ 4. Crear/modificar Repository Interface en app/Domain/Portfolio/Repositories/
-□ 5. Implementar Repository en app/Infrastructure/Persistence/Eloquent/Repositories/
-□ 6. Registrar binding en app/Providers/RepositoryServiceProvider.php
-□ 7. Añadir test en tests/Feature/Api/
-□ 8. Regenerar docs: php artisan l5-swagger:generate
+[ ] 1. Crear/modificar Controller en app/Http/Controllers/Api/
+[ ] 2. Añadir ruta en routes/api.php
+[ ] 3. Crear Service en app/Application/Portfolio/Services/ (si hay lógica)
+[ ] 4. Crear/modificar Repository Interface en app/Domain/Portfolio/Repositories/
+[ ] 5. Implementar Repository en app/Infrastructure/Persistence/Eloquent/Repositories/
+[ ] 6. Registrar binding en app/Providers/RepositoryServiceProvider.php
+[ ] 7. Añadir test en tests/Feature/Api/
+[ ] 8. Regenerar docs: php artisan l5-swagger:generate
 ```
 
 ### Ejemplo: Añadir endpoint GET /api/certifications
@@ -290,16 +292,16 @@ it('returns all certifications', function () {
 
 ---
 
-## 🧩 Añadir Nuevo Componente Vue
+## Añadir Nuevo Componente Vue
 
-### Checklist Rápido
+### Checklist
 
 ```
-□ 1. Crear componente en resources/js/components/
-□ 2. Usar <script setup> con Composition API
-□ 3. Definir props con tipos
-□ 4. Crear test en resources/js/components/__tests__/
-□ 5. Importar donde se use
+[ ] 1. Crear componente en resources/js/components/
+[ ] 2. Usar <script setup> con Composition API
+[ ] 3. Definir props con tipos
+[ ] 4. Crear test en resources/js/components/__tests__/
+[ ] 5. Importar donde se use
 ```
 
 ### Template de Componente
@@ -404,19 +406,19 @@ describe('MiComponente', () => {
 
 ---
 
-## 📝 Modificar una Entidad/Modelo
+## Modificar una Entidad/Modelo
 
-### Checklist Rápido
+### Checklist
 
 ```
-□ 1. Crear migración: php artisan make:migration add_campo_to_tabla
-□ 2. Modificar modelo en app/Models/
-□ 3. Modificar entidad de dominio en app/Domain/Portfolio/Entities/
-□ 4. Actualizar Repository si es necesario
-□ 5. Actualizar Factory en database/factories/
-□ 6. Actualizar Seeder en database/seeders/
-□ 7. Actualizar tests
-□ 8. Ejecutar: php artisan migrate
+[ ] 1. Crear migración: php artisan make:migration add_campo_to_tabla
+[ ] 2. Modificar modelo en app/Models/
+[ ] 3. Modificar entidad de dominio en app/Domain/Portfolio/Entities/
+[ ] 4. Actualizar Repository si es necesario
+[ ] 5. Actualizar Factory en database/factories/
+[ ] 6. Actualizar Seeder en database/seeders/
+[ ] 7. Actualizar tests
+[ ] 8. Ejecutar: php artisan migrate
 ```
 
 ### Ejemplo: Añadir campo "featured" a Projects
@@ -465,16 +467,16 @@ php artisan migrate
 
 ---
 
-## 🗺️ Añadir Nueva Vista
+## Añadir Nueva Vista
 
-### Checklist Rápido
+### Checklist
 
 ```
-□ 1. Crear vista en resources/js/views/
-□ 2. Añadir ruta en resources/js/router/index.js
-□ 3. Añadir link en navegación (NavBar.vue)
-□ 4. Añadir traducciones si es necesario
-□ 5. Crear tests
+[ ] 1. Crear vista en resources/js/views/
+[ ] 2. Añadir ruta en resources/js/router/index.js
+[ ] 3. Añadir link en navegación (NavBar.vue)
+[ ] 4. Añadir traducciones si es necesario
+[ ] 5. Crear tests
 ```
 
 ### Ejemplo: Añadir página de Certificaciones
@@ -532,7 +534,7 @@ onMounted(async () => {
 
 ---
 
-## 🌐 Traducciones (i18n)
+## Traducciones (i18n)
 
 ### Archivos de Traducciones
 
@@ -575,7 +577,7 @@ onMounted(async () => {
 
 ---
 
-## 🧪 Testing - Referencia Rápida
+## Testing - Referencia Rápida
 
 ### Ejecutar Tests
 
@@ -643,17 +645,17 @@ describe('ProjectApiTest', function () {
 
 ---
 
-## 🚀 Despliegue
+## Despliegue
 
 ### Pre-despliegue Checklist
 
 ```
-□ Todos los tests pasan: php artisan test && npm test
-□ Código formateado: ./vendor/bin/pint
-□ No hay errores de consola en el navegador
-□ Build de producción exitoso: npm run build
-□ Variables de entorno configuradas
-□ Migraciones listas
+[ ] Todos los tests pasan: php artisan test && npm test
+[ ] Código formateado: ./vendor/bin/pint
+[ ] No hay errores de consola en el navegador
+[ ] Build de producción exitoso: npm run build
+[ ] Variables de entorno configuradas
+[ ] Migraciones listas
 ```
 
 ### Comandos de Despliegue
@@ -685,7 +687,7 @@ docker compose up -d  # Levanta versión anterior si la imagen no cambió
 
 ---
 
-## 📋 Cheatsheets
+## Cheatsheets
 
 ### Artisan Commands Frecuentes
 
@@ -748,7 +750,7 @@ public function findById(int $id): ?Entity;
 
 ---
 
-## 🔗 Enlaces Útiles
+## Enlaces Útiles
 
 - **Swagger UI Local**: http://localhost:8000/api/documentation
 - **Logs Laravel**: `storage/logs/laravel.log`
@@ -760,7 +762,6 @@ public function findById(int $id): ?Entity;
 
 ---
 
-<div align="center">
-  <p><strong>Guía de Desarrollo - Portfolio</strong></p>
-  <p>Última actualización: Noviembre 2025</p>
-</div>
+**Guía de Desarrollo - Portfolio**
+
+Última actualización: Diciembre 2025
