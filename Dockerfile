@@ -16,8 +16,8 @@ WORKDIR /var/www/html
 # Copy composer files
 COPY composer.json composer.lock ./
 
-# Install PHP dependencies
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+# Install PHP dependencies (including dev for testing)
+RUN composer install --no-scripts --no-autoloader --prefer-dist
 
 # Copy package files
 COPY package*.json ./
@@ -51,6 +51,9 @@ RUN php artisan l5-swagger:generate
 # Run tests (Laravel + Vitest)
 RUN php artisan test --parallel
 RUN npm run test
+
+# Remove dev dependencies after tests pass
+RUN composer install --no-dev --optimize-autoloader --prefer-dist
 
 # Build frontend assets
 RUN npm run build
