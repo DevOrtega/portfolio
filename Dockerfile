@@ -31,8 +31,8 @@ COPY . .
 # Setup environment and generate key as root
 USER root
 
-# Generate optimized autoload files first
-RUN composer dump-autoload --optimize
+# Generate autoload with dev dependencies for testing
+RUN composer dump-autoload
 
 # Copy .env.example to .env if .env doesn't exist, then generate key
 RUN if [ ! -f .env ]; then \
@@ -49,10 +49,10 @@ RUN php artisan migrate:fresh --seed --force
 RUN php artisan l5-swagger:generate
 
 # Run tests (Laravel + Vitest)
-RUN php artisan test --parallel
+RUN ./vendor/bin/pest --parallel
 RUN npm run test
 
-# Remove dev dependencies after tests pass
+# Remove dev dependencies after tests pass and optimize
 RUN composer install --no-dev --optimize-autoloader --prefer-dist
 
 # Build frontend assets
