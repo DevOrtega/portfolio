@@ -7,7 +7,15 @@
       :class="['language-btn', { active: currentLocale === lang.code }]"
       :title="lang.name"
     >
-      {{ lang.flag }} {{ lang.label }}
+      <img 
+        :src="`https://flagcdn.com/w20/${lang.flagCode}.png`" 
+        :srcset="`https://flagcdn.com/w40/${lang.flagCode}.png 2x`"
+        :alt="lang.name"
+        class="flag-img"
+        width="20"
+        height="15"
+      />
+      {{ lang.label }}
     </button>
   </div>
 </template>
@@ -19,8 +27,8 @@ import { useI18n } from 'vue-i18n';
 const { locale } = useI18n();
 
 const availableLanguages = [
-  { code: 'es', label: 'ES', name: 'Español', flag: '🇪🇸' },
-  { code: 'en', label: 'EN', name: 'English', flag: '🇬🇧' }
+  { code: 'es', label: 'ES', name: 'Español', flagCode: 'es' },
+  { code: 'en', label: 'EN', name: 'English', flagCode: 'gb' }
 ];
 
 const currentLocale = computed(() => locale.value);
@@ -62,5 +70,12 @@ const changeLanguage = (lang) => {
   background: #3b82f6;
   color: white;
   border-color: #3b82f6;
+}
+
+.flag-img {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.25rem;
+  border-radius: 2px;
 }
 </style>
