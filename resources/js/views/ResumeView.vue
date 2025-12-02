@@ -117,6 +117,7 @@ const getCategoryTranslation = (category) => {
     'SQL': 'skills.sql',
     'NoSQL': 'skills.nosql',
     'DevOps': 'skills.devops',
+    'Cloud': 'skills.cloud',
     'AI Tools': 'skills.aitools',
     'Tools': 'skills.tools',
     'Methodology': 'skills.methodology',
@@ -138,17 +139,17 @@ const getCategoryTranslation = (category) => {
         <SectionHeader :title="$t('skills.title')" default-icon="skills" />
         
         <!-- Year Filter -->
-        <div class="mb-6 flex items-center gap-4">
-          <label for="year-filter" class="text-gray-300 font-medium">{{ $t('skills.filterByYear') }}:</label>
+        <div class="mb-6 flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4">
+          <label for="year-filter" class="text-gray-300 font-medium text-sm sm:text-base">{{ $t('skills.filterByYear') }}:</label>
           <select 
             id="year-filter"
             v-model="selectedYear" 
-            class="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-indigo-500 focus:outline-none transition-colors"
+            class="bg-gray-800 text-white px-4 py-2 rounded-lg border border-gray-700 focus:border-indigo-500 focus:outline-none transition-colors w-full sm:w-auto text-base"
           >
             <option value="all">{{ $t('skills.allYears') }}</option>
             <option v-for="year in availableYears" :key="year" :value="year">{{ year }}</option>
           </select>
-          <span v-if="selectedYear !== 'all'" class="text-sm text-gray-400">
+          <span v-if="selectedYear !== 'all'" class="text-xs sm:text-sm text-gray-400">
             ({{ $t('skills.showingSkillsFor') }} {{ selectedYear }})
           </span>
         </div>
@@ -158,8 +159,11 @@ const getCategoryTranslation = (category) => {
             <h3 class="text-lg font-semibold text-indigo-300 mb-4">{{ $t(getCategoryTranslation(category)) }}</h3>
             <div class="space-y-4">
               <div v-for="skill in categorySkills" :key="skill.id">
-                <div class="flex justify-between text-sm mb-1">
+                <div class="flex flex-wrap items-center gap-1 text-sm mb-1">
                   <span class="text-gray-300">{{ skill.name }}</span>
+                  <span v-if="skill.is_personal" class="text-xs bg-indigo-600/30 text-indigo-300 px-2 py-0.5 rounded-full whitespace-nowrap">
+                    {{ $t('skills.personal') }}
+                  </span>
                   <!-- Proficiency hidden but bar still uses the value -->
                 </div>
                 <div class="w-full bg-gray-700 rounded-full h-2">

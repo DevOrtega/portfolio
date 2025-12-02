@@ -1,5 +1,5 @@
 <template>
-  <div class="h-[600px] w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700 relative flex flex-col md:flex-row">
+  <div class="h-[400px] sm:h-[500px] md:h-[600px] w-full rounded-xl overflow-hidden shadow-2xl border border-gray-700 relative flex flex-col md:flex-row">
     <!-- Map Container -->
     <div class="flex-grow h-full relative z-0">
       <l-map ref="map" v-model:zoom="zoom" :center="center" :use-global-leaflet="false">
@@ -37,7 +37,7 @@
     </div>
     
     <!-- Sidebar / Legend -->
-    <div class="w-full md:w-80 bg-gray-900 border-l border-gray-700 p-6 flex flex-col z-10 overflow-y-auto">
+    <div class="w-full md:w-80 bg-gray-900 border-t md:border-t-0 md:border-l border-gray-700 p-4 sm:p-6 flex flex-col z-10 overflow-y-auto max-h-[200px] md:max-h-none">
       <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
         <span class="animate-pulse text-green-500">●</span> Live Monitor
       </h3>

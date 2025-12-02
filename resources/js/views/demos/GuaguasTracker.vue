@@ -219,6 +219,10 @@ const zoom = ref(getResponsiveZoom());
 // Handle window resize
 const handleResize = () => {
   zoom.value = getResponsiveZoom();
+  // Close tree on mobile when resizing down
+  if (isMobile() && treeVisible.value) {
+    treeVisible.value = false;
+  }
 };
 
 // UI State
@@ -227,8 +231,9 @@ const selectedBusId = ref(null);
 const buses = ref([]);
 const updateInterval = ref(null);
 
-// Sidebar tree control
-const treeVisible = ref(true);
+// Sidebar tree control - closed by default on mobile
+const isMobile = () => window.innerWidth < 640;
+const treeVisible = ref(!isMobile());
 const treeRef = ref(null);
 const selectedBusIds = ref(new Set());
 const hiddenBusIds = ref(new Set());

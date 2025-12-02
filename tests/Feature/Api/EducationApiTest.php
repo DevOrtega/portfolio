@@ -11,23 +11,23 @@ describe('Education API', function () {
         Education::create([
             'institution' => 'University A',
             'degree' => 'Master in Computer Science',
-            'start_date' => '2020-09-01',
-            'end_date' => '2022-06-30',
+            'start_date' => 'Sept. 2020',
+            'end_date' => 'Jun. 2022',
             'description' => 'Master studies',
         ]);
 
         Education::create([
             'institution' => 'University B',
             'degree' => 'Bachelor in Computer Science',
-            'start_date' => '2016-09-01',
-            'end_date' => '2020-06-30',
+            'start_date' => 'Sept. 2016',
+            'end_date' => 'Jun. 2020',
             'description' => 'Bachelor studies',
         ]);
 
         Education::create([
             'institution' => 'University C',
             'degree' => 'PhD in Computer Science',
-            'start_date' => '2022-09-01',
+            'start_date' => 'Oct. 2022',
             'end_date' => null,
             'description' => 'Current PhD studies',
         ]);
@@ -53,9 +53,9 @@ describe('Education API', function () {
 
         $data = $response->json();
         
-        // Verify ordering: most recent first
+        // Verify ordering: most recent first (2022 Oct > 2022 Sept > 2020 > 2016)
         expect($data[0]['institution'])->toBe('University C')
-            ->and($data[0]['start_date'])->toBe('2022-09-01')
+            ->and($data[0]['start_date'])->toBe('Oct. 2022')
             ->and($data[1]['institution'])->toBe('University A')
             ->and($data[2]['institution'])->toBe('University B');
     });
@@ -74,7 +74,7 @@ describe('Education API', function () {
         Education::create([
             'institution' => 'Current University',
             'degree' => 'Ongoing Degree',
-            'start_date' => '2023-09-01',
+            'start_date' => 'Sept. 2023',
             'end_date' => null,
             'description' => 'Currently studying',
         ]);
@@ -97,8 +97,8 @@ describe('Education API', function () {
         Education::create([
             'institution' => 'University',
             'degree' => 'Degree',
-            'start_date' => '2020-01-01',
-            'end_date' => '2021-12-31',
+            'start_date' => 'Ene. 2020',
+            'end_date' => 'Dic. 2021',
             'description' => null,
         ]);
 
