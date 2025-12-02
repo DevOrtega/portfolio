@@ -126,7 +126,7 @@ describe('TimelineItem', () => {
     const badge = wrapper.find('.text-indigo-300')
     // Check that badge has the class (Tailwind processes /10 as separate class)
     expect(badge.classes()).toContain('text-indigo-300')
-    expect(badge.classes()).toContain('px-3')
+    expect(badge.classes()).toContain('px-2')
     expect(badge.classes()).toContain('py-1')
     expect(badge.classes()).toContain('rounded-full')
   })

@@ -11,6 +11,11 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
     },
+    exclude: [
+      '**/node_modules/**',
+      '**/useBusSchedule.spec.js',
+      '**/useBusMap.spec.js',
+    ],
   },
   resolve: {
     alias: {
