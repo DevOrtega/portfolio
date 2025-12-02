@@ -14,7 +14,8 @@ set -e
 case "$1" in
   build)
     echo "🔨 Building and starting services..."
-    docker compose up -d --build
+    docker compose build --no-cache
+    docker compose up -d
     echo "✅ Services started. Checking health..."
     sleep 5
     docker compose ps
