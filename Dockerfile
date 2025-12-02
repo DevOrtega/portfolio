@@ -45,6 +45,13 @@ RUN if [ ! -f .env ]; then \
 # Run migrations and seeders
 RUN php artisan migrate:fresh --seed --force
 
+# Generate API documentation
+RUN php artisan l5-swagger:generate
+
+# Run tests (Laravel + Vitest)
+RUN php artisan test --parallel
+RUN npm run test
+
 # Build frontend assets
 RUN npm run build
 
