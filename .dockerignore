@@ -17,10 +17,8 @@ public/build
 .vscode
 .DS_Store
 Thumbs.db
-tests
 .phpunit.result.cache
 .editorconfig
 .gitignore
 .gitattributes
-phpunit.xml
 README.md
