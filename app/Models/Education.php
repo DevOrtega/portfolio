@@ -19,6 +19,14 @@ final class Education extends Model
 {
     use HasFactory;
 
+    /**
+     * Get the skills associated with the education.
+     */
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'education_skill');
+    }
+
     protected $fillable = [
         'institution',
         'degree',

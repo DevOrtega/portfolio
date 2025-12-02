@@ -47,23 +47,28 @@ const changeLanguage = (lang) => {
 .language-switcher {
   display: flex;
   gap: 0.5rem;
+  flex-wrap: wrap;
 }
 
 .language-btn {
-  padding: 0.5rem 1rem;
-  border: 1px solid #e5e7eb;
-  background: white;
+  padding: 0.375rem 0.75rem;
+  border: 1px solid #374151;
+  background: #1f2937;
   border-radius: 0.375rem;
   cursor: pointer;
   transition: all 0.2s;
   font-size: 0.875rem;
   font-weight: 500;
-  color: #6b7280;
+  color: #9ca3af;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .language-btn:hover {
-  background: #f9fafb;
-  border-color: #d1d5db;
+  background: #374151;
+  border-color: #4b5563;
+  color: #e5e7eb;
 }
 
 .language-btn.active {
@@ -75,7 +80,7 @@ const changeLanguage = (lang) => {
 .flag-img {
   display: inline-block;
   vertical-align: middle;
-  margin-right: 0.25rem;
   border-radius: 2px;
+  flex-shrink: 0;
 }
 </style>

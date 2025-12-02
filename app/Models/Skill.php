@@ -17,10 +17,27 @@ final class Skill extends Model
 {
     use HasFactory;
 
+    /**
+     * Get the experiences associated with the skill.
+     */
+    public function experiences()
+    {
+        return $this->belongsToMany(Experience::class, 'experience_skill');
+    }
+
+    /**
+     * Get the educations associated with the skill.
+     */
+    public function educations()
+    {
+        return $this->belongsToMany(Education::class, 'education_skill');
+    }
+
     protected $fillable = [
         'name',
         'category',
         'proficiency',
+        'is_personal',
     ];
 
     protected function casts(): array
@@ -29,6 +46,7 @@ final class Skill extends Model
             'name' => 'string',
             'category' => 'string',
             'proficiency' => 'integer',
+            'is_personal' => 'boolean',
         ];
     }
 }

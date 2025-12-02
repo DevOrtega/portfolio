@@ -11,7 +11,7 @@ describe('Experience API', function () {
         Experience::create([
             'company' => 'Company A',
             'role' => 'Senior Developer',
-            'start_date' => '2023-01-01',
+            'start_date' => 'Ene. 2023',
             'end_date' => null,
             'description' => 'Current position',
         ]);
@@ -19,16 +19,16 @@ describe('Experience API', function () {
         Experience::create([
             'company' => 'Company B',
             'role' => 'Junior Developer',
-            'start_date' => '2020-06-01',
-            'end_date' => '2022-12-31',
+            'start_date' => 'Jun. 2020',
+            'end_date' => 'Dic. 2022',
             'description' => 'First job',
         ]);
 
         Experience::create([
             'company' => 'Company C',
             'role' => 'Mid Developer',
-            'start_date' => '2021-03-01',
-            'end_date' => '2022-11-30',
+            'start_date' => 'Mar. 2021',
+            'end_date' => 'Nov. 2022',
             'description' => 'Second job',
         ]);
 
@@ -53,9 +53,9 @@ describe('Experience API', function () {
 
         $data = $response->json();
         
-        // Verify ordering: most recent first
+        // Verify ordering: most recent first (2023 > 2021 > 2020)
         expect($data[0]['company'])->toBe('Company A')
-            ->and($data[0]['start_date'])->toBe('2023-01-01')
+            ->and($data[0]['start_date'])->toBe('Ene. 2023')
             ->and($data[1]['company'])->toBe('Company C')
             ->and($data[2]['company'])->toBe('Company B');
     });
@@ -74,7 +74,7 @@ describe('Experience API', function () {
         Experience::create([
             'company' => 'Current Company',
             'role' => 'Developer',
-            'start_date' => '2023-01-01',
+            'start_date' => 'Ene. 2023',
             'end_date' => null,
             'description' => 'Current role',
         ]);

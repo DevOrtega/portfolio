@@ -8,10 +8,10 @@
       class="bg-gray-800 rounded-xl p-6 border border-gray-700 transition-colors"
       :class="hoverColorClass"
     >
-      <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-        <h3 class="text-xl font-bold text-white">{{ title }}</h3>
+      <div class="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-2">
+        <h3 class="text-lg sm:text-xl font-bold text-white">{{ title }}</h3>
         <span 
-          class="text-sm font-medium px-3 py-1 rounded-full"
+          class="text-xs sm:text-sm font-medium px-2 sm:px-3 py-1 rounded-full self-start md:self-auto whitespace-nowrap"
           :class="badgeColorClass"
         >
           {{ dateRange }}

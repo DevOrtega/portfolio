@@ -109,6 +109,7 @@ export default {
     sql: 'SQL Databases',
     nosql: 'NoSQL Databases',
     devops: 'DevOps',
+    cloud: 'Cloud',
     aitools: 'AI Tools',
     tools: 'Tools',
     methodology: 'Methodology',
@@ -116,7 +117,8 @@ export default {
     noSkills: 'No skills available',
     filterByYear: 'Filter by year',
     allYears: 'All years',
-    showingSkillsFor: 'Showing skills used in'
+    showingSkillsFor: 'Showing skills used in',
+    personal: 'Personal'
   },
   contact: {
     title: 'Contact',

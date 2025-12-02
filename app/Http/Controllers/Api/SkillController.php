@@ -20,16 +20,30 @@ final class SkillController extends Controller
      *      operationId="getSkills",
      *      tags={"Skills"},
      *      summary="Get list of skills",
+     *      description="Returns skills ordered by proficiency. When filtering by year, returns skills associated with experiences/education active in that year, plus personal skills (always shown).",
      *      @OA\Parameter(
      *          name="year",
      *          in="query",
-     *          description="Filter skills by year (based on experience descriptions)",
+     *          description="Filter skills by year (based on experience and education relationships). Personal skills are always included.",
      *          required=false,
-     *          @OA\Schema(type="integer")
+     *          @OA\Schema(type="integer", example=2023)
      *      ),
      *      @OA\Response(
      *          response=200,
-     *          description="Successful operation"
+     *          description="Successful operation",
+     *          @OA\JsonContent(
+     *              type="array",
+     *              @OA\Items(
+     *                  type="object",
+     *                  @OA\Property(property="id", type="integer", example=1),
+     *                  @OA\Property(property="name", type="string", example="Laravel"),
+     *                  @OA\Property(property="category", type="string", example="Backend"),
+     *                  @OA\Property(property="proficiency", type="integer", example=95),
+     *                  @OA\Property(property="is_personal", type="boolean", example=false, description="Indicates if this is a personal/self-taught skill"),
+     *                  @OA\Property(property="created_at", type="string", format="date-time"),
+     *                  @OA\Property(property="updated_at", type="string", format="date-time")
+     *              )
+     *          )
      *       )
      * )
      */
@@ -42,33 +56,42 @@ final class SkillController extends Controller
             $year = (int) request('year');
 
             // Get experiences active during the specified year
-            $relevantExperiences = \App\Models\Experience::where(function ($q) use ($year) {
+            $relevantExperienceIds = \App\Models\Experience::where(function ($q) use ($year) {
                 $q->whereRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) <= ?", [$year])
                     ->where(function ($subQ) use ($year) {
                         $subQ->whereNull('end_date')
                             ->orWhereRaw("CAST(SUBSTR(end_date, -4) AS INTEGER) >= ?", [$year]);
                     });
-            })->get();
+            })->pluck('id');
 
-            // Extract skill names mentioned in experience descriptions
-            $skillNames = [];
-            foreach ($relevantExperiences as $exp) {
-                $description = strtolower($exp->description);
-                $allSkills = Skill::all();
+            // Get educations active during the specified year
+            $relevantEducationIds = \App\Models\Education::where(function ($q) use ($year) {
+                $q->whereRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) <= ?", [$year])
+                    ->where(function ($subQ) use ($year) {
+                        $subQ->whereNull('end_date')
+                            ->orWhereRaw("CAST(SUBSTR(end_date, -4) AS INTEGER) >= ?", [$year]);
+                    });
+            })->pluck('id');
 
-                foreach ($allSkills as $skill) {
-                    if (str_contains($description, strtolower($skill->name))) {
-                        $skillNames[] = $skill->name;
-                    }
+            // Filter skills: show personal skills always OR skills related to experiences/educations
+            $query->where(function ($q) use ($relevantExperienceIds, $relevantEducationIds) {
+                // Always show personal skills
+                $q->where('is_personal', true);
+
+                // Also show skills from relevant experiences
+                if ($relevantExperienceIds->isNotEmpty()) {
+                    $q->orWhereHas('experiences', function ($subQ) use ($relevantExperienceIds) {
+                        $subQ->whereIn('experiences.id', $relevantExperienceIds);
+                    });
                 }
-            }
 
-            // Filter skills by names found in experiences
-            // If no experiences found for this year, show all skills instead of none
-            if (!empty($skillNames)) {
-                $query->whereIn('name', array_unique($skillNames));
-            }
-            // If no relevant experiences, don't filter skills (show all)
+                // Also show skills from relevant educations
+                if ($relevantEducationIds->isNotEmpty()) {
+                    $q->orWhereHas('educations', function ($subQ) use ($relevantEducationIds) {
+                        $subQ->whereIn('education.id', $relevantEducationIds);
+                    });
+                }
+            });
         }
 
         // Order by proficiency descending (highest first), then by category and name

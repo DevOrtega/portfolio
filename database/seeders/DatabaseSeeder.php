@@ -36,6 +36,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Laravel', 'category' => 'Backend', 'proficiency' => 95],
             ['name' => 'PHP', 'category' => 'Backend', 'proficiency' => 90],
             ['name' => 'Node.js', 'category' => 'Backend', 'proficiency' => 80],
+            ['name' => 'Express.js', 'category' => 'Backend', 'proficiency' => 75],
             ['name' => 'Java', 'category' => 'Backend', 'proficiency' => 70],
             ['name' => 'Python', 'category' => 'Backend', 'proficiency' => 75],
             ['name' => 'Gradle', 'category' => 'Backend', 'proficiency' => 60],
@@ -44,6 +45,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Vue.js', 'category' => 'Frontend', 'proficiency' => 90],
             ['name' => 'JavaScript', 'category' => 'Frontend', 'proficiency' => 85],
             ['name' => 'TypeScript', 'category' => 'Frontend', 'proficiency' => 80],
+            ['name' => 'React.js', 'category' => 'Frontend', 'proficiency' => 65],
             ['name' => 'HTML', 'category' => 'Frontend', 'proficiency' => 95],
             ['name' => 'CSS', 'category' => 'Frontend', 'proficiency' => 85],
             ['name' => 'Angular.js', 'category' => 'Frontend', 'proficiency' => 60],
@@ -63,11 +65,18 @@ class DatabaseSeeder extends Seeder
             // Cloud & DevOps
             ['name' => 'Docker', 'category' => 'DevOps', 'proficiency' => 80],
             ['name' => 'Git', 'category' => 'DevOps', 'proficiency' => 85],
+            ['name' => 'Linux', 'category' => 'DevOps', 'proficiency' => 75],
             ['name' => 'AWS', 'category' => 'Cloud', 'proficiency' => 65],
-            ['name' => 'Proxmox', 'category' => 'DevOps', 'proficiency' => 70],
+            ['name' => 'Firebase', 'category' => 'Cloud', 'proficiency' => 70],
+            ['name' => 'Proxmox', 'category' => 'DevOps', 'proficiency' => 70, 'is_personal' => true],
             ['name' => 'Cloudera', 'category' => 'DevOps', 'proficiency' => 60],
 
-            // AI Tools
+            // AI & Data Science
+            ['name' => 'TensorFlow', 'category' => 'AI Tools', 'proficiency' => 65],
+            ['name' => 'PyTorch', 'category' => 'AI Tools', 'proficiency' => 60],
+            ['name' => 'Pandas', 'category' => 'AI Tools', 'proficiency' => 70],
+            ['name' => 'NumPy', 'category' => 'AI Tools', 'proficiency' => 70],
+            ['name' => 'Spark', 'category' => 'AI Tools', 'proficiency' => 65],
             ['name' => 'GitHub Copilot', 'category' => 'AI Tools', 'proficiency' => 90],
             ['name' => 'ChatGPT', 'category' => 'AI Tools', 'proficiency' => 85],
             ['name' => 'Claude AI', 'category' => 'AI Tools', 'proficiency' => 85],
@@ -76,21 +85,31 @@ class DatabaseSeeder extends Seeder
             ['name' => 'VS Code + Copilot', 'category' => 'AI Tools', 'proficiency' => 90],
 
             // Tools & Methodology
+            ['name' => 'VS Code', 'category' => 'Tools', 'proficiency' => 95],
+            ['name' => 'Postman', 'category' => 'Tools', 'proficiency' => 85],
+            ['name' => 'Swagger UI', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'OpenAPI', 'category' => 'Tools', 'proficiency' => 80],
+            ['name' => 'Bruno', 'category' => 'Tools', 'proficiency' => 75],
+            ['name' => 'WSL', 'category' => 'Tools', 'proficiency' => 80],
+            ['name' => 'Bash', 'category' => 'Tools', 'proficiency' => 80],
+            ['name' => 'DBeaver', 'category' => 'Tools', 'proficiency' => 80],
+            ['name' => 'Composer', 'category' => 'Tools', 'proficiency' => 90],
+            ['name' => 'npm', 'category' => 'Tools', 'proficiency' => 85],
+            ['name' => 'Figma', 'category' => 'Tools', 'proficiency' => 70],
             ['name' => 'Scrum', 'category' => 'Methodology', 'proficiency' => 85],
             ['name' => 'DevOps', 'category' => 'Methodology', 'proficiency' => 75],
-            ['name' => 'TDD', 'category' => 'Methodology', 'proficiency' => 80],
+            ['name' => 'TDD', 'category' => 'Methodology', 'proficiency' => 80, 'is_personal' => true],
             ['name' => 'DDD', 'category' => 'Methodology', 'proficiency' => 75],
             ['name' => 'MVC', 'category' => 'Methodology', 'proficiency' => 90],
             ['name' => 'Principios SOLID', 'category' => 'Methodology', 'proficiency' => 80],
-            ['name' => 'Arquitectura Hexagonal', 'category' => 'Methodology', 'proficiency' => 75],
+            ['name' => 'Arquitectura Hexagonal', 'category' => 'Methodology', 'proficiency' => 75, 'is_personal' => true],
 
             // IoT
-            ['name' => 'Home Assistant', 'category' => 'IoT', 'proficiency' => 75],
+            ['name' => 'Home Assistant', 'category' => 'IoT', 'proficiency' => 75, 'is_personal' => true],
             ['name' => 'MQTT', 'category' => 'IoT', 'proficiency' => 70],
             ['name' => 'Zigbee/Z-Wave', 'category' => 'IoT', 'proficiency' => 65],
             ['name' => 'Zigbee2MQTT', 'category' => 'IoT', 'proficiency' => 70],
-            ['name' => 'Matter', 'category' => 'IoT', 'proficiency' => 60],
+            ['name' => 'Matter', 'category' => 'IoT', 'proficiency' => 60, 'is_personal' => true],
             ['name' => 'Edge Computing', 'category' => 'IoT', 'proficiency' => 65],
             ['name' => 'LPWAN/LoRa', 'category' => 'IoT', 'proficiency' => 60],
             ['name' => 'Plataformas IoT', 'category' => 'IoT', 'proficiency' => 70],
@@ -100,7 +119,10 @@ class DatabaseSeeder extends Seeder
         foreach ($skills as $skill) {
             Skill::firstOrCreate(
                 ['name' => $skill['name'], 'category' => $skill['category']],
-                ['proficiency' => $skill['proficiency']]
+                [
+                    'proficiency' => $skill['proficiency'],
+                    'is_personal' => $skill['is_personal'] ?? false,
+                ]
             );
         }
 
@@ -164,6 +186,44 @@ class DatabaseSeeder extends Seeder
                     'description_en' => $exp['description_en']
                 ]
             );
+        }
+
+        // Associate skills with experiences
+        $experienceSkills = [
+            'DESIC S.L.' => [
+                'Laravel', 'PHP', 'Vue.js', 'JavaScript', 'Node.js', 'Java', 'Gradle',
+                'PostgreSQL', 'Oracle Database', 'Docker', 'Git', 'Linux', 'OpenAPI', 'Swagger UI', 'Postman', 'Bruno',
+                'VS Code', 'DBeaver', 'Composer', 'npm', 'WSL', 'Bash',
+                'Scrum', 'DevOps', 'DDD', 'Principios SOLID', 'MVC', 'HTML', 'CSS'
+            ],
+            'Fundación Universitaria de Las Palmas' => [
+                'Laravel', 'PHP', 'Vue.js', 'JavaScript', 'Oracle Database', 'Docker', 'Git',
+                'VS Code', 'Composer', 'npm', 'Postman',
+                'DDD', 'Principios SOLID', 'MVC', 'HTML', 'CSS'
+            ],
+            'Ecommium' => [
+                'Laravel', 'PHP', 'JavaScript', 'TypeScript', 'React.js', 'MySQL', 'Git', 'Linux',
+                'VS Code', 'Composer', 'Postman',
+                'Principios SOLID', 'MVC', 'HTML', 'CSS'
+            ],
+            'AtlanTIC Systems' => [
+                'PHP', 'Vue.js', 'JavaScript', 'MySQL', 'MariaDB', 'Git', 'Linux',
+                'VS Code', 'Composer', 'npm', 'Postman', 'Bash',
+                'Principios SOLID', 'MVC', 'HTML', 'CSS'
+            ],
+            'Satocan' => [
+                'PHP', 'Vue.js', 'JavaScript', 'Node.js', 'MySQL', 'Git', 'Firebase',
+                'VS Code', 'npm',
+                'MVC', 'HTML', 'CSS'
+            ],
+        ];
+
+        foreach ($experienceSkills as $companyName => $skillNames) {
+            $experience = Experience::where('company', $companyName)->first();
+            if ($experience) {
+                $skillIds = Skill::whereIn('name', $skillNames)->pluck('id')->toArray();
+                $experience->skills()->syncWithoutDetaching($skillIds);
+            }
         }
 
         // Education - Solo crear si no existen
@@ -235,6 +295,41 @@ class DatabaseSeeder extends Seeder
                     'description_en' => $edu['description_en']
                 ]
             );
+        }
+
+        // Associate skills with education
+        $educationSkills = [
+            'Curso de Especialización en Big Data e Inteligencia Artificial' => [
+                'Python', 'Docker', 'Linux', 'Hadoop', 'MongoDB', 'Neo4j', 'Cloudera',
+                'TensorFlow', 'PyTorch', 'Pandas', 'NumPy', 'Spark',
+                'Machine Learning (IoT)', 'DDD',
+                'GitHub Copilot', 'ChatGPT', 'Claude AI', 'Perplexity', 'Antigravity', 'VS Code + Copilot'
+            ],
+            'Programa Enfocado de Internet of Things (IoT)' => [
+                'MQTT', 'Zigbee/Z-Wave', 'Zigbee2MQTT', 'BigQuery',
+                'Edge Computing', 'LPWAN/LoRa', 'Plataformas IoT', 'Machine Learning (IoT)'
+            ],
+            'Programación Fullstack' => [
+                'Node.js', 'Express.js', 'JavaScript', 'Angular.js', 'HTML', 'CSS',
+                'MongoDB', 'AWS', 'Docker', 'Git',
+                'VS Code', 'npm', 'Figma', 'Scrum', 'DevOps'
+            ],
+            'Desarrollo de Aplicaciones Web' => [
+                'PHP', 'JavaScript', 'HTML', 'CSS', 'Java',
+                'MySQL', 'Git', 'MVC',
+                'VS Code'
+            ],
+            'Desarrollo de Aplicaciones con Tecnologías Web' => [
+                'PHP', 'JavaScript', 'HTML', 'CSS', 'MySQL'
+            ],
+        ];
+
+        foreach ($educationSkills as $degreeName => $skillNames) {
+            $education = Education::where('degree', $degreeName)->first();
+            if ($education) {
+                $skillIds = Skill::whereIn('name', $skillNames)->pluck('id')->toArray();
+                $education->skills()->syncWithoutDetaching($skillIds);
+            }
         }
 
         // Projects - Solo crear si no existen

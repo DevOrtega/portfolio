@@ -19,6 +19,14 @@ final class Experience extends Model
 {
     use HasFactory;
 
+    /**
+     * Get the skills associated with the experience.
+     */
+    public function skills()
+    {
+        return $this->belongsToMany(Skill::class, 'experience_skill');
+    }
+
     protected $fillable = [
         'company',
         'role',
