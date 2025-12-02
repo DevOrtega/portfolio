@@ -49,7 +49,7 @@ RUN php artisan migrate:fresh --seed --force
 RUN php artisan l5-swagger:generate
 
 # Run tests (Laravel + Vitest)
-RUN ./vendor/bin/phpunit --configuration phpunit.xml
+RUN ./vendor/bin/pest --configuration phpunit.xml
 RUN npm run test
 
 # Remove dev dependencies after tests pass and optimize
