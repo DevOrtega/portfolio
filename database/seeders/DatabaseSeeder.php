@@ -21,8 +21,8 @@ class DatabaseSeeder extends Seeder
             ['email' => 'carloso2103@gmail.com'],
             [
                 'name' => 'Carlos Miguel Ortega Arencibia',
-                'headline' => 'Programador/Desarrollador de Aplicaciones Web',
-                'headline_en' => 'Web Application Programmer/Developer',
+                'headline' => 'Desarrollador Fullstack',
+                'headline_en' => 'Fullstack Developer',
                 'bio' => "Soy un profesional con amplia experiencia en el desarrollo full-stack, especializado en Laravel, Vue.js y MySQL, con una sólida trayectoria en la creación, migración y mantenimiento de aplicaciones web robustas y escalables.\n\nHe liderado procesos de migración tecnológica, actualizando aplicaciones de Laravel 7 a Laravel 10 y de Vue.js 2 a Vue.js 3, además de implementar contenedores Docker y servicios web en Node.js y Java (Gradle).\n\nActualmente estoy realizando una especialización en Big Data e Inteligencia Artificial, profundizando en análisis de datos, machine learning, procesamiento de grandes volúmenes de información y desarrollo de soluciones basadas en IA.\n\nMe apasiona el desarrollo de soluciones tecnológicas innovadoras y el aprendizaje continuo de nuevas tecnologías.",
                 'bio_en' => "I am a professional with extensive experience in full-stack development, specialized in Laravel, Vue.js, and MySQL, with a solid track record in creating, migrating, and maintaining robust and scalable web applications.\n\nI have led technology migration processes, upgrading applications from Laravel 7 to Laravel 10 and Vue.js 2 to Vue.js 3, in addition to implementing Docker containers and web services in Node.js and Java (Gradle).\n\nI am currently pursuing a specialization in Big Data and Artificial Intelligence, deepening my knowledge in data analysis, machine learning, processing large volumes of information, and developing AI-based solutions.\n\nI am passionate about developing innovative technological solutions and continuous learning of new technologies.",
                 'linkedin_url' => 'https://www.linkedin.com/in/carlosmortega/',
@@ -48,23 +48,53 @@ class DatabaseSeeder extends Seeder
             ['name' => 'CSS', 'category' => 'Frontend', 'proficiency' => 85],
             ['name' => 'Angular.js', 'category' => 'Frontend', 'proficiency' => 60],
 
-            // Database
-            ['name' => 'MySQL', 'category' => 'Database', 'proficiency' => 90],
-            ['name' => 'PostgreSQL', 'category' => 'Database', 'proficiency' => 80],
-            ['name' => 'Oracle Database', 'category' => 'Database', 'proficiency' => 75],
-            ['name' => 'MongoDB', 'category' => 'Database', 'proficiency' => 70],
-            ['name' => 'MariaDB', 'category' => 'Database', 'proficiency' => 85],
-            ['name' => 'Neo4j', 'category' => 'Database', 'proficiency' => 60],
-            ['name' => 'Hadoop', 'category' => 'Database', 'proficiency' => 65],
+            // SQL Databases
+            ['name' => 'MySQL', 'category' => 'SQL', 'proficiency' => 90],
+            ['name' => 'PostgreSQL', 'category' => 'SQL', 'proficiency' => 80],
+            ['name' => 'Oracle Database', 'category' => 'SQL', 'proficiency' => 75],
+            ['name' => 'MariaDB', 'category' => 'SQL', 'proficiency' => 85],
+            ['name' => 'BigQuery', 'category' => 'SQL', 'proficiency' => 65],
 
-            // DevOps & Tools
+            // NoSQL Databases
+            ['name' => 'MongoDB', 'category' => 'NoSQL', 'proficiency' => 70],
+            ['name' => 'Neo4j', 'category' => 'NoSQL', 'proficiency' => 60],
+            ['name' => 'Hadoop', 'category' => 'NoSQL', 'proficiency' => 65],
+
+            // Cloud & DevOps
             ['name' => 'Docker', 'category' => 'DevOps', 'proficiency' => 80],
             ['name' => 'Git', 'category' => 'DevOps', 'proficiency' => 85],
-            ['name' => 'AWS', 'category' => 'DevOps', 'proficiency' => 60],
+            ['name' => 'AWS', 'category' => 'Cloud', 'proficiency' => 65],
             ['name' => 'Proxmox', 'category' => 'DevOps', 'proficiency' => 70],
             ['name' => 'Cloudera', 'category' => 'DevOps', 'proficiency' => 60],
+
+            // AI Tools
+            ['name' => 'GitHub Copilot', 'category' => 'AI Tools', 'proficiency' => 90],
+            ['name' => 'ChatGPT', 'category' => 'AI Tools', 'proficiency' => 85],
+            ['name' => 'Claude AI', 'category' => 'AI Tools', 'proficiency' => 85],
+            ['name' => 'Perplexity', 'category' => 'AI Tools', 'proficiency' => 80],
+            ['name' => 'Antigravity', 'category' => 'AI Tools', 'proficiency' => 75],
+            ['name' => 'VS Code + Copilot', 'category' => 'AI Tools', 'proficiency' => 90],
+
+            // Tools & Methodology
             ['name' => 'OpenAPI', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'Scrum', 'category' => 'Methodology', 'proficiency' => 85],
+            ['name' => 'DevOps', 'category' => 'Methodology', 'proficiency' => 75],
+            ['name' => 'TDD', 'category' => 'Methodology', 'proficiency' => 80],
+            ['name' => 'DDD', 'category' => 'Methodology', 'proficiency' => 75],
+            ['name' => 'MVC', 'category' => 'Methodology', 'proficiency' => 90],
+            ['name' => 'Principios SOLID', 'category' => 'Methodology', 'proficiency' => 80],
+            ['name' => 'Arquitectura Hexagonal', 'category' => 'Methodology', 'proficiency' => 75],
+
+            // IoT
+            ['name' => 'Home Assistant', 'category' => 'IoT', 'proficiency' => 75],
+            ['name' => 'MQTT', 'category' => 'IoT', 'proficiency' => 70],
+            ['name' => 'Zigbee/Z-Wave', 'category' => 'IoT', 'proficiency' => 65],
+            ['name' => 'Zigbee2MQTT', 'category' => 'IoT', 'proficiency' => 70],
+            ['name' => 'Matter', 'category' => 'IoT', 'proficiency' => 60],
+            ['name' => 'Edge Computing', 'category' => 'IoT', 'proficiency' => 65],
+            ['name' => 'LPWAN/LoRa', 'category' => 'IoT', 'proficiency' => 60],
+            ['name' => 'Plataformas IoT', 'category' => 'IoT', 'proficiency' => 70],
+            ['name' => 'Machine Learning (IoT)', 'category' => 'IoT', 'proficiency' => 65],
         ];
 
         foreach ($skills as $skill) {
@@ -153,8 +183,8 @@ class DatabaseSeeder extends Seeder
                 'degree_en' => 'Internet of Things (IoT) Focused Program',
                 'start_date' => 'Oct. 2023',
                 'end_date' => 'Dic. 2023',
-                'description' => '',
-                'description_en' => ''
+                'description' => 'Programa de 96 horas impartido por expertos de Vodafone IoT, Google y empresas del sector. Módulos: introducción al IoT y estado del arte, diseño y desarrollo de sensores IoT, redes de comunicaciones IoT (arquitecturas mesh, edge computing, protocolos, LPWA, 5G), plataformas IoT y su arquitectura, gestión del dato con Big Data e Inteligencia Artificial aplicada, y estrategias empresariales para soluciones IoT.',
+                'description_en' => '96-hour program taught by experts from Vodafone IoT, Google, and industry companies. Modules: IoT introduction and state of the art, IoT sensor design and development, IoT communication networks (mesh architectures, edge computing, protocols, LPWA, 5G), IoT platforms and architecture, data management with Big Data and applied Artificial Intelligence, and business strategies for IoT solutions.'
             ],
             [
                 'institution' => 'Escuela de Organización Industrial',

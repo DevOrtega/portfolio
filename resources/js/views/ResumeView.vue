@@ -114,9 +114,13 @@ const getCategoryTranslation = (category) => {
     'Backend': 'skills.backend',
     'Frontend': 'skills.frontend',
     'Database': 'skills.database',
+    'SQL': 'skills.sql',
+    'NoSQL': 'skills.nosql',
     'DevOps': 'skills.devops',
+    'AI Tools': 'skills.aitools',
     'Tools': 'skills.tools',
-    'Methodology': 'skills.methodology'
+    'Methodology': 'skills.methodology',
+    'IoT': 'skills.iot'
   };
   return categoryMap[category] || category;
 };
@@ -156,7 +160,7 @@ const getCategoryTranslation = (category) => {
               <div v-for="skill in categorySkills" :key="skill.id">
                 <div class="flex justify-between text-sm mb-1">
                   <span class="text-gray-300">{{ skill.name }}</span>
-                  <span class="text-gray-500">{{ skill.proficiency }}%</span>
+                  <!-- Proficiency hidden but bar still uses the value -->
                 </div>
                 <div class="w-full bg-gray-700 rounded-full h-2">
                   <div class="bg-indigo-500 h-2 rounded-full transition-all duration-1000" :style="{ width: skill.proficiency + '%' }"></div>
