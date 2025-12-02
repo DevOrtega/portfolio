@@ -48,15 +48,15 @@ RUN php artisan migrate:fresh --seed --force
 # Generate API documentation
 RUN php artisan l5-swagger:generate
 
+# Build frontend assets (needed before tests for ExampleTest)
+RUN npm run build
+
 # Run tests (Laravel + Vitest)
 RUN ./vendor/bin/pest --configuration phpunit.xml
 RUN npm run test
 
 # Remove dev dependencies after tests pass and optimize
 RUN composer install --no-dev --optimize-autoloader --prefer-dist
-
-# Build frontend assets
-RUN npm run build
 
 # Cache configuration for production
 RUN php artisan config:cache && \
