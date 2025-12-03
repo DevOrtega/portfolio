@@ -68,13 +68,16 @@ class ContactController extends Controller
             // Get validated and sanitized data
             $data = $request->validated();
             
-            // Remove honeypot field
+            // Remove honeypot field and extract locale
             unset($data['website']);
+            $locale = $data['locale'] ?? 'es';
+            unset($data['locale']);
             
             // Add metadata for security logging
             $data['ip_address'] = $request->ip();
             $data['user_agent'] = substr($request->userAgent() ?? '', 0, 500);
             $data['submitted_at'] = now()->toDateTimeString();
+            $data['locale'] = $locale;
             
             // Send email
             Mail::to(config('mail.contact_email', 'carloso2103@gmail.com'))
@@ -87,9 +90,14 @@ class ContactController extends Controller
                 'ip' => $data['ip_address'],
             ]);
             
+            // Return message in user's locale
+            $successMessage = $locale === 'en' 
+                ? 'Message sent successfully. Thank you for contacting!'
+                : 'Mensaje enviado correctamente. ¡Gracias por contactar!';
+            
             return response()->json([
                 'success' => true,
-                'message' => 'Mensaje enviado correctamente. ¡Gracias por contactar!',
+                'message' => $successMessage,
             ]);
             
         } catch (\Exception $e) {
