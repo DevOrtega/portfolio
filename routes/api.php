@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\ExperienceController;
 use App\Http\Controllers\Api\SkillController;
 use App\Http\Controllers\Api\PersonalInfoController;
 use App\Http\Controllers\Api\EducationController;
+use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Admin\AdminAuthController;
 
 Route::get('/user', function (Request $request) {
@@ -19,6 +20,10 @@ Route::get('/experiences', [ExperienceController::class, 'index']);
 Route::get('/skills', [SkillController::class, 'index']);
 Route::get('/personal-info', [PersonalInfoController::class, 'index']);
 Route::get('/education', [EducationController::class, 'index']);
+
+// Contact form (rate limited)
+Route::post('/contact', [ContactController::class, 'send'])
+    ->middleware('throttle:5,1'); // 5 requests per minute
 
 // Admin Authentication Routes
 Route::prefix('admin/auth')->group(function () {
