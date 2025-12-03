@@ -123,10 +123,45 @@ export default {
   },
   contact: {
     title: 'Contacto',
+    subtitle: '¿Tienes un proyecto en mente? ¡Hablemos!',
     email: 'Correo electrónico',
     linkedin: 'LinkedIn',
     github: 'GitHub',
-    downloadCV: 'Descargar CV'
+    downloadCV: 'Descargar CV',
+    connectWith: 'Conecta conmigo',
+    viewProfile: 'Ver perfil profesional',
+    viewCode: 'Ver repositorios',
+    availability: '¿Disponible para proyectos?',
+    availabilityText: 'Actualmente estoy disponible para proyectos freelance y colaboraciones. Si tienes una idea interesante o necesitas ayuda con tu proyecto, no dudes en contactarme.',
+    sendMessage: 'Envía un mensaje',
+    successTitle: '¡Mensaje enviado!',
+    successMessage: 'Gracias por contactar. Te responderé lo antes posible.',
+    sendAnother: 'Enviar otro mensaje',
+    form: {
+      name: 'Nombre',
+      namePlaceholder: 'Tu nombre completo',
+      email: 'Correo electrónico',
+      emailPlaceholder: 'tu@email.com',
+      subject: 'Asunto',
+      subjectPlaceholder: '¿De qué quieres hablar?',
+      message: 'Mensaje',
+      messagePlaceholder: 'Escribe tu mensaje aquí...',
+      send: 'Enviar mensaje',
+      sending: 'Enviando...'
+    },
+    errors: {
+      nameRequired: 'El nombre es obligatorio',
+      nameMin: 'El nombre debe tener al menos 2 caracteres',
+      nameInvalid: 'El nombre solo puede contener letras, espacios y guiones',
+      emailRequired: 'El correo electrónico es obligatorio',
+      emailInvalid: 'Por favor, introduce un correo electrónico válido',
+      subjectRequired: 'El asunto es obligatorio',
+      subjectMin: 'El asunto debe tener al menos 5 caracteres',
+      messageRequired: 'El mensaje es obligatorio',
+      messageMin: 'El mensaje debe tener al menos 10 caracteres',
+      generic: 'Error al enviar el mensaje. Por favor, inténtalo más tarde.',
+      tooMany: 'Demasiados intentos. Por favor, espera unos minutos.'
+    }
   },
   common: {
     loading: 'Cargando...',

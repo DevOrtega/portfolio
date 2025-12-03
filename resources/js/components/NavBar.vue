@@ -78,5 +78,6 @@ const navItems = [
   { name: 'nav.home', path: '/' },
   { name: 'nav.projects', path: '/projects' },
   { name: 'nav.experience', path: '/resume' },
+  { name: 'nav.contact', path: '/contact' },
 ];
 </script>

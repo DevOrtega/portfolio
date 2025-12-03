@@ -123,10 +123,45 @@ export default {
   },
   contact: {
     title: 'Contact',
+    subtitle: 'Have a project in mind? Let\'s talk!',
     email: 'Email',
     linkedin: 'LinkedIn',
     github: 'GitHub',
-    downloadCV: 'Download CV'
+    downloadCV: 'Download CV',
+    connectWith: 'Connect with me',
+    viewProfile: 'View professional profile',
+    viewCode: 'View repositories',
+    availability: 'Available for projects?',
+    availabilityText: 'I am currently available for freelance projects and collaborations. If you have an interesting idea or need help with your project, feel free to contact me.',
+    sendMessage: 'Send a message',
+    successTitle: 'Message sent!',
+    successMessage: 'Thank you for reaching out. I will reply as soon as possible.',
+    sendAnother: 'Send another message',
+    form: {
+      name: 'Name',
+      namePlaceholder: 'Your full name',
+      email: 'Email',
+      emailPlaceholder: 'your@email.com',
+      subject: 'Subject',
+      subjectPlaceholder: 'What would you like to discuss?',
+      message: 'Message',
+      messagePlaceholder: 'Write your message here...',
+      send: 'Send message',
+      sending: 'Sending...'
+    },
+    errors: {
+      nameRequired: 'Name is required',
+      nameMin: 'Name must be at least 2 characters',
+      nameInvalid: 'Name can only contain letters, spaces and hyphens',
+      emailRequired: 'Email is required',
+      emailInvalid: 'Please enter a valid email address',
+      subjectRequired: 'Subject is required',
+      subjectMin: 'Subject must be at least 5 characters',
+      messageRequired: 'Message is required',
+      messageMin: 'Message must be at least 10 characters',
+      generic: 'Error sending message. Please try again later.',
+      tooMany: 'Too many attempts. Please wait a few minutes.'
+    }
   },
   common: {
     loading: 'Loading...',
