@@ -69,7 +69,9 @@ onMounted(async () => {
       <div class="order-1 lg:order-2 flex justify-center relative">
         <div class="relative w-64 h-64 md:w-80 md:h-80 lg:w-96 lg:h-96 mt-8">
             <div class="absolute inset-0 bg-gradient-to-tr from-indigo-500 to-cyan-500 rounded-full blur-2xl opacity-50 animate-pulse-slow"></div>
-            <img :src="'/images/profile.png'" alt="Carlos Ortega" class="relative w-full h-full object-cover rounded-full border-4 border-gray-800 shadow-2xl z-10 hover:scale-105 transition-transform duration-500 bg-gray-800">
+            <div class="profile-frame relative w-full h-full rounded-full border-4 border-gray-800 shadow-2xl z-10 hover:scale-105 transition-transform duration-500 overflow-hidden bg-gradient-to-b from-gray-700 to-gray-900">
+              <img :src="'/images/profile.png'" alt="Carlos Ortega" class="w-full h-full object-cover object-top">
+            </div>
             
             <!-- Floating Skill Badges -->
             <div class="absolute top-4 -right-2 md:-right-4 bg-gray-800 border border-gray-700 p-2 rounded-lg shadow-xl animate-float delay-0 z-20">

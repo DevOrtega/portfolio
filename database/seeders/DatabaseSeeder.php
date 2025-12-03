@@ -48,6 +48,7 @@ class DatabaseSeeder extends Seeder
             ['name' => 'React.js', 'category' => 'Frontend', 'proficiency' => 65],
             ['name' => 'HTML', 'category' => 'Frontend', 'proficiency' => 95],
             ['name' => 'CSS', 'category' => 'Frontend', 'proficiency' => 85],
+            ['name' => 'Tailwind CSS', 'category' => 'Frontend', 'proficiency' => 85],
             ['name' => 'Angular.js', 'category' => 'Frontend', 'proficiency' => 60],
 
             // SQL Databases
@@ -59,42 +60,48 @@ class DatabaseSeeder extends Seeder
 
             // NoSQL Databases
             ['name' => 'MongoDB', 'category' => 'NoSQL', 'proficiency' => 70],
+            ['name' => 'Redis', 'category' => 'NoSQL', 'proficiency' => 75],
             ['name' => 'Neo4j', 'category' => 'NoSQL', 'proficiency' => 60],
             ['name' => 'Hadoop', 'category' => 'NoSQL', 'proficiency' => 65],
 
             // Cloud & DevOps
             ['name' => 'Docker', 'category' => 'DevOps', 'proficiency' => 80],
             ['name' => 'Git', 'category' => 'DevOps', 'proficiency' => 85],
+            ['name' => 'GitHub Actions', 'category' => 'DevOps', 'proficiency' => 75],
             ['name' => 'Linux', 'category' => 'DevOps', 'proficiency' => 75],
+            ['name' => 'Nginx', 'category' => 'DevOps', 'proficiency' => 70],
             ['name' => 'AWS', 'category' => 'Cloud', 'proficiency' => 65],
+            ['name' => 'Google Cloud', 'category' => 'Cloud', 'proficiency' => 70],
             ['name' => 'Firebase', 'category' => 'Cloud', 'proficiency' => 70],
             ['name' => 'Proxmox', 'category' => 'DevOps', 'proficiency' => 70, 'is_personal' => true],
             ['name' => 'Cloudera', 'category' => 'DevOps', 'proficiency' => 60],
 
-            // AI & Data Science
-            ['name' => 'TensorFlow', 'category' => 'AI Tools', 'proficiency' => 65],
-            ['name' => 'PyTorch', 'category' => 'AI Tools', 'proficiency' => 60],
-            ['name' => 'Pandas', 'category' => 'AI Tools', 'proficiency' => 70],
-            ['name' => 'NumPy', 'category' => 'AI Tools', 'proficiency' => 70],
-            ['name' => 'Spark', 'category' => 'AI Tools', 'proficiency' => 65],
+            // AI Tools (LLMs & Assistants)
             ['name' => 'GitHub Copilot', 'category' => 'AI Tools', 'proficiency' => 90],
             ['name' => 'ChatGPT', 'category' => 'AI Tools', 'proficiency' => 85],
             ['name' => 'Claude AI', 'category' => 'AI Tools', 'proficiency' => 85],
+            ['name' => 'Gemini', 'category' => 'AI Tools', 'proficiency' => 80],
             ['name' => 'Perplexity', 'category' => 'AI Tools', 'proficiency' => 80],
             ['name' => 'Antigravity', 'category' => 'AI Tools', 'proficiency' => 75],
-            ['name' => 'VS Code + Copilot', 'category' => 'AI Tools', 'proficiency' => 90],
+
+            // Data Science & ML
+            ['name' => 'Pandas', 'category' => 'Data Science', 'proficiency' => 70],
+            ['name' => 'NumPy', 'category' => 'Data Science', 'proficiency' => 70],
+            ['name' => 'TensorFlow', 'category' => 'Data Science', 'proficiency' => 65],
+            ['name' => 'PyTorch', 'category' => 'Data Science', 'proficiency' => 60],
+            ['name' => 'Spark', 'category' => 'Data Science', 'proficiency' => 65],
 
             // Tools & Methodology
             ['name' => 'VS Code', 'category' => 'Tools', 'proficiency' => 95],
             ['name' => 'Postman', 'category' => 'Tools', 'proficiency' => 85],
-            ['name' => 'Swagger UI', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'OpenAPI', 'category' => 'Tools', 'proficiency' => 80],
-            ['name' => 'Bruno', 'category' => 'Tools', 'proficiency' => 75],
             ['name' => 'WSL', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'Bash', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'DBeaver', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'Composer', 'category' => 'Tools', 'proficiency' => 90],
             ['name' => 'npm', 'category' => 'Tools', 'proficiency' => 85],
+            ['name' => 'Vite', 'category' => 'Tools', 'proficiency' => 80],
+            ['name' => 'Pest/PHPUnit', 'category' => 'Tools', 'proficiency' => 80],
             ['name' => 'Figma', 'category' => 'Tools', 'proficiency' => 70],
             ['name' => 'Scrum', 'category' => 'Methodology', 'proficiency' => 85],
             ['name' => 'DevOps', 'category' => 'Methodology', 'proficiency' => 75],
@@ -192,9 +199,9 @@ class DatabaseSeeder extends Seeder
         $experienceSkills = [
             'DESIC S.L.' => [
                 'Laravel', 'PHP', 'Vue.js', 'JavaScript', 'Node.js', 'Java', 'Gradle',
-                'PostgreSQL', 'Oracle Database', 'Docker', 'Git', 'Linux', 'OpenAPI', 'Swagger UI', 'Postman', 'Bruno',
-                'VS Code', 'DBeaver', 'Composer', 'npm', 'WSL', 'Bash',
-                'Scrum', 'DevOps', 'DDD', 'Principios SOLID', 'MVC', 'HTML', 'CSS'
+                'PostgreSQL', 'Oracle Database', 'Docker', 'Git', 'GitHub Actions', 'Linux', 'Nginx', 'OpenAPI', 'Postman',
+                'VS Code', 'DBeaver', 'Composer', 'npm', 'WSL', 'Bash', 'Vite', 'Pest/PHPUnit',
+                'Scrum', 'DevOps', 'DDD', 'Principios SOLID', 'MVC', 'HTML', 'CSS', 'Tailwind CSS', 'Redis'
             ],
             'Fundación Universitaria de Las Palmas' => [
                 'Laravel', 'PHP', 'Vue.js', 'JavaScript', 'Oracle Database', 'Docker', 'Git',
@@ -212,7 +219,7 @@ class DatabaseSeeder extends Seeder
                 'Principios SOLID', 'MVC', 'HTML', 'CSS'
             ],
             'Satocan' => [
-                'PHP', 'Vue.js', 'JavaScript', 'Node.js', 'MySQL', 'Git', 'Firebase',
+                'PHP', 'Vue.js', 'JavaScript', 'Node.js', 'MySQL', 'Git', 'Firebase', 'Google Cloud',
                 'VS Code', 'npm',
                 'MVC', 'HTML', 'CSS'
             ],
@@ -303,15 +310,16 @@ class DatabaseSeeder extends Seeder
                 'Python', 'Docker', 'Linux', 'Hadoop', 'MongoDB', 'Neo4j', 'Cloudera',
                 'TensorFlow', 'PyTorch', 'Pandas', 'NumPy', 'Spark',
                 'Machine Learning (IoT)', 'DDD',
-                'GitHub Copilot', 'ChatGPT', 'Claude AI', 'Perplexity', 'Antigravity', 'VS Code + Copilot'
+                'GitHub Copilot', 'ChatGPT', 'Claude AI', 'Perplexity', 'Antigravity', 'Gemini',
+                'Google Cloud', 'BigQuery'
             ],
             'Programa Enfocado de Internet of Things (IoT)' => [
-                'MQTT', 'Zigbee/Z-Wave', 'Zigbee2MQTT', 'BigQuery',
+                'MQTT', 'Zigbee/Z-Wave', 'Zigbee2MQTT', 'BigQuery', 'Google Cloud',
                 'Edge Computing', 'LPWAN/LoRa', 'Plataformas IoT', 'Machine Learning (IoT)'
             ],
             'Programación Fullstack' => [
                 'Node.js', 'Express.js', 'JavaScript', 'Angular.js', 'HTML', 'CSS',
-                'MongoDB', 'AWS', 'Docker', 'Git',
+                'MongoDB', 'Redis', 'AWS', 'Docker', 'Git',
                 'VS Code', 'npm', 'Figma', 'Scrum', 'DevOps'
             ],
             'Desarrollo de Aplicaciones Web' => [

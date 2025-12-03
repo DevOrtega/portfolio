@@ -111,6 +111,7 @@ export default {
     devops: 'DevOps',
     cloud: 'Cloud',
     aitools: 'AI Tools',
+    datascience: 'Data Science',
     tools: 'Tools',
     methodology: 'Methodology',
     iot: 'Internet of Things (IoT)',
