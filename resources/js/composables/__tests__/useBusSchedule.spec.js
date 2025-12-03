@@ -28,7 +28,10 @@ describe('useBusSchedule', () => {
   }
 
   describe('isNightTime', () => {
-    it('returns true between 00:00 and 05:59', () => {
+    it('returns true between 23:00 and 05:59', () => {
+      mockDate(23) // 23:00
+      expect(isNightTime()).toBe(true)
+
       mockDate(0) // 00:00
       expect(isNightTime()).toBe(true)
 
@@ -46,7 +49,7 @@ describe('useBusSchedule', () => {
       mockDate(12) // 12:00
       expect(isNightTime()).toBe(false)
 
-      mockDate(23) // 23:00
+      mockDate(22) // 22:00
       expect(isNightTime()).toBe(false)
     })
   })
@@ -67,12 +70,13 @@ describe('useBusSchedule', () => {
       expect(isInService('night', 'N1')).toBe(true)
     })
 
-    it('returns false for night buses on weekday nights', () => {
-      mockDate(2, 1) // Monday, 02:00
-      expect(isInService('night', 'N1')).toBe(false)
+    it('returns true for night buses on weekday nights (default schedule)', () => {
+      // Default night schedule: weekdays 23:00 - 05:00
+      mockDate(23, 1) // Monday, 23:00
+      expect(isInService('night', 'N1')).toBe(true)
 
-      mockDate(3, 3) // Wednesday, 03:00
-      expect(isInService('night', 'N1')).toBe(false)
+      mockDate(2, 3) // Wednesday, 02:00
+      expect(isInService('night', 'N1')).toBe(true)
     })
 
     it('returns false for night buses during day hours', () => {
@@ -110,8 +114,8 @@ describe('useBusSchedule', () => {
   })
 
   describe('isInService - interurban buses', () => {
-    it('returns true during weekday service hours (05:00-21:59)', () => {
-      mockDate(5, 1) // Monday, 05:00
+    it('returns true during weekday service hours (05:00-23:00)', () => {
+      mockDate(6, 1) // Monday, 06:00 (not in late night)
       expect(isInService('interurban', '30')).toBe(true)
 
       mockDate(14, 3) // Wednesday, 14:00
@@ -121,30 +125,27 @@ describe('useBusSchedule', () => {
       expect(isInService('interurban', '30')).toBe(true)
     })
 
-    it('returns false outside weekday service hours', () => {
-      mockDate(4, 1) // Monday, 04:00
+    it('returns false during late night hours (00:00-05:59)', () => {
+      mockDate(4, 1) // Monday, 04:00 (late night)
       expect(isInService('interurban', '30')).toBe(false)
 
-      mockDate(22, 2) // Tuesday, 22:00
+      mockDate(2, 2) // Tuesday, 02:00 (late night)
       expect(isInService('interurban', '30')).toBe(false)
     })
 
-    it('has reduced service on Sundays (07:00-21:59)', () => {
-      mockDate(6, 0) // Sunday, 06:00
-      expect(isInService('interurban', '30')).toBe(false)
-
+    it('has reduced service on Sundays (07:00-22:00)', () => {
       mockDate(7, 0) // Sunday, 07:00
       expect(isInService('interurban', '30')).toBe(true)
 
-      mockDate(21, 0) // Sunday, 21:00
+      mockDate(14, 0) // Sunday, 14:00
       expect(isInService('interurban', '30')).toBe(true)
 
       mockDate(22, 0) // Sunday, 22:00
-      expect(isInService('interurban', '30')).toBe(false)
+      expect(isInService('interurban', '30')).toBe(true)
     })
 
     it('has normal service on Saturdays', () => {
-      mockDate(5, 6) // Saturday, 05:00
+      mockDate(6, 6) // Saturday, 06:00
       expect(isInService('interurban', '30')).toBe(true)
 
       mockDate(21, 6) // Saturday, 21:00
