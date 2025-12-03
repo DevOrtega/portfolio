@@ -1,22 +1,26 @@
+@php
+$isEnglish = ($locale ?? 'es') === 'en';
+@endphp
+
 <x-mail::message>
-# Mensaje de contacto
+# {{ $isEnglish ? 'Contact Message' : 'Mensaje de contacto' }}
 
-Has enviado un mensaje desde el formulario de contacto. Te responderé lo antes posible.
+{{ $isEnglish ? 'You have sent a message from the contact form. I will reply as soon as possible.' : 'Has enviado un mensaje desde el formulario de contacto. Te responderé lo antes posible.' }}
 
 ---
 
-**De:** {{ $name }}  
+**{{ $isEnglish ? 'From' : 'De' }}:** {{ $name }}  
 **Email:** {{ $email }}  
-**Asunto:** {{ $subject }}
+**{{ $isEnglish ? 'Subject' : 'Asunto' }}:** {{ $subject }}
 
 ---
 
-## Mensaje:
+## {{ $isEnglish ? 'Message' : 'Mensaje' }}:
 
 {{ $messageContent }}
 
 ---
 
-Gracias,<br>
+{{ $isEnglish ? 'Thanks' : 'Gracias' }},<br>
 Carlos Ortega
 </x-mail::message>

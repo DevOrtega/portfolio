@@ -4,7 +4,7 @@ import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import LoadingSpinner from '../components/LoadingSpinner.vue';
 
-const { t } = useI18n();
+const { t, locale } = useI18n();
 
 const personalInfo = ref(null);
 const loading = ref(true);
@@ -85,7 +85,10 @@ const submitForm = async () => {
   submitError.value = '';
   
   try {
-    const response = await axios.post('/api/contact', form.value);
+    const response = await axios.post('/api/contact', {
+      ...form.value,
+      locale: locale.value
+    });
     
     if (response.data.success) {
       submitSuccess.value = true;

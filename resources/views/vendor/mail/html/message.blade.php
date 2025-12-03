@@ -21,7 +21,7 @@ Carlos Ortega
 {{-- Footer --}}
 <x-slot:footer>
 <x-mail::footer>
-© {{ date('Y') }} Carlos Ortega. Todos los derechos reservados.
+© {{ date('Y') }} Carlos Ortega. {{ isset($locale) && $locale === 'en' ? 'All rights reserved.' : 'Todos los derechos reservados.' }}
 </x-mail::footer>
 </x-slot:footer>
 </x-mail::layout>

@@ -52,6 +52,7 @@ class ContactFormMail extends Mailable
                 'ipAddress' => $this->data['ip_address'] ?? 'N/A',
                 'userAgent' => $this->data['user_agent'] ?? 'N/A',
                 'submittedAt' => $this->data['submitted_at'] ?? now()->toDateTimeString(),
+                'locale' => $this->data['locale'] ?? 'es',
             ],
         );
     }

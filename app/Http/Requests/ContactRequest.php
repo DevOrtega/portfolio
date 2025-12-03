@@ -48,6 +48,12 @@ class ContactRequest extends FormRequest
             'website' => [
                 'max:0',
             ],
+            // Locale for email translation
+            'locale' => [
+                'nullable',
+                'string',
+                'in:es,en',
+            ],
         ];
     }
 
