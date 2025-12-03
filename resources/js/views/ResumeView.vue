@@ -99,13 +99,41 @@ const availableYears = computed(() => {
 });
 
 // Skills are already filtered and sorted by backend (proficiency DESC)
-// Just group them by category
+// Group them by category and order categories logically (related ones together)
 const skillsByCategory = computed(() => {
-  return skills.value.reduce((acc, skill) => {
+  const grouped = skills.value.reduce((acc, skill) => {
     if (!acc[skill.category]) acc[skill.category] = [];
     acc[skill.category].push(skill);
     return acc;
   }, {});
+  
+  // Define category order - related categories are adjacent
+  // This ensures they appear side by side in the 2-column grid
+  const categoryOrder = [
+    'Backend', 'Frontend',           // Development (row 1)
+    'SQL', 'NoSQL',                  // Databases (row 2)
+    'DevOps', 'IoT',                 // Infrastructure/Hardware (row 3)
+    'Cloud', 'Methodology',          // Cloud & Practices (row 4)
+    'AI Tools', 'Data Science',      // AI & Data (row 5)
+    'Tools'                          // Tools (row 6 - solo or paired)
+  ];
+  
+  // Sort by defined order, unknown categories at the end
+  const orderedCategories = Object.keys(grouped).sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+    if (indexA === -1 && indexB === -1) return a.localeCompare(b);
+    if (indexA === -1) return 1;
+    if (indexB === -1) return -1;
+    return indexA - indexB;
+  });
+  
+  // Return ordered object
+  const ordered = {};
+  orderedCategories.forEach(cat => {
+    ordered[cat] = grouped[cat];
+  });
+  return ordered;
 });
 
 // Translate category name to i18n key
@@ -119,6 +147,7 @@ const getCategoryTranslation = (category) => {
     'DevOps': 'skills.devops',
     'Cloud': 'skills.cloud',
     'AI Tools': 'skills.aitools',
+    'Data Science': 'skills.datascience',
     'Tools': 'skills.tools',
     'Methodology': 'skills.methodology',
     'IoT': 'skills.iot'
@@ -154,20 +183,24 @@ const getCategoryTranslation = (category) => {
           </span>
         </div>
         
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div v-for="(categorySkills, category) in skillsByCategory" :key="category" class="bg-gray-800 rounded-xl p-6 border border-gray-700">
-            <h3 class="text-lg font-semibold text-indigo-300 mb-4">{{ $t(getCategoryTranslation(category)) }}</h3>
-            <div class="space-y-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6">
+          <div 
+            v-for="(categorySkills, category) in skillsByCategory" 
+            :key="category" 
+            class="bg-gray-800 rounded-xl p-4 md:p-5 border border-gray-700 flex flex-col"
+          >
+            <h3 class="text-base md:text-lg font-semibold text-indigo-300 mb-3">{{ $t(getCategoryTranslation(category)) }}</h3>
+            <div class="space-y-2.5 flex-1">
               <div v-for="skill in categorySkills" :key="skill.id">
-                <div class="flex flex-wrap items-center gap-1 text-sm mb-1">
+                <div class="flex flex-wrap items-center gap-1 text-xs md:text-sm mb-1">
                   <span class="text-gray-300">{{ skill.name }}</span>
-                  <span v-if="skill.is_personal" class="text-xs bg-indigo-600/30 text-indigo-300 px-2 py-0.5 rounded-full whitespace-nowrap">
+                  <span v-if="skill.is_personal" class="text-xs bg-indigo-600/30 text-indigo-300 px-1.5 py-0.5 rounded-full whitespace-nowrap">
                     {{ $t('skills.personal') }}
                   </span>
                   <!-- Proficiency hidden but bar still uses the value -->
                 </div>
-                <div class="w-full bg-gray-700 rounded-full h-2">
-                  <div class="bg-indigo-500 h-2 rounded-full transition-all duration-1000" :style="{ width: skill.proficiency + '%' }"></div>
+                <div class="w-full bg-gray-700 rounded-full h-1.5">
+                  <div class="bg-indigo-500 h-1.5 rounded-full transition-all duration-1000" :style="{ width: skill.proficiency + '%' }"></div>
                 </div>
               </div>
             </div>
