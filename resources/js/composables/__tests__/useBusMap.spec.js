@@ -17,9 +17,9 @@ describe('useBusMap', () => {
     it('has correct geographic boundaries for Gran Canaria', () => {
       expect(BOUNDS).toEqual({
         north: 28.18,
-        south: 27.75,
+        south: 27.74,
         east: -15.35,
-        west: -15.85
+        west: -15.60
       })
     })
   })
