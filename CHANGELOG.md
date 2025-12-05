@@ -7,6 +7,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Major Updates
+
+#### Portfolio Domain - Hexagonal Architecture Migration
+- **Domain Entities**: Added `Experience`, `Education`, `Skill`, `PersonalInfo` entities
+- **Repository Pattern**: Implemented repository interfaces and Eloquent implementations for all Portfolio entities
+- **Application Services**: Added services for Experience, Education, Skill, and PersonalInfo
+- **Controllers Refactored**: All Portfolio controllers now use dependency injection with services
+
+### Added
+
+#### Backend
+- `app/Domain/Portfolio/Entities/Experience.php` - Work experience domain entity
+- `app/Domain/Portfolio/Entities/Education.php` - Education domain entity
+- `app/Domain/Portfolio/Entities/Skill.php` - Skill domain entity
+- `app/Domain/Portfolio/Entities/PersonalInfo.php` - Personal info domain entity
+- `app/Domain/Portfolio/Repositories/*Interface.php` - Repository interfaces for all entities
+- `app/Application/Portfolio/Services/ExperienceService.php` - Experience application service
+- `app/Application/Portfolio/Services/EducationService.php` - Education application service
+- `app/Application/Portfolio/Services/SkillService.php` - Skill application service
+- `app/Application/Portfolio/Services/PersonalInfoService.php` - Personal info application service
+- `app/Infrastructure/Persistence/Eloquent/EloquentExperienceRepository.php`
+- `app/Infrastructure/Persistence/Eloquent/EloquentEducationRepository.php`
+- `app/Infrastructure/Persistence/Eloquent/EloquentSkillRepository.php`
+- `app/Infrastructure/Persistence/Eloquent/EloquentPersonalInfoRepository.php`
+
+### Changed
+- `ExperienceController` - Now uses `ExperienceService` instead of direct Eloquent calls
+- `EducationController` - Now uses `EducationService` instead of direct Eloquent calls
+- `SkillController` - Now uses `SkillService` instead of direct Eloquent calls
+- `PersonalInfoController` - Now uses `PersonalInfoService` instead of direct Eloquent calls
+- `RepositoryServiceProvider` - Added bindings for all new repository interfaces
+- Updated `ARCHITECTURE.md` and `ARCHITECTURE.en.md` to reflect complete hexagonal architecture
+
+#### Frontend i18n
+- Added complete translations for guaguas section in `es.js` and `en.js`
+- Updated `BusLegend.vue`, `BusPopup.vue`, `GuaguasTracker.vue` to use `$t()` for all user-visible text
+
+### Removed
+- Removed unused `resources/js/data/guaguas/` folder (~4000 lines of hardcoded data)
+- Removed unused `computed` import from `BusLinesTree.vue`
+
 ## [2.1.0] - 2025-12-05
 
 ### Major Updates

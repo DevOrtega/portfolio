@@ -148,7 +148,7 @@ describe('useBusMap', () => {
     })
 
     it('returns correct label for night', () => {
-      expect(getCompanyLabel('night')).toBe('Línea Nocturna')
+      expect(getCompanyLabel('night')).toBe('Night Line')
     })
 
     it('returns original value for unknown company', () => {
@@ -158,15 +158,15 @@ describe('useBusMap', () => {
 
   describe('getBusTypeLabel', () => {
     it('returns correct label for urban', () => {
-      expect(getBusTypeLabel('urban')).toBe('Urbana')
+      expect(getBusTypeLabel('urban')).toBe('Urban')
     })
 
     it('returns correct label for interurban', () => {
-      expect(getBusTypeLabel('interurban')).toBe('Interurbana')
+      expect(getBusTypeLabel('interurban')).toBe('Interurban')
     })
 
     it('returns correct label for night', () => {
-      expect(getBusTypeLabel('night')).toBe('Nocturna')
+      expect(getBusTypeLabel('night')).toBe('Night')
     })
 
     it('returns original value for unknown type', () => {
