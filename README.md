@@ -1,4 +1,9 @@
-# Portfolio de Carlos Miguel Ortega Arencibia
+# Carlos Miguel Ortega Arencibia's Portfolio
+
+<p align="center">
+  <a href="README.es.md">🇪🇸 Español</a> •
+  <a href="README.md">🇬🇧 English</a>
+</p>
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.39-FF2D20?style=flat&logo=laravel)](https://laravel.com)
 [![Vue.js](https://img.shields.io/badge/Vue.js-3.5.25-4FC08D?style=flat&logo=vue.js)](https://vuejs.org)
@@ -8,11 +13,11 @@
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 [![Website](https://img.shields.io/badge/Website-devortega.com-blue?style=flat&logo=googlechrome)](https://devortega.com)
 
-**Demo en vivo**: [https://devortega.com](https://devortega.com)
+**Live Demo**: [https://devortega.com](https://devortega.com)
 
-Este proyecto es un portfolio personal moderno y profesional desarrollado con las últimas tecnologías del ecosistema PHP y JavaScript. Muestra mi experiencia, habilidades, educación y proyectos destacados, siguiendo arquitectura hexagonal y principios SOLID.
+A modern, professional portfolio built with cutting-edge PHP and JavaScript technologies. Showcases my experience, skills, education, and featured projects, following hexagonal architecture and SOLID principles.
 
-## Stack Tecnológico
+## Tech Stack
 
 ### Backend
 - **PHP**: 8.3.28 (Latest stable)
@@ -35,104 +40,104 @@ Este proyecto es un portfolio personal moderno y profesional desarrollado con la
 - **Leaflet**: 1.9.4 (Maps - for demos)
 - **Axios**: 1.13.2 (HTTP client)
 
-## Características Principales
+## Key Features
 
-- **Interfaz Moderna**: Diseño oscuro totalmente responsivo con animaciones suaves y gradientes
-- **API RESTful**: Backend robusto con endpoints para proyectos, experiencia, habilidades y educación
-- **Documentación API**: Swagger UI integrado en `/api/documentation`
-- **Testing Completo**: 110 tests (21 backend + 89 frontend) con cobertura completa
-- **Arquitectura Hexagonal**: Código limpio, mantenible y escalable siguiendo principios SOLID
-- **Internacionalización**: Soporte multiidioma completo (ES/EN) con Vue i18n para UI y contenido de base de datos
-- **SPA**: Navegación fluida sin recargas gracias a Vue Router
-- **Demos Interactivas**: Proyectos destacados con mapas interactivos y funcionalidades avanzadas
-- **Rendimiento**: Optimizado con Vite y lazy loading
-- **Type Safety**: PHP 8.3 con tipos estrictos y JavaScript moderno con mejores prácticas
-- **Filtrado Avanzado**: Filtros por año en aptitudes, experiencia y formación académica
-- **Docker Ready**: Dockerfile multi-stage optimizado para producción con PHP-FPM + Nginx
+- **Modern Interface**: Fully responsive dark design with smooth animations and gradients
+- **RESTful API**: Robust backend with endpoints for projects, experience, skills, and education
+- **API Documentation**: Integrated Swagger UI at `/api/documentation`
+- **Comprehensive Testing**: 110 tests (21 backend + 89 frontend) with full coverage
+- **Hexagonal Architecture**: Clean, maintainable, and scalable code following SOLID principles
+- **Internationalization**: Full multi-language support (ES/EN) with Vue i18n for UI and database content
+- **SPA**: Seamless navigation without reloads thanks to Vue Router
+- **Interactive Demos**: Featured projects with interactive maps and advanced features
+- **Performance**: Optimized with Vite and lazy loading
+- **Type Safety**: PHP 8.3 with strict types and modern JavaScript best practices
+- **Advanced Filtering**: Year-based filters for skills, experience, and education
+- **Docker Ready**: Multi-stage Dockerfile optimized for production with PHP-FPM + Nginx
 
-## Instalación y Puesta en Marcha
+## Quick Start
 
-### Prerrequisitos
+### Prerequisites
 
 - PHP >= 8.3
 - Node.js >= 24.x LTS
 - npm >= 11.x
 - Composer
-- SQLite o MySQL/PostgreSQL
+- SQLite or MySQL/PostgreSQL
 
-### Instalación Rápida (Recomendado)
+### Quick Installation (Recommended)
 
 ```bash
-# 1. Clonar el repositorio
+# 1. Clone the repository
 git clone https://github.com/DevOrtega/portfolio.git
 cd portfolio
 
-# 2. Ejecutar setup completo (instala todo y configura BD)
+# 2. Run complete setup (installs everything and configures DB)
 composer setup
 
-# 3. Levantar entorno de desarrollo
+# 3. Start development environment
 composer dev
 ```
 
-Abre [http://localhost:8000](http://localhost:8000) en tu navegador.
+Open [http://localhost:8000](http://localhost:8000) in your browser.
 
-### Scripts Disponibles
+### Available Scripts
 
-| Comando | Cuándo usarlo |
-|---------|---------------|
-| `composer setup` | Primera instalación tras clonar el proyecto |
-| `composer dev` | Levantar entorno de desarrollo (servidor + vite + logs + queue) |
-| `composer refresh` | Tras `git pull` con cambios en dependencias, migraciones o seeders |
-| `composer test` | Ejecutar tests de backend |
+| Command | When to use |
+|---------|-------------|
+| `composer setup` | First installation after cloning the project |
+| `composer dev` | Start development environment (server + vite + logs + queue) |
+| `composer refresh` | After `git pull` with changes in dependencies, migrations, or seeders |
+| `composer test` | Run backend tests |
 
-### Instalación Manual (Paso a Paso)
+### Manual Installation (Step by Step)
 
 <details>
-<summary>Click para expandir instalación manual</summary>
+<summary>Click to expand manual installation</summary>
 
-1. **Clonar el repositorio**
+1. **Clone the repository**
    ```bash
    git clone https://github.com/DevOrtega/portfolio.git
    cd portfolio
    ```
 
-2. **Instalar dependencias de PHP**
+2. **Install PHP dependencies**
    ```bash
    composer install
    ```
 
-3. **Instalar dependencias de JavaScript**
+3. **Install JavaScript dependencies**
    ```bash
    npm install
    ```
 
-4. **Configurar entorno**
+4. **Configure environment**
    ```bash
    cp .env.example .env
    php artisan key:generate
    ```
 
-5. **Base de Datos**
-   Configura tu base de datos en el archivo `.env` (por defecto usa SQLite). Luego ejecuta las migraciones y los seeders:
+5. **Database**
+   Configure your database in the `.env` file (SQLite by default). Then run migrations and seeders:
    ```bash
-   touch database/database.sqlite # Si usas SQLite
+   touch database/database.sqlite # If using SQLite
    php artisan migrate:fresh --seed
    ```
 
-6. **Generar documentación de la API**
+6. **Generate API documentation**
    ```bash
    php artisan l5-swagger:generate
    ```
 
-7. **Ejecutar tests (opcional pero recomendado)**
+7. **Run tests (optional but recommended)**
    ```bash
    php artisan test    # Backend tests
    npm test           # Frontend tests
    ```
 
-8. **Ejecutar servidores de desarrollo**
+8. **Run development servers**
    
-   Necesitarás dos terminales:
+   You'll need two terminals:
 
    *Terminal 1 (Backend):*
    ```bash
@@ -144,34 +149,35 @@ Abre [http://localhost:8000](http://localhost:8000) en tu navegador.
    npm run dev
    ```
 
-9. **Ver el proyecto**
-   Abre tu navegador en [http://localhost:8000](http://localhost:8000).
+9. **View the project**
+   Open your browser at [http://localhost:8000](http://localhost:8000).
 
 </details>
 
-## Endpoints de la API
+## API Endpoints
 
-Documentación completa disponible en [http://localhost:8000/api/documentation](http://localhost:8000/api/documentation)
+Full documentation available at [http://localhost:8000/api/documentation](http://localhost:8000/api/documentation)
 
-### Endpoints Principales
+### Main Endpoints
 
-| Método | Endpoint | Parámetros | Descripción |
+| Method | Endpoint | Parameters | Description |
 |--------|----------|------------|-------------|
-| GET | `/api/personal-info` | - | Información personal (bio, contacto, redes sociales) |
-| GET | `/api/projects` | - | Lista de proyectos destacados con detalles completos |
-| GET | `/api/experiences` | `?year=2023` (opcional) | Historial laboral ordenado por fecha, filtrable por año |
-| GET | `/api/education` | `?year=2023` (opcional) | Formación académica, filtrable por año |
-| GET | `/api/skills` | `?year=2023` (opcional) | Aptitudes técnicas categorizadas, filtrables por año de experiencia |
+| GET | `/api/personal-info` | - | Personal information (bio, contact, social media) |
+| GET | `/api/projects` | - | List of featured projects with full details |
+| GET | `/api/experiences` | `?year=2023` (optional) | Work history sorted by date, filterable by year |
+| GET | `/api/education` | `?year=2023` (optional) | Academic background, filterable by year |
+| GET | `/api/skills` | `?year=2023` (optional) | Technical skills categorized, filterable by experience year |
+| GET | `/api/bus/data` | - | Bus tracking data (companies, lines, stops, routes) |
 
-### Ejemplo de Respuesta
+### Response Example
 
 ```json
 // GET /api/projects
 [
   {
     "id": 1,
-    "title": "Gestor de Cajeros Automáticos",
-    "description": "Sistema de gestión de red de ATMs con monitoreo en tiempo real",
+    "title": "ATM Manager",
+    "description": "ATM network management system with real-time monitoring",
     "image": "/images/atm-manager.jpg",
     "tags": ["Laravel", "Vue.js", "MySQL", "Docker"],
     "github_url": "https://github.com/DevOrtega/atm-manager",
@@ -180,41 +186,43 @@ Documentación completa disponible en [http://localhost:8000/api/documentation](
 ]
 ```
 
-## Demos Interactivas
+## Interactive Demos
 
-El portfolio incluye demos funcionales de proyectos reales:
+The portfolio includes functional demos of real projects:
 
-### Seguimiento de Guaguas en Tiempo Real
-- **Ruta**: `/projects/demo/guaguas-tracker`
-- **Tecnologías**: Vue 3, Leaflet, OSRM API, Composables
-- **Características**:
-  - Mapa interactivo de Gran Canaria con rutas reales
-  - Movimiento de buses siguiendo carreteras usando OSRM (Open Source Routing Machine)
-  - Iconos personalizados de guaguas por compañía
-  - Horarios de servicio (urbano/interurbano/nocturno)
-  - Sistema responsive con zoom adaptativo
-  - Detección de límites geográficos
-  - Interpolación suave de movimiento entre puntos de ruta
+### Real-Time Bus Tracking (GuaguasTracker)
+- **Route**: `/projects/demo/guaguas-tracker`
+- **Technologies**: Vue 3, Leaflet, OSRM API, Composables, SQLite
+- **Features**:
+  - Interactive map of Gran Canaria with real routes
+  - Bus movement following real roads using OSRM (Open Source Routing Machine)
+  - Custom bus icons by company (Guaguas Municipales, Global, Night Lines)
+  - Service schedules (urban/interurban/night)
+  - Responsive system with adaptive zoom
+  - Geographic boundary detection
+  - Smooth movement interpolation between route points
+  - **NEW**: Database-backed with hexagonal architecture
+  - **NEW**: API endpoint for bus data (`/api/bus/data`)
 
-### Gestor de Cajeros Automáticos
-- **Ruta**: `/projects/demo/atm-manager`
-- **Tecnologías**: Vue 3, Element Plus, Pinia
-- **Características**: (En desarrollo)
+### ATM Manager
+- **Route**: `/projects/demo/atm-manager`
+- **Technologies**: Vue 3, Element Plus, Pinia
+- **Features**: (In development)
 
-### Próximas Demos
-- Sistema ERP empresarial
-- Portal de investigadores universitarios
-- Chatbot con Google Assistant
+### Upcoming Demos
+- Enterprise ERP system
+- University researchers portal
+- Google Assistant chatbot
 
-## Arquitectura del Proyecto
+## Project Architecture
 
-Este proyecto sigue los principios **SOLID** y está estructurado usando **Arquitectura Hexagonal** (Ports & Adapters), lo que garantiza:
-- **Mantenibilidad**: Código organizado y fácil de entender
-- **Testabilidad**: Componentes desacoplados y fáciles de probar
-- **Escalabilidad**: Fácil de extender sin modificar código existente
-- **Flexibilidad**: Posibilidad de cambiar implementaciones sin afectar la lógica de negocio
+This project follows **SOLID** principles and is structured using **Hexagonal Architecture** (Ports & Adapters), ensuring:
+- **Maintainability**: Organized and easy-to-understand code
+- **Testability**: Decoupled and easy-to-test components
+- **Scalability**: Easy to extend without modifying existing code
+- **Flexibility**: Ability to change implementations without affecting business logic
 
-### Capas de la Arquitectura
+### Architecture Layers
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -238,90 +246,50 @@ Este proyecto sigue los principios **SOLID** y está estructurado usando **Arqui
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### Estructura de Directorios
+### Directory Structure
 
 ```
 app/
-├── Domain/                          # Capa de Dominio
-│   └── Portfolio/
-│       ├── Entities/                # Entidades de dominio (Project, Skill, etc.)
-│       └── Repositories/            # Interfaces de repositorios (contratos)
+├── Domain/                          # Domain Layer
+│   ├── Portfolio/
+│   │   ├── Entities/                # Domain entities (Project, Skill, etc.)
+│   │   └── Repositories/            # Repository interfaces (contracts)
+│   └── Bus/
+│       ├── Entities/                # Bus domain entities (BusCompany, BusLine, BusStop)
+│       └── Repositories/            # Bus repository interfaces
 │
-├── Application/                     # Capa de Aplicación
-│   └── Portfolio/
-│       ├── Services/                # Servicios de aplicación (lógica de negocio)
-│       └── DTOs/                    # Data Transfer Objects
+├── Application/                     # Application Layer
+│   ├── Portfolio/
+│   │   ├── Services/                # Application services (business logic)
+│   │   └── DTOs/                    # Data Transfer Objects
+│   └── Bus/
+│       └── Services/                # Bus application services (BusService)
 │
-├── Infrastructure/                  # Capa de Infraestructura
+├── Infrastructure/                  # Infrastructure Layer
 │   └── Persistence/
 │       └── Eloquent/
-│           ├── Models/              # Modelos Eloquent (ProjectModel, etc.)
-│           └── Repositories/        # Implementaciones de repositorios
+│           ├── Models/              # Eloquent models (ProjectModel, BusLineModel, etc.)
+│           └── Repositories/        # Repository implementations
 │
-└── Http/                            # Capa de Presentación
+└── Http/                            # Presentation Layer
     └── Controllers/
-        └── Api/                     # Controladores API (solo HTTP)
+        └── Api/                     # API controllers (HTTP only)
 ```
 
-### Principios SOLID Aplicados
-
-#### 1. Single Responsibility Principle (SRP)
-Cada clase tiene una única responsabilidad:
-- **Controllers**: Solo manejan peticiones/respuestas HTTP
-- **Services**: Solo contienen lógica de negocio
-- **Repositories**: Solo gestionan persistencia de datos
-
-#### 2. Open/Closed Principle (OCP)
-El código está abierto a extensión pero cerrado a modificación:
-- Nuevas implementaciones de repositorios pueden añadirse sin modificar servicios
-- Uso de interfaces permite cambiar implementaciones fácilmente
-
-#### 3. Liskov Substitution Principle (LSP)
-Cualquier implementación de repositorio puede sustituir a otra:
-- `EloquentProjectRepository` puede reemplazarse por `MongoProjectRepository`
-- Los servicios funcionan con interfaces, no con implementaciones concretas
-
-#### 4. Interface Segregation Principle (ISP)
-Interfaces pequeñas y específicas:
-- `ProjectRepositoryInterface` solo define métodos relacionados con proyectos
-- No hay métodos innecesarios que los clientes no usen
-
-#### 5. Dependency Inversion Principle (DIP)
-Módulos de alto nivel no dependen de módulos de bajo nivel:
-- `ProjectService` depende de `ProjectRepositoryInterface` (abstracción)
-- No depende directamente de `EloquentProjectRepository` (implementación)
-
-### Ejemplo de Flujo de Datos
-
-```php
-// 1. HTTP Request llega al Controller
-ProjectController::index()
-
-// 2. Controller delega al Service
-$projects = $this->projectService->getAllProjects()
-
-// 3. Service usa el Repository (a través de la interfaz)
-return $this->repository->findAll()
-
-// 4. Repository (Eloquent) consulta la base de datos
-ProjectModel::all()->map(fn($m) => $this->toDomain($m))
-
-// 5. Se devuelven entidades de dominio (Project)
-// 6. Controller formatea la respuesta JSON
-```
+For detailed architecture documentation, see [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ## Testing
 
-El proyecto cuenta con una suite completa de tests utilizando **PEST** (backend) y **Vitest** (frontend).
+The project includes a comprehensive test suite using **PEST** (backend) and **Vitest** (frontend).
 
-### Estadísticas de Tests
+### Test Statistics
 
 - **Backend**: 21 tests, 155 assertions
-- **Frontend**: 89 tests (6 componentes + 2 composables)
-- **Total**: 110 tests pasando
-- **Cobertura**: Alta cobertura en todas las capas
+- **Frontend**: 89 tests (6 components + 2 composables)
+- **Total**: 110 tests passing
+- **Coverage**: High coverage across all layers
 
-### Ejecutar Tests
+### Running Tests
 
 ```bash
 # Backend tests (PEST)
@@ -331,259 +299,64 @@ php artisan test --coverage
 
 # Frontend tests (Vitest)
 npm test
-npm run test:ui        # UI interactiva
-npm run test:coverage  # Con reporte de cobertura
+npm run test:ui        # Interactive UI
+npm run test:coverage  # With coverage report
 
-# Ejecutar todos los tests
+# Run all tests
 php artisan test && npm test
 ```
 
-### Tipos de Tests
-
-#### Backend Tests (`tests/`)
-
-**Tests Unitarios** (`tests/Unit/`):
-- ProjectService: Lógica de negocio con mocks
-
-**Tests de Integración** (`tests/Feature/Api/`):
-- PersonalInfoApiTest: GET endpoint, 404 handling
-- SkillApiTest: Ordering, empty arrays, proficiency
-- ExperienceApiTest: Date ordering, null handling
-- EducationApiTest: Ordering, ongoing education
-- ProjectApiTest: CRUD operations, data structure
-
-#### Frontend Tests (`resources/js/`)
-
-**Componentes** (`__tests__/`):
-- StatsCard: Props, color variants, hover effects
-- LoadingSpinner: Sizes, accessibility
-- InfoBanner: Types, icons, slots
-- ProjectCard: Images, links, RouterLink
-- TimelineItem: Colors, timeline dot
-- SectionHeader: Icons, styling
-
-**Composables** (`composables/__tests__/`):
-- useBusMap: Geographic bounds, Leaflet icons
-- useBusSchedule: Service schedules, time logic
-
-## Scripts Disponibles
-
-### Backend (PHP)
-```bash
-composer install          # Instalar dependencias
-php artisan serve        # Servidor de desarrollo
-php artisan test         # Ejecutar tests
-php artisan migrate      # Ejecutar migraciones
-php artisan db:seed      # Poblar base de datos
-php artisan l5-swagger:generate  # Generar documentación API
-php artisan pint         # Formatear código
-```
-
-### Frontend (JavaScript)
-```bash
-npm install              # Instalar dependencias
-npm run dev             # Servidor de desarrollo con HMR
-npm run build           # Build para producción
-npm test                # Ejecutar tests
-npm run test:ui         # Tests con interfaz visual
-npm run test:coverage   # Tests con cobertura
-```
-
-## Tecnologías Modernas Utilizadas
-
-### PHP 8.3 Features
-- Typed properties en todos los modelos
-- Constructor property promotion
-- Readonly classes para inmutabilidad
-- Final classes para mejor rendimiento
-- Enums para valores constantes
-- Modern array functions
-
-### JavaScript ES2024
-- Nullish coalescing operator (`??`)
-- Optional chaining (`?.`)
-- Async/await para operaciones asíncronas
-- ES Modules
-- Composition API de Vue 3
-- Reactive state management con Pinia
-
-## Rendimiento
+## Performance
 
 - **First Contentful Paint**: < 1.5s
 - **Time to Interactive**: < 3s
 - **Lighthouse Score**: 95+
-- **Build optimizado**: Code splitting automático
-- **Lazy loading**: Componentes y rutas cargadas bajo demanda
+- **Optimized Build**: Automatic code splitting
+- **Lazy Loading**: Components and routes loaded on demand
 
-## Seguridad
+## Security
 
-- CSRF Protection activado
-- XSS Prevention con sanitización
-- SQL Injection prevention con Eloquent ORM
-- Rate limiting en API endpoints
-- Secure headers configurados
-- Input validation en todos los endpoints
+- CSRF Protection enabled
+- XSS Prevention with sanitization
+- SQL Injection prevention with Eloquent ORM
+- Rate limiting on API endpoints
+- Secure headers configured
+- Input validation on all endpoints
 
-## Despliegue
+## Deployment
 
-### Despliegue con Docker Compose (Recomendado)
-
-El proyecto incluye `docker-compose.yml` para un despliegue simple y rápido:
+### Docker Compose Deployment (Recommended)
 
 ```bash
-# Construir y lanzar (primera vez o después de cambios)
+# Build and launch (first time or after changes)
 docker compose up -d --build
 
-# Reiniciar sin reconstruir
-docker compose restart
-
-# Ver logs en tiempo real
+# View real-time logs
 docker compose logs -f
 
-# Parar servicios
-docker compose down
-
-# O usar el script incluido
+# Or use the included script
 chmod +x deploy-compose.sh
-./deploy-compose.sh build    # Primera vez
-./deploy-compose.sh restart  # Reinicio rápido
-./deploy-compose.sh logs     # Ver logs
+./deploy-compose.sh build
 ```
 
-### Actualizar Despliegue tras git pull
+For detailed deployment instructions, see [DEVELOPMENT.md](DEVELOPMENT.md).
 
-Cuando traes cambios del repositorio a tu servidor/VM:
+## Documentation
 
-```bash
-# 1. Traer los cambios
-git pull
+| Document | Description |
+|----------|-------------|
+| [README.md](README.md) | Project overview (English) |
+| [README.es.md](README.es.md) | Project overview (Spanish) |
+| [ARCHITECTURE.md](ARCHITECTURE.md) | Detailed architecture documentation |
+| [DEVELOPMENT.md](DEVELOPMENT.md) | Development guide |
+| [CONTRIBUTING.md](CONTRIBUTING.md) | Contribution guidelines |
+| [CHANGELOG.md](CHANGELOG.md) | Version history |
 
-# 2. Reconstruir y reiniciar (siempre seguro)
-docker compose up -d --build
-```
+## License
 
-| Tipo de cambio | Comando necesario |
-|----------------|-------------------|
-| Solo código PHP (sin dependencias) | `docker compose restart` (rápido) |
-| Nuevas dependencias composer/npm | `docker compose up -d --build` |
-| Cambios en migraciones | `docker compose up -d --build` |
-| Cambios en Dockerfile | `docker compose up -d --build` |
-| Cambios en .env | `docker compose up -d` |
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
-**Nota**: Ante la duda, usa siempre `docker compose up -d --build`. Tarda un poco más pero garantiza que todo está actualizado.
-
-**Características del docker-compose.yml:**
-- Volúmenes persistentes para storage y database
-- Health checks automáticos
-- Restart automático si el contenedor falla
-- Red aislada para seguridad
-- Variables de entorno configurables
-- Puerto 80 expuesto (mapea a 8080 interno)
-- Límites de recursos (CPU y RAM)
-
-### Comandos Útiles Docker Compose
-
-```bash
-# Gestión del contenedor
-docker compose ps                    # Ver estado de servicios
-docker compose logs -f              # Ver logs en tiempo real
-docker compose logs -f --tail 50    # Ver últimos 50 logs
-docker compose restart              # Reiniciar servicios
-docker compose down                 # Parar y eliminar contenedores
-docker compose down -v              # Parar y eliminar volúmenes
-
-# Ejecutar comandos dentro del contenedor
-docker compose exec portfolio bash                           # Abrir shell interactiva
-docker compose exec portfolio php artisan migrate           # Ejecutar migraciones
-docker compose exec portfolio php artisan cache:clear       # Limpiar cache
-docker compose exec portfolio php artisan config:cache      # Cachear configuración
-docker compose exec portfolio php artisan route:list        # Listar rutas
-docker compose exec portfolio php artisan tinker            # Abrir REPL de Laravel
-docker compose exec portfolio php artisan test              # Ejecutar tests
-docker compose exec portfolio composer install              # Instalar dependencias
-docker compose exec portfolio tail -f storage/logs/laravel.log  # Ver logs de Laravel
-
-# Inspección y debugging
-docker compose exec portfolio env                           # Ver variables de entorno
-docker compose exec portfolio cat .env                      # Ver archivo .env
-docker compose exec portfolio ls -la storage/logs          # Listar archivos de logs
-docker compose exec portfolio php -v                        # Ver versión de PHP
-docker compose exec portfolio node -v                       # Ver versión de Node.js
-
-# Gestión de recursos
-docker compose top                   # Ver procesos corriendo
-docker stats portfolio              # Ver uso de CPU/RAM en tiempo real
-```
-
-### Script de Despliegue Automatizado
-
-El proyecto incluye `deploy-compose.sh` para facilitar operaciones comunes:
-
-```bash
-chmod +x deploy-compose.sh
-
-./deploy-compose.sh build    # Construir y lanzar (primera vez o tras cambios)
-./deploy-compose.sh restart  # Reinicio rápido sin rebuild
-./deploy-compose.sh logs     # Ver logs en tiempo real
-./deploy-compose.sh stop     # Parar servicios
-./deploy-compose.sh clean    # Eliminar todo (contenedores, volúmenes, imágenes)
-```
-
-### Despliegue con Docker (Sin Compose)
-
-También puedes usar Docker directamente:
-
-```bash
-# Construir la imagen
-docker build -t portfolio .
-
-# Ejecutar el contenedor
-docker run -d -p 80:8080 \
-  --name portfolio \
-  --health-cmd="curl -f http://localhost:8080/up || exit 1" \
-  --health-interval=30s \
-  --health-timeout=10s \
-  --health-retries=3 \
-  portfolio
-```
-
-**El Dockerfile incluye:**
-- PHP 8.3 con FPM + Nginx (serversideup/php:8.3-fpm-nginx)
-- Node.js 20 para build de assets
-- Extensiones PHP necesarias (bcmath, intl)
-- Generación automática de APP_KEY
-- Migraciones y seeders automáticos
-- Build de assets optimizado para producción
-- Caché de configuración (config, routes, views)
-- Health check en `/up`
-- Permisos correctos para www-data
-
-### Plataformas Soportadas
-
-El proyecto está preparado para despliegue en:
-- **Contenedores**: Docker, Kubernetes, Proxmox LXC
-- **Cloud**: AWS, DigitalOcean, Google Cloud, Azure
-- **PaaS**: Laravel Forge, Railway, Render
-- **Self-hosted**: VPS con Docker, Cloudflare Tunnel
-- **Database**: SQLite (incluida), MySQL, PostgreSQL
-
-### Build para Producción
-```bash
-# Backend
-composer install --optimize-autoloader --no-dev
-php artisan config:cache
-php artisan route:cache
-php artisan view:cache
-
-# Frontend
-npm run build
-```
-
-## Licencia
-
-Este proyecto está bajo la Licencia MIT. Ver el archivo [LICENSE](LICENSE) para más detalles.
-
-## Autor
+## Author
 
 **Carlos Miguel Ortega Arencibia**
 
@@ -594,15 +367,15 @@ Full Stack Developer | Laravel & Vue.js Specialist
 - **Email**: carloso2103@gmail.com
 - **GitHub**: [github.com/DevOrtega](https://github.com/DevOrtega)
 
-## Agradecimientos
+## Acknowledgments
 
-- Laravel Framework por proporcionar un ecosistema robusto
-- Vue.js por la reactividad y composición elegante
-- Tailwind CSS por el sistema de diseño utility-first
-- La comunidad open source por las increíbles herramientas
+- Laravel Framework for providing a robust ecosystem
+- Vue.js for elegant reactivity and composition
+- Tailwind CSS for the utility-first design system
+- The open source community for amazing tools
 
 ---
 
-**Portfolio de Carlos Miguel Ortega Arencibia**
+**Carlos Miguel Ortega Arencibia's Portfolio**
 
-© 2025 - Todos los derechos reservados
+© 2025 - All rights reserved

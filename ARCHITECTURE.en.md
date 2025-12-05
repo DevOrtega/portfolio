@@ -1,104 +1,104 @@
-# Arquitectura del Proyecto
+# Project Architecture
 
-🌐 *Read this in other languages: [English](ARCHITECTURE.en.md) • Español*
+🌐 *Read this in other languages: English • [Español](ARCHITECTURE.md)*
 
-## 📐 Visión General
+## 📐 Overview
 
-Este proyecto implementa una **Arquitectura Hexagonal** (también conocida como Ports & Adapters) combinada con los principios **SOLID**, proporcionando una base de código limpia, mantenible y altamente testeable.
+This project implements a **Hexagonal Architecture** (also known as Ports & Adapters) combined with **SOLID** principles, providing a clean, maintainable, and highly testable codebase.
 
-El proyecto cuenta con **dos dominios principales**:
-- **Portfolio**: Gestión de proyectos, experiencias, educación y habilidades
-- **Bus**: Sistema de tracking de guaguas en tiempo real (TITSA - Tenerife)
+The project has **two main domains**:
+- **Portfolio**: Management of projects, experiences, education, and skills
+- **Bus**: Real-time bus tracking system (TITSA - Tenerife)
 
-## 🎯 Objetivos Arquitectónicos
+## 🎯 Architectural Goals
 
-1. **Separación de Responsabilidades**: Cada capa tiene un propósito bien definido
-2. **Independencia de Framework**: La lógica de negocio no depende de Laravel
-3. **Testabilidad**: Facilita el testing unitario y de integración
-4. **Flexibilidad**: Permite cambiar implementaciones sin afectar otras capas
-5. **Mantenibilidad**: Código organizado y fácil de entender
+1. **Separation of Concerns**: Each layer has a well-defined purpose
+2. **Framework Independence**: Business logic does not depend on Laravel
+3. **Testability**: Facilitates unit and integration testing
+4. **Flexibility**: Allows changing implementations without affecting other layers
+5. **Maintainability**: Organized and easy-to-understand code
 
-## 🏛️ Capas de la Arquitectura
+## 🏛️ Architecture Layers
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                  Presentation Layer                          │
 │              (Controllers, API Resources)                    │
 │                                                              │
-│  • Maneja HTTP requests/responses                           │
-│  • Validación de entrada                                    │
-│  • Formateo de respuestas JSON                              │
+│  • Handles HTTP requests/responses                          │
+│  • Input validation                                         │
+│  • JSON response formatting                                 │
 └──────────────────────┬──────────────────────────────────────┘
                        │ (Ports - Interfaces)
 ┌──────────────────────▼──────────────────────────────────────┐
 │                 Application Layer                            │
 │          (Services, Use Cases, DTOs)                         │
 │                                                              │
-│  • Orquesta la lógica de negocio                            │
-│  • Coordina entre diferentes entidades                       │
-│  • No contiene lógica de infraestructura                    │
+│  • Orchestrates business logic                              │
+│  • Coordinates between different entities                   │
+│  • Contains no infrastructure logic                         │
 └──────────────────────┬──────────────────────────────────────┘
                        │ (Ports - Interfaces)
 ┌──────────────────────▼──────────────────────────────────────┐
 │                   Domain Layer                               │
 │         (Entities, Value Objects, Rules)                     │
 │                                                              │
-│  • Contiene las reglas de negocio puras                     │
-│  • Entidades de dominio inmutables                          │
-│  • Independiente de frameworks                              │
+│  • Contains pure business rules                             │
+│  • Immutable domain entities                                │
+│  • Framework independent                                    │
 └──────────────────────┬──────────────────────────────────────┘
                        │ (Ports - Interfaces)
 ┌──────────────────────▼──────────────────────────────────────┐
 │               Infrastructure Layer                           │
 │      (Repositories, Database, External APIs)                 │
 │                                                              │
-│  • Implementaciones concretas                               │
-│  • Acceso a base de datos (Eloquent)                        │
-│  • Integración con servicios externos                       │
+│  • Concrete implementations                                 │
+│  • Database access (Eloquent)                               │
+│  • Integration with external services                       │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Estructura de Directorios
+## 📁 Directory Structure
 
 ```
 app/
-├── Domain/                          # 🎯 CAPA DE DOMINIO
+├── Domain/                          # 🎯 DOMAIN LAYER
 │   ├── Portfolio/
 │   │   ├── Entities/                
-│   │   │   └── Project.php          # Entidad de dominio (readonly)
+│   │   │   └── Project.php          # Domain entity (readonly)
 │   │   └── Repositories/            
-│   │       └── ProjectRepositoryInterface.php  # Puerto (interface)
+│   │       └── ProjectRepositoryInterface.php  # Port (interface)
 │   │
-│   └── Bus/                         # 🚌 DOMINIO BUS (NUEVO)
+│   └── Bus/                         # 🚌 BUS DOMAIN (NEW)
 │       ├── Entities/
-│       │   ├── BusCompany.php       # Entidad compañía de guaguas
-│       │   ├── BusStop.php          # Entidad parada
-│       │   ├── BusLine.php          # Entidad línea
-│       │   └── BusRouteStop.php     # Entidad parada de ruta
+│       │   ├── BusCompany.php       # Bus company entity
+│       │   ├── BusStop.php          # Stop entity
+│       │   ├── BusLine.php          # Line entity
+│       │   └── BusRouteStop.php     # Route stop entity
 │       └── Repositories/
 │           ├── BusCompanyRepositoryInterface.php
 │           ├── BusStopRepositoryInterface.php
 │           ├── BusLineRepositoryInterface.php
 │           └── BusRouteStopRepositoryInterface.php
 │
-├── Application/                     # 🔧 CAPA DE APLICACIÓN
+├── Application/                     # 🔧 APPLICATION LAYER
 │   ├── Portfolio/
 │   │   └── Services/                
-│   │       └── ProjectService.php   # Servicio de aplicación (readonly)
+│   │       └── ProjectService.php   # Application service (readonly)
 │   │
-│   └── Bus/                         # 🚌 SERVICIOS BUS
+│   └── Bus/                         # 🚌 BUS SERVICES
 │       └── Services/
-│           └── BusDataService.php   # Servicio de datos de bus
+│           └── BusDataService.php   # Bus data service
 │
-├── Infrastructure/                  # 🗄️ CAPA DE INFRAESTRUCTURA
+├── Infrastructure/                  # 🗄️ INFRASTRUCTURE LAYER
 │   └── Persistence/
 │       ├── Eloquent/
 │       │   ├── Models/              
-│       │   │   └── ProjectModel.php # Modelo Eloquent (final)
+│       │   │   └── ProjectModel.php # Eloquent model (final)
 │       │   └── Repositories/        
-│       │       └── EloquentProjectRepository.php  # Adaptador (final)
+│       │       └── EloquentProjectRepository.php  # Adapter (final)
 │       │
-│       └── SQLite/                  # 🚌 PERSISTENCIA BUS
+│       └── SQLite/                  # 🚌 BUS PERSISTENCE
 │           ├── Models/
 │           │   ├── BusCompanyModel.php
 │           │   ├── BusStopModel.php
@@ -110,48 +110,48 @@ app/
 │               ├── SQLiteBusLineRepository.php
 │               └── SQLiteBusRouteStopRepository.php
 │
-└── Http/                            # 🌐 CAPA DE PRESENTACIÓN
+└── Http/                            # 🌐 PRESENTATION LAYER
     └── Controllers/
         ├── Api/                     
-        │   └── ProjectController.php # Controlador API (final)
+        │   └── ProjectController.php # API controller (final)
         │
-        └── Bus/                     # 🚌 CONTROLADOR BUS
-            └── BusController.php    # API de datos de bus
+        └── Bus/                     # 🚌 BUS CONTROLLER
+            └── BusController.php    # Bus data API
 
 resources/js/                        # 🎨 FRONTEND (Vue.js)
-├── components/                      # Componentes reutilizables
+├── components/                      # Reusable components
 │   ├── StatsCard.vue
 │   ├── LoadingSpinner.vue
 │   ├── InfoBanner.vue
 │   ├── ProjectCard.vue
 │   ├── TimelineItem.vue
 │   ├── SectionHeader.vue
-│   └── guaguas/                     # 🚌 COMPONENTES BUS
+│   └── guaguas/                     # 🚌 BUS COMPONENTS
 │       ├── BusMap.vue
 │       ├── BusPopup.vue
 │       ├── BusMarker.vue
 │       ├── BusLegend.vue
 │       ├── BusScheduleModal.vue
 │       └── BusStats.vue
-├── composables/                     # Lógica reutilizable
-│   ├── useBusMap.js                 # Configuración del mapa
-│   ├── useBusSchedule.js            # Gestión de horarios
-│   └── useBusData.js                # 🚌 Datos de bus (NUEVO)
-├── views/                           # Vistas principales
+├── composables/                     # Reusable logic
+│   ├── useBusMap.js                 # Map configuration
+│   ├── useBusSchedule.js            # Schedule management
+│   └── useBusData.js                # 🚌 Bus data (NEW)
+├── views/                           # Main views
 │   ├── HomeView.vue
 │   ├── ProjectsView.vue
 │   ├── ResumeView.vue
 │   └── demos/
-│       └── GuaguasTracker.vue       # 🚌 Demo tracking bus
-└── router/                          # Configuración de rutas
+│       └── GuaguasTracker.vue       # 🚌 Bus tracking demo
+└── router/                          # Route configuration
     └── index.js
 ```
 
 ## 🚌 Bus Domain Architecture
 
-El dominio Bus sigue la misma arquitectura hexagonal, con persistencia en **SQLite** para datos estáticos de rutas y paradas:
+The Bus domain follows the same hexagonal architecture, with **SQLite** persistence for static route and stop data:
 
-### Modelo de Datos
+### Data Model
 
 ```
 ┌──────────────────┐       ┌──────────────────┐
@@ -182,7 +182,7 @@ El dominio Bus sigue la misma arquitectura hexagonal, con persistencia en **SQLi
                            └────────────────────┘
 ```
 
-### Flujo de Datos Bus
+### Bus Data Flow
 
 ```
 Frontend (Vue.js)
@@ -207,11 +207,12 @@ useBusData.js (Composable)
      └◄─────────────────────────────┘
      │
      ▼
-useBusMap.js + Leaflet (Mapa interactivo)
+useBusMap.js + Leaflet (Interactive map)
+```
 
-## 🔄 Flujo de Datos
+## 🔄 Data Flow
 
-### Portfolio Domain: Request Flow (Usuario → Backend → Base de Datos)
+### Portfolio Domain: Request Flow (User → Backend → Database)
 
 ```
 1. HTTP Request
@@ -219,27 +220,27 @@ useBusMap.js + Leaflet (Mapa interactivo)
 2. Router (routes/api.php)
    ↓
 3. Controller (Presentation Layer)
-   • Valida request
-   • Delega al Service
+   • Validates request
+   • Delegates to Service
    ↓
 4. Service (Application Layer)
-   • Ejecuta lógica de negocio
-   • Usa Repository (interface)
+   • Executes business logic
+   • Uses Repository (interface)
    ↓
 5. Repository (Infrastructure Layer)
-   • Consulta base de datos (Eloquent)
-   • Mapea a entidades de dominio
+   • Queries database (Eloquent)
+   • Maps to domain entities
    ↓
 6. Domain Entity
-   • Devuelve datos puros
+   • Returns pure data
    ↓
-7. Response JSON
+7. JSON Response
 ```
 
-### Ejemplo Práctico
+### Practical Example
 
 ```php
-// 1. Request llega al Controller
+// 1. Request arrives at Controller
 GET /api/projects
 
 // 2. ProjectController::index()
@@ -252,7 +253,7 @@ public function index(): JsonResponse
 // 3. ProjectService::getAllProjects()
 public function getAllProjects(): Collection
 {
-    return $this->repository->findAll(); // Usa la interface
+    return $this->repository->findAll(); // Uses the interface
 }
 
 // 4. EloquentProjectRepository::findAll()
@@ -262,38 +263,38 @@ public function findAll(): Collection
         ->map(fn($model) => $this->toDomain($model));
 }
 
-// 5. Mapeo a entidad de dominio
+// 5. Mapping to domain entity
 private function toDomain(ProjectModel $model): Project
 {
     return new Project(
         id: $model->id,
         title: $model->title,
-        // ... más propiedades
+        // ... more properties
     );
 }
 ```
 
-## 🎨 Principios SOLID Aplicados
+## 🎨 SOLID Principles Applied
 
 ### 1. Single Responsibility Principle (SRP)
-**"Una clase debe tener una sola razón para cambiar"**
+**"A class should have only one reason to change"**
 
-✅ **Aplicación en el proyecto:**
-- `ProjectController`: Solo maneja HTTP requests/responses
-- `ProjectService`: Solo contiene lógica de negocio
-- `EloquentProjectRepository`: Solo gestiona persistencia
+✅ **Application in the project:**
+- `ProjectController`: Only handles HTTP requests/responses
+- `ProjectService`: Only contains business logic
+- `EloquentProjectRepository`: Only manages persistence
 
 ```php
-// ❌ MAL - Controller con múltiples responsabilidades
+// ❌ BAD - Controller with multiple responsibilities
 class ProjectController {
     public function index() {
-        $data = DB::table('projects')->get(); // ❌ Acceso directo a DB
-        // ... lógica de negocio ...
+        $data = DB::table('projects')->get(); // ❌ Direct DB access
+        // ... business logic ...
         return response()->json($data);
     }
 }
 
-// ✅ BIEN - Responsabilidades separadas
+// ✅ GOOD - Separated responsibilities
 class ProjectController {
     public function index() {
         $projects = $this->projectService->getAllProjects();
@@ -303,34 +304,34 @@ class ProjectController {
 ```
 
 ### 2. Open/Closed Principle (OCP)
-**"Abierto a extensión, cerrado a modificación"**
+**"Open for extension, closed for modification"**
 
-✅ **Aplicación en el proyecto:**
-- Nuevas implementaciones de repositorios sin modificar servicios
-- Nuevos tipos de proyectos sin cambiar código existente
+✅ **Application in the project:**
+- New repository implementations without modifying services
+- New project types without changing existing code
 
 ```php
-// Se puede añadir MongoProjectRepository sin modificar ProjectService
+// Can add MongoProjectRepository without modifying ProjectService
 class MongoProjectRepository implements ProjectRepositoryInterface {
     public function findAll(): Collection { /* ... */ }
 }
 
-// Service binding en RepositoryServiceProvider
+// Service binding in RepositoryServiceProvider
 $this->app->bind(
     ProjectRepositoryInterface::class,
-    EloquentProjectRepository::class // Fácil de cambiar
+    EloquentProjectRepository::class // Easy to change
 );
 ```
 
 ### 3. Liskov Substitution Principle (LSP)
-**"Las subclases deben ser sustituibles por sus clases base"**
+**"Subtypes must be substitutable for their base types"**
 
-✅ **Aplicación en el proyecto:**
-- Cualquier implementación de `ProjectRepositoryInterface` puede sustituir a otra
-- El service funciona igual con Eloquent, Mongo o cualquier otra implementación
+✅ **Application in the project:**
+- Any implementation of `ProjectRepositoryInterface` can substitute another
+- The service works the same with Eloquent, Mongo, or any other implementation
 
 ```php
-// Ambas implementaciones son intercambiables
+// Both implementations are interchangeable
 interface ProjectRepositoryInterface {
     public function findAll(): Collection;
     public function findById(int $id): ?Project;
@@ -342,14 +343,14 @@ class InMemoryProjectRepository implements ProjectRepositoryInterface { }
 ```
 
 ### 4. Interface Segregation Principle (ISP)
-**"Los clientes no deben depender de interfaces que no usan"**
+**"Clients should not depend on interfaces they don't use"**
 
-✅ **Aplicación en el proyecto:**
-- Interfaces pequeñas y específicas
-- Solo métodos necesarios
+✅ **Application in the project:**
+- Small and specific interfaces
+- Only necessary methods
 
 ```php
-// ❌ MAL - Interface "gorda" con métodos no usados
+// ❌ BAD - "Fat" interface with unused methods
 interface ProjectRepositoryInterface {
     public function findAll();
     public function findById(int $id);
@@ -360,7 +361,7 @@ interface ProjectRepositoryInterface {
     public function exportToExcel(Collection $projects); // ❌
 }
 
-// ✅ BIEN - Interface específica
+// ✅ GOOD - Specific interface
 interface ProjectRepositoryInterface {
     public function findAll(): Collection;
     public function findById(int $id): ?Project;
@@ -370,14 +371,14 @@ interface ProjectRepositoryInterface {
 ```
 
 ### 5. Dependency Inversion Principle (DIP)
-**"Depender de abstracciones, no de implementaciones"**
+**"Depend on abstractions, not implementations"**
 
-✅ **Aplicación en el proyecto:**
-- Services dependen de interfaces, no de implementaciones concretas
-- Inversión de control mediante inyección de dependencias
+✅ **Application in the project:**
+- Services depend on interfaces, not concrete implementations
+- Inversion of control through dependency injection
 
 ```php
-// ❌ MAL - Dependencia de implementación concreta
+// ❌ BAD - Dependency on concrete implementation
 class ProjectService {
     private EloquentProjectRepository $repository;
     
@@ -386,7 +387,7 @@ class ProjectService {
     }
 }
 
-// ✅ BIEN - Dependencia de abstracción
+// ✅ GOOD - Dependency on abstraction
 class ProjectService {
     public function __construct(
         private readonly ProjectRepositoryInterface $repository // ✅
@@ -396,8 +397,8 @@ class ProjectService {
 
 ## 🧪 Testing Strategy
 
-### Tests Unitarios (Application Layer)
-Prueban la lógica de negocio en aislamiento usando **mocks**:
+### Unit Tests (Application Layer)
+Test business logic in isolation using **mocks**:
 
 ```php
 it('retrieves all projects', function () {
@@ -418,8 +419,8 @@ it('retrieves all projects', function () {
 });
 ```
 
-### Tests de Integración (Presentation Layer)
-Prueban el flujo completo de la aplicación:
+### Integration Tests (Presentation Layer)
+Test the complete application flow:
 
 ```php
 it('returns all projects via API', function () {
@@ -465,7 +466,7 @@ it('calculates responsive zoom correctly', () => {
 ### Composition API Pattern
 
 ```javascript
-// Composable: Lógica reutilizable
+// Composable: Reusable logic
 export function useBusMap() {
   const zoom = ref(10);
   
@@ -477,7 +478,7 @@ export function useBusMap() {
   return { zoom, getResponsiveZoom };
 }
 
-// Component: UI y presentación
+// Component: UI and presentation
 <script setup>
 import { useBusMap } from '@/composables/useBusMap';
 
@@ -488,7 +489,7 @@ const { zoom, getResponsiveZoom } = useBusMap();
 ### Bus Domain Composables
 
 ```javascript
-// useBusData.js - Gestión de datos de bus
+// useBusData.js - Bus data management
 export function useBusData(lineNumber, direction = 'outbound') {
   const stops = ref([]);
   const lines = ref([]);
@@ -518,58 +519,58 @@ export function useBusData(lineNumber, direction = 'outbound') {
 
 ```
 components/
-├── Common/              # Componentes reutilizables
-│   ├── StatsCard.vue   # Props tipadas, slots, eventos
+├── Common/              # Reusable components
+│   ├── StatsCard.vue   # Typed props, slots, events
 │   ├── LoadingSpinner.vue
 │   └── InfoBanner.vue
-├── Projects/            # Específicos de dominio Portfolio
+├── Projects/            # Portfolio domain specific
 │   └── ProjectCard.vue
-├── guaguas/             # 🚌 Específicos de dominio Bus
+├── guaguas/             # 🚌 Bus domain specific
 │   ├── BusMap.vue
 │   ├── BusPopup.vue
 │   ├── BusMarker.vue
 │   ├── BusLegend.vue
 │   ├── BusScheduleModal.vue
 │   └── BusStats.vue
-└── Layout/              # Estructura de página
+└── Layout/              # Page structure
     ├── Header.vue
     └── Footer.vue
 ```
 
-## 🚀 Ventajas de esta Arquitectura
+## 🚀 Benefits of this Architecture
 
-### ✅ Mantenibilidad
-- Código organizado por capas lógicas
-- Fácil de entender y navegar
-- Cambios localizados en una capa
+### ✅ Maintainability
+- Code organized by logical layers
+- Easy to understand and navigate
+- Changes localized to one layer
 
-### ✅ Testabilidad
-- Tests unitarios simples con mocks
-- Tests de integración completos
-- Alta cobertura de código
+### ✅ Testability
+- Simple unit tests with mocks
+- Complete integration tests
+- High code coverage
 
-### ✅ Escalabilidad
-- Fácil añadir nuevas features
-- Nuevas implementaciones sin cambios
-- Código preparado para crecer
+### ✅ Scalability
+- Easy to add new features
+- New implementations without changes
+- Code ready to grow
 
-### ✅ Flexibilidad
-- Cambiar de ORM (Eloquent → Doctrine)
-- Cambiar de BD (MySQL → MongoDB, SQLite)
-- Cambiar de cache (Redis → Memcached)
-- **Multi-database**: Portfolio usa MySQL, Bus usa SQLite
+### ✅ Flexibility
+- Change ORM (Eloquent → Doctrine)
+- Change DB (MySQL → MongoDB, SQLite)
+- Change cache (Redis → Memcached)
+- **Multi-database**: Portfolio uses MySQL, Bus uses SQLite
 
-### ✅ Independencia
-- Lógica de negocio sin Laravel
-- Testeable sin framework
-- Portable a otros proyectos
+### ✅ Independence
+- Business logic without Laravel
+- Testable without framework
+- Portable to other projects
 
 ### ✅ Multi-Domain Support
-- Dominios aislados (Portfolio, Bus)
-- Cada dominio con su propia persistencia
-- Escalabilidad horizontal por dominio
+- Isolated domains (Portfolio, Bus)
+- Each domain with its own persistence
+- Horizontal scalability per domain
 
-## 📚 Referencias
+## 📚 References
 
 - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
 - [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
