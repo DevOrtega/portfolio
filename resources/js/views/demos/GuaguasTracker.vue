@@ -9,30 +9,43 @@
         <h1 class="text-3xl font-bold mb-2">{{ $t('guaguas.title') }}</h1>
         <p class="text-gray-400">{{ $t('guaguas.subtitle') }}</p>
         <InfoBanner type="info" class="mt-2">
-          ℹ️ Demo con simulación basada en rutas y horarios reales de <strong>Guaguas Municipales</strong> (amarillo - urbanas), <strong>Global</strong> (azul - interurbanas) y <strong>Líneas Nocturnas</strong> (morado - L1, L2, L3, 64, 65). 
-          Las guaguas solo aparecen dentro de sus horarios operativos y se mueven por rutas geográficamente precisas de Gran Canaria.
-          <br><small class="opacity-80">Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos son simulados con máxima fidelidad a la realidad.</small>
+          ℹ️ Demo with simulation based on real routes and schedules from <strong>Guaguas Municipales</strong> (yellow - urban), <strong>Global</strong> (blue - interurban) and <strong>Night Lines</strong> (purple - L1, L2, L3, 64, 65). 
+          Buses only appear within their operating hours and move along geographically accurate routes of Gran Canaria.
+          <br><small class="opacity-80">Note: Gran Canaria does not have public GTFS feeds. Data is simulated with maximum fidelity to reality.</small>
         </InfoBanner>
       </div>
 
-      <!-- Stats Panel -->
-      <BusStatsPanel 
-        v-model:selected-line="selectedLine"
-        :stats="busStats"
-        :available-lines="busLines"
-        class="mb-4"
-      />
+      <!-- Loading state -->
+      <div v-if="isLoadingData" class="flex flex-col items-center justify-center py-20">
+        <LoadingSpinner size="large" />
+        <p class="mt-4 text-gray-400">Loading route data...</p>
+      </div>
 
-      <!-- Mensaje cuando no hay servicio -->
-      <InfoBanner v-if="activeBuses.length === 0" type="warning" class="mb-4">
-        🌙 {{ $t('guaguas.noService') }} 
-        <span v-if="isNightTime()">{{ $t('guaguas.nightSchedule') }}</span>
-        <span v-else>{{ $t('guaguas.nightLinesSchedule') }}</span>
+      <!-- Error state -->
+      <InfoBanner v-else-if="dataError" type="error" class="mb-4">
+        ❌ Error al cargar los datos: {{ dataError }}
       </InfoBanner>
 
-      <!-- Contenedor del mapa y árbol lateral -->
-      <div class="relative">
-        <!-- Botón para toggle del árbol -->
+      <!-- Main content when data is loaded -->
+      <template v-else>
+        <!-- Stats Panel -->
+        <BusStatsPanel 
+          v-model:selected-line="selectedLine"
+          :stats="busStats"
+          :available-lines="busLines"
+          class="mb-4"
+        />
+
+        <!-- Mensaje cuando no hay servicio -->
+        <InfoBanner v-if="activeBuses.length === 0" type="warning" class="mb-4">
+          🌙 {{ $t('guaguas.noService') }} 
+          <span v-if="isNightTime()">{{ $t('guaguas.nightSchedule') }}</span>
+          <span v-else>{{ $t('guaguas.nightLinesSchedule') }}</span>
+        </InfoBanner>
+
+        <!-- Map and sidebar tree container -->
+        <div class="relative">
+        <!-- Button to toggle tree -->
         <button 
           @click="treeVisible = !treeVisible"
           class="absolute top-4 right-4 z-[1000] bg-gray-800 hover:bg-gray-700 text-white p-2 rounded-lg shadow-lg transition-all"
@@ -42,7 +55,7 @@
           <el-icon v-else><ArrowLeft /></el-icon>
         </button>
 
-        <!-- Árbol lateral (componente extraído) -->
+        <!-- Sidebar tree (extracted component) -->
         <BusLinesTree
           :visible="treeVisible"
           :tree-data="treeData"
@@ -99,12 +112,13 @@
         :selected-count="selectedLines.size"
         class="mt-4"
       />
+      </template><!-- Fin template v-else (main content) -->
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -114,23 +128,21 @@ import 'element-plus/dist/index.css';
 
 // Components
 import InfoBanner from '@/components/InfoBanner.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { BusLegend, BusLinesTree, BusPopup, BusStatsPanel } from '@/components/guaguas';
 
 // Composables
 import { useBusMap } from '@/composables/useBusMap';
 import { useBusSchedule } from '@/composables/useBusSchedule';
 import { useBusSelection } from '@/composables/useBusSelection';
-
-// Data
-import { MAIN_LINES, BUS_LINES, COMPANY_COLORS, getRoutes } from '@/data/guaguas';
-import { getParada } from '@/data/guaguas/paradas';
+import { useBusData } from '@/composables/useBusData';
 
 // Leaflet icons
 import iconUrl from 'leaflet/dist/images/marker-icon.png';
 import iconRetinaUrl from 'leaflet/dist/images/marker-icon-2x.png';
 import shadowUrl from 'leaflet/dist/images/marker-shadow.png';
 
-// Configurar los íconos de Leaflet con assets locales
+// Configure Leaflet icons with local assets
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl,
@@ -141,9 +153,19 @@ L.Icon.Default.mergeOptions({
 // Initialize composables
 const { mapOptions, getResponsiveZoom, createBusIcon } = useBusMap();
 const { isNightTime, isInService } = useBusSchedule();
+const { 
+  routes: apiRoutes, 
+  busLines: apiBusLines, 
+  mainLines,
+  companies: apiCompanies,
+  isLoading: isLoadingData,
+  error: dataError,
+  loadBusData,
+  isLoaded: isDataLoaded
+} = useBusData();
 
 // Map state
-const center = ref([28.050, -15.450]); // Centrado en zona media de Gran Canaria
+const center = ref([28.050, -15.450]); // Centered on middle zone of Gran Canaria
 const zoom = ref(getResponsiveZoom());
 
 // Handle window resize
@@ -167,14 +189,14 @@ const treeVisible = ref(!isMobile());
 const hiddenBusIds = ref(new Set());
 const expandedKeys = ref(['municipales', 'global']);
 
-// Initialize bus selection composable
+// Initialize bus selection composable (pass mainLines from API)
 const {
   selectedLines,
   exclusiveMode,
   exclusiveLine,
   isLineSelected,
   updateBusVisibility
-} = useBusSelection(buses, hiddenBusIds);
+} = useBusSelection(buses, hiddenBusIds, mainLines);
 
 // Click tracking for double-click detection (used in handleNodeClick)
 const lastClickTime = ref(0);
@@ -186,71 +208,70 @@ const previousSelectedLines = ref(new Set());
 const selectedRoute = ref(null);
 const selectedRouteColor = ref('#FDB913');
 
-// Available bus lines - EXPANDIDO (según guaguas.com y guaguasglobal.com)
-const busLines = [
-  // Municipales urbanas (guaguas.com)
-  '1', '2', '6', '7', '8', '9', '10', '11', '12', '13', '17', '18', '19', '20', '21', '22', '24', '25', '26', '33', '35', '41', '44', '45', '47', '48', '49', '50', '51', '52', '53', '54', '55', '70', '80', '81', '82', '84', '91',
-  // Global interurbanas (guaguasglobal.com)
-  '1', '5', '10', '11', '12', '15', '18', '21', '25', '30', '32', '38', '41', '45', '50', '55', '60', '66', '80', '90', '91', '105',
-  // Nocturnas
-  'L1', 'L2', 'L3', '64', '65'
-];
-
-// PARADAS y getParada ahora se importan desde data/guaguas/paradas.js
-// Las rutas se importan desde data/guaguas/routes.js
+// Available bus lines - Computed from API data
+const busLines = computed(() => {
+  const lines = new Set();
+  Object.values(apiBusLines.value).forEach(companyLines => {
+    companyLines.forEach(line => lines.add(line));
+  });
+  return Array.from(lines);
+});
 
 /**
- * Generate simulated buses based on real routes
- * Data sourced from https://www.guaguas.com and http://globalsu.net
- * Note: No public GTFS feed available for Gran Canaria
+ * Generate simulated buses based on real routes from API
+ * Data sourced from database (originally from guaguas.com and globalsu.net)
  */
 const generateBuses = () => {
-  // Obtener rutas desde el archivo de datos
-  const routes = getRoutes();
+  // Get routes from API
+  const routes = apiRoutes.value;
+  
+  if (!routes || routes.length === 0) {
+    return [];
+  }
 
-  // Generar múltiples guaguas por línea solo si están en servicio
+  // Generate multiple buses per line only if they are in service
   const allBuses = [];
   
-  // Primero obtenemos las rutas OSRM para cada línea (async)
+  // First we get OSRM routes for each line (async)
   for (const route of routes) {
-    // Verificar si la línea debe estar en servicio
+    // Check if the line should be in service
     if (!isInService(route.type, route.line)) {
-      continue; // Saltar esta línea si no está en servicio
+      continue; // Skip this line if not in service
     }
     
-    // Número de guaguas por línea y sentido
+    // Number of buses per line and direction
     const busesPerDirection = route.type === 'interurban' ? 1 : (route.type === 'night' ? 1 : 2);
     const lineIndex = routes.indexOf(route);
     
-    // Crear guaguas en ambos sentidos (ida y vuelta)
-    const directions = ['outbound', 'inbound']; // ida y vuelta
+    // Create buses in both directions (outbound and inbound)
+    const directions = ['outbound', 'inbound'];
     
     for (const [dirIndex, tripDirection] of directions.entries()) {
-      // Obtener coordenadas de ruta ESPECÍFICAS para cada sentido (NO invertir)
+      // Get route coordinates SPECIFIC for each direction (API uses snake_case)
       const routeCoords = tripDirection === 'outbound' 
-        ? route.routeCoordsIda 
-        : route.routeCoordsVuelta;
+        ? route.route_coords_outbound 
+        : route.route_coords_inbound;
       
-      // Validar que existen las coordenadas
+      // Validate that coordinates exist
       if (!routeCoords || routeCoords.length < 2) {
-        console.warn(`Ruta ${route.line} ${tripDirection} no tiene suficientes puntos válidos`);
+        console.warn(`Route ${route.line} ${tripDirection} does not have enough valid points`);
         continue;
       }
       
-      // Origen y destino según el sentido
+      // Origin and destination according to direction
       const origin = tripDirection === 'outbound' ? route.origin : route.destination;
       const destination = tripDirection === 'outbound' ? route.destination : route.origin;
       
-      // Paradas según el sentido (ya definidas por separado)
-      const stops = tripDirection === 'outbound' ? route.stopsIda : route.stopsVuelta;
+      // Stops according to direction (API uses snake_case)
+      const stops = tripDirection === 'outbound' ? route.stops_outbound : route.stops_inbound;
       
       for (let i = 0; i < busesPerDirection; i++) {
-        // Distribuir guaguas uniformemente a lo largo de la ruta
+        // Distribute buses uniformly along the route
         const totalBuses = busesPerDirection;
         const spacing = 1 / (totalBuses + 1);
         const routeProgress = spacing * (i + 1);
         
-        // Calcular índice exacto en la ruta
+        // Calculate exact index in route
         const exactIndex = routeProgress * (routeCoords.length - 1);
         const routeIndex = Math.floor(exactIndex);
         const nextRouteIndex = Math.min(routeIndex + 1, routeCoords.length - 1);
@@ -258,17 +279,17 @@ const generateBuses = () => {
         const [lat1, lng1] = routeCoords[routeIndex];
         const [lat2, lng2] = routeCoords[nextRouteIndex];
         
-        // Interpolar posición exacta entre dos puntos (SIN variación aleatoria)
+        // Interpolate exact position between two points (NO random variation)
         const segmentProgress = exactIndex - routeIndex;
         const finalLat = lat1 + (lat2 - lat1) * segmentProgress;
         const finalLng = lng1 + (lng2 - lng1) * segmentProgress;
         
-        // Calcular ángulo de dirección para orientar el icono
+        // Calculate direction angle to orient the icon
         const angle = Math.atan2(lng2 - lng1, lat2 - lat1) * (180 / Math.PI);
         
-        const delayed = Math.random() > 0.85; // 15% probabilidad de retraso
+        const delayed = Math.random() > 0.85; // 15% probability of delay
         
-        // Calcular parada actual basada en el progreso
+        // Calculate current stop based on progress
         const currentStopIndex = Math.floor(routeProgress * stops.length);
         const nextStop = stops[Math.min(currentStopIndex, stops.length - 1)];
         
@@ -279,12 +300,12 @@ const generateBuses = () => {
           company: route.company,
           origin: origin,
           destination: destination,
-          tripDirection: tripDirection, // 'outbound' (ida) o 'inbound' (vuelta)
-          stops: stops, // Lista de paradas para esta dirección
+          tripDirection: tripDirection, // 'outbound' or 'inbound'
+          stops: stops, // List of stops for this direction
           nextStop: nextStop,
           lat: finalLat,
           lng: finalLng,
-          speed: route.type === 'interurban' ? 0.025 : 0.02, // Factor de velocidad
+          speed: route.type === 'interurban' ? 0.025 : 0.02, // Speed factor
           angle: angle,
           routeCoords: routeCoords,
           currentRouteIndex: routeIndex,
@@ -302,13 +323,13 @@ const generateBuses = () => {
   return allBuses;
 };
 
-// Generar estructura de árbol para Element Plus
+// Generate tree structure for Element Plus
 const treeData = computed(() => {
   const municipalesBuses = buses.value.filter(b => b.company === 'municipales' && b.type !== 'night');
   const globalBuses = buses.value.filter(b => b.company === 'global');
   const nightBusesList = buses.value.filter(b => b.type === 'night');
   
-  // Agrupar por línea
+  // Group by line
   const groupByLine = (busList) => {
     const grouped = {};
     busList.forEach(bus => {
@@ -331,7 +352,7 @@ const treeData = computed(() => {
       type: 'company',
       children: Object.entries(municipalesGrouped).map(([line, busList]) => ({
         id: `municipales-line-${line}`,
-        label: `Línea ${line} (${busList.length})`,
+        label: `Line ${line} (${busList.length})`,
         type: 'line',
         line: line,
         company: 'municipales',
@@ -352,7 +373,7 @@ const treeData = computed(() => {
       type: 'company',
       children: Object.entries(globalGrouped).map(([line, busList]) => ({
         id: `global-line-${line}`,
-        label: `Línea ${line} (${busList.length})`,
+        label: `Line ${line} (${busList.length})`,
         type: 'line',
         line: line,
         company: 'global',
@@ -369,11 +390,11 @@ const treeData = computed(() => {
     },
     {
       id: 'night',
-      label: `Líneas Nocturnas (${nightBusesList.length})`,
+      label: `Night Lines (${nightBusesList.length})`,
       type: 'company',
       children: Object.entries(nightGrouped).map(([line, busList]) => ({
         id: `night-line-${line}`,
-        label: `Línea ${line} (${busList.length})`,
+        label: `Line ${line} (${busList.length})`,
         type: 'line',
         line: line,
         company: 'municipales',
@@ -392,65 +413,65 @@ const treeData = computed(() => {
 });
 
 /**
- * Obtener ruta real usando OSRM (Open Source Routing Machine)
- * Convierte puntos simples en una ruta que sigue carreteras reales
+ * Get real route using OSRM (Open Source Routing Machine)
+ * Converts simple points to a route that follows real roads
  */
 const getRouteFromOSRM = async (coordinates) => {
   try {
-    // Las coordenadas de entrada (PARADAS) ya están verificadas
+    // Input coordinates (STOPS) are already verified
     if (coordinates.length < 2) {
-      console.warn('No hay suficientes coordenadas para calcular ruta');
+      console.warn('Not enough coordinates to calculate route');
       return coordinates;
     }
     
-    // OSRM espera formato: lon,lat;lon,lat;...
+    // OSRM expects format: lon,lat;lon,lat;...
     const coordString = coordinates
       .map(([lat, lng]) => `${lng},${lat}`)
       .join(';');
     
-    // API pública de OSRM - routing profile "driving"
+    // OSRM public API - routing profile "driving"
     const url = `https://router.project-osrm.org/route/v1/driving/${coordString}?overview=full&geometries=geojson`;
     
     const response = await fetch(url);
     const data = await response.json();
     
     if (data.code === 'Ok' && data.routes && data.routes[0]) {
-      // Convertir coordenadas GeoJSON [lng, lat] a Leaflet [lat, lng]
+      // Convert GeoJSON coordinates [lng, lat] to Leaflet [lat, lng]
       const routeCoordinates = data.routes[0].geometry.coordinates.map(
         ([lng, lat]) => [lat, lng]
       );
       
-      // Solo filtrar si hay puntos claramente en el océano Atlántico (muy al este)
+      // Only filter if there are points clearly in the Atlantic Ocean (too far east)
       const filteredRoute = routeCoordinates.filter(([lat, lng]) => {
-        // Solo excluir puntos muy claramente en el mar (lng > -15.35)
+        // Only exclude points very clearly in the sea (lng > -15.35)
         return lng <= -15.35;
       });
       
       return filteredRoute.length > 1 ? filteredRoute : coordinates;
     }
     
-    // Si falla OSRM, devolver coordenadas originales
+    // If OSRM fails, return original coordinates
     return coordinates;
   } catch (error) {
-    console.warn('Error obteniendo ruta de OSRM:', error);
-    // Si hay error, devolver coordenadas originales
+    console.warn('Error getting route from OSRM:', error);
+    // If there's an error, return original coordinates
     return coordinates;
   }
 };
 
-// Cache de rutas para evitar llamadas repetidas a OSRM
+// Route cache to avoid repeated OSRM calls
 const routeCache = new Map();
 
-// Manejar clicks en el árbol
+// Handle tree clicks
 const handleNodeClick = async (data, node) => {
   const now = Date.now();
   const DOUBLE_CLICK_THRESHOLD = 300; // ms
   
   if (data.type === 'bus') {
-    // Click en una guagua individual - mostrar solo esta guagua y su ruta
+    // Click on an individual bus - show only this bus and its route
     const bus = buses.value.find(b => b.id === data.id);
     if (bus) {
-      // Ocultar todas las demás guaguas
+      // Hide all other buses
       buses.value.forEach(b => {
         if (b.id !== data.id) {
           hiddenBusIds.value.add(b.id);
@@ -459,7 +480,7 @@ const handleNodeClick = async (data, node) => {
         }
       });
       
-      // Obtener ruta real de OSRM
+      // Get real route from OSRM
       const cacheKey = `${bus.company}-${bus.line}-${bus.tripDirection}`;
       let realRoute;
       
@@ -486,7 +507,7 @@ const handleNodeClick = async (data, node) => {
       selectedBusId.value = bus.id;
     }
     
-    // Forzar reactividad
+    // Force reactivity
     hiddenBusIds.value = new Set(hiddenBusIds.value);
     return;
   }
@@ -496,34 +517,34 @@ const handleNodeClick = async (data, node) => {
     const isDoubleClick = lastClickedLine.value === lineKey && (now - lastClickTime.value) < DOUBLE_CLICK_THRESHOLD;
     
     if (isDoubleClick) {
-      // DOBLE CLICK - Modo exclusivo
+      // DOUBLE CLICK - Exclusive mode
       if (exclusiveMode.value && exclusiveLine.value?.line === data.line && exclusiveLine.value?.company === data.company) {
-        // Ya estamos en modo exclusivo de esta línea - SALIR del modo exclusivo
+        // We're already in exclusive mode for this line - EXIT exclusive mode
         exclusiveMode.value = false;
         exclusiveLine.value = null;
         
-        // Restaurar estado anterior
+        // Restore previous state
         selectedLines.value = new Set(previousSelectedLines.value);
         hiddenBusIds.value = new Set(previousHiddenBusIds.value);
         
-        // Si no había seleccionadas antes, mostrar principales
+        // If none were selected before, show main lines
         if (selectedLines.value.size === 0) {
           updateBusVisibility();
         }
       } else {
-        // ENTRAR en modo exclusivo
-        // Guardar estado actual antes de entrar
+        // ENTER exclusive mode
+        // Save current state before entering
         previousSelectedLines.value = new Set(selectedLines.value);
         previousHiddenBusIds.value = new Set(hiddenBusIds.value);
         
-        // Activar modo exclusivo
+        // Activate exclusive mode
         exclusiveMode.value = true;
         exclusiveLine.value = { line: data.line, company: data.company };
         
-        // Seleccionar SOLO esta línea
+        // Select ONLY this line
         selectedLines.value = new Set([lineKey]);
         
-        // Ocultar todas las guaguas excepto las de esta línea
+        // Hide all buses except those from this line
         const newHiddenBusIds = new Set();
         buses.value.forEach(bus => {
           if (bus.line !== data.line || bus.company !== data.company) {
@@ -533,39 +554,39 @@ const handleNodeClick = async (data, node) => {
         hiddenBusIds.value = newHiddenBusIds;
       }
     } else {
-      // CLICK SIMPLE - Agregar/quitar de la selección
+      // SIMPLE CLICK - Add/remove from selection
       if (exclusiveMode.value) {
-        // Si estamos en modo exclusivo, salir primero
+        // If we're in exclusive mode, exit first
         exclusiveMode.value = false;
         exclusiveLine.value = null;
         selectedLines.value = new Set(previousSelectedLines.value);
       }
       
-      // Toggle la línea en la selección
+      // Toggle the line in selection
       if (selectedLines.value.has(lineKey)) {
         selectedLines.value.delete(lineKey);
       } else {
         selectedLines.value.add(lineKey);
       }
       
-      // Actualizar visibilidad de buses
+      // Update bus visibility
       updateBusVisibility();
     }
     
-    // Actualizar tracking de clicks
+    // Update click tracking
     lastClickTime.value = now;
     lastClickedLine.value = lineKey;
     
-    // Limpiar ruta seleccionada
+    // Clear selected route
     selectedRoute.value = null;
     
-    // Forzar reactividad
+    // Force reactivity
     selectedLines.value = new Set(selectedLines.value);
     return;
   }
   
   if (data.type === 'company') {
-    // Click en una empresa - toggle todas las líneas de esa empresa
+    // Click on a company - toggle all lines of that company
     const companyId = data.id;
     const companyBuses = buses.value.filter(b => {
       if (companyId === 'night') {
@@ -574,24 +595,24 @@ const handleNodeClick = async (data, node) => {
       return b.company === companyId && b.type !== 'night';
     });
     
-    // Obtener todas las líneas únicas de esta empresa
+    // Get all unique lines from this company
     const companyLineKeys = new Set();
     companyBuses.forEach(bus => {
       companyLineKeys.add(`${bus.company}-${bus.line}`);
     });
     
-    // Verificar si todas están seleccionadas
+    // Check if all are selected
     const allSelected = [...companyLineKeys].every(key => selectedLines.value.has(key));
     
     if (allSelected) {
-      // Deseleccionar todas
+      // Deselect all
       companyLineKeys.forEach(key => selectedLines.value.delete(key));
     } else {
-      // Seleccionar todas
+      // Select all
       companyLineKeys.forEach(key => selectedLines.value.add(key));
     }
     
-    // Salir del modo exclusivo si estaba activo
+    // Exit exclusive mode if it was active
     if (exclusiveMode.value) {
       exclusiveMode.value = false;
       exclusiveLine.value = null;
@@ -599,60 +620,60 @@ const handleNodeClick = async (data, node) => {
     
     updateBusVisibility();
     
-    // Limpiar ruta seleccionada
+    // Clear selected route
     selectedRoute.value = null;
     
-    // Forzar reactividad
+    // Force reactivity
     selectedLines.value = new Set(selectedLines.value);
   }
 };
 
-// Manejar expansión de nodos del árbol
+// Handle tree node expansion
 const handleNodeExpand = (data, node) => {
   if (!expandedKeys.value.includes(node.key)) {
     expandedKeys.value.push(node.key);
   }
 };
 
-// Manejar colapso de nodos del árbol
+// Handle tree node collapse
 const handleNodeCollapse = (data, node) => {
   expandedKeys.value = expandedKeys.value.filter(k => k !== node.key);
 };
 
-// Simular movimiento realista de guaguas siguiendo rutas reales
+// Simulate realistic bus movement following real routes
 const updateBusPositions = () => {
   buses.value = buses.value.filter(bus => {
-    // Verificar si el bus sigue en servicio según la hora
+    // Check if the bus is still in service according to the time
     if (!isInService(bus.type, bus.line)) {
-      return false; // Eliminar buses fuera de servicio
+      return false; // Remove buses out of service
     }
     return true;
   }).map(bus => {
     const currentIndex = bus.currentRouteIndex || 0;
     const progress = bus.routeProgress || 0;
     
-    // Velocidad variable: interurbanas más rápidas
+    // Variable speed: interurban buses are faster
     const baseSpeed = bus.type === 'interurban' ? 0.035 : 0.025;
-    // Añadir pequeña variación para que no se muevan todas igual
+    // Add small variation so they don't all move the same
     const speedVariation = 1 + (Math.sin(Date.now() / 1000 + bus.id.charCodeAt(4)) * 0.1);
     const speedFactor = baseSpeed * speedVariation;
     
     let newProgress = progress + speedFactor;
     let newIndex = currentIndex;
     
-    // Si completó el segmento actual, avanzar al siguiente punto
+    // If completed current segment, advance to next point
     if (newProgress >= 1.0) {
-      newProgress = newProgress - 1.0; // Mantener el exceso para continuidad
+      newProgress = newProgress - 1.0; // Keep the excess for continuity
       newIndex = currentIndex + 1;
       
-      // Si llegó al final de la ruta, volver al inicio (ruta circular)
+      // If reached the end of route, return to start (circular route)
       if (newIndex >= bus.routeCoords.length - 1) {
         newIndex = 0;
         newProgress = 0;
       }
     }
     
-    // Interpolar posición exacta entre dos puntos consecutivos
+    // Interpolate exact position between two consecutive points
     const [lat1, lng1] = bus.routeCoords[newIndex];
     const nextIndex = Math.min(newIndex + 1, bus.routeCoords.length - 1);
     const [lat2, lng2] = bus.routeCoords[nextIndex];
@@ -660,13 +681,13 @@ const updateBusPositions = () => {
     const newLat = lat1 + (lat2 - lat1) * newProgress;
     const newLng = lng1 + (lng2 - lng1) * newProgress;
     
-    // Calcular ángulo de dirección para orientar el icono
+    // Calculate direction angle to orient the icon
     const angle = Math.atan2(lng2 - lng1, lat2 - lat1) * (180 / Math.PI);
     
-    // Calcular progreso total en la ruta (0 a 1)
+    // Calculate total progress in the route (0 to 1)
     const totalProgress = (newIndex + newProgress) / (bus.routeCoords.length - 1);
     
-    // Calcular próxima parada basada en el progreso
+    // Calculate next stop based on progress
     let nextStop = bus.nextStop;
     if (bus.stops && bus.stops.length > 0) {
       const stopIndex = Math.min(
@@ -676,7 +697,7 @@ const updateBusPositions = () => {
       nextStop = bus.stops[stopIndex];
     }
     
-    // Actualizar tiempo a próxima parada (simulación)
+    // Update time to next stop (simulation)
     let newTime = bus.timeToNext;
     if (Math.random() > 0.85) {
       newTime = Math.max(1, newTime - 1);
@@ -698,7 +719,7 @@ const updateBusPositions = () => {
     };
   });
   
-  // Si no hay buses (todos fuera de servicio), regenerar para verificar horarios
+  // If no buses (all out of service), regenerate to check schedules
   if (buses.value.length === 0) {
     buses.value = generateBuses();
   }
@@ -707,12 +728,12 @@ const updateBusPositions = () => {
 const filteredBuses = computed(() => {
   let filtered = buses.value;
   
-  // Filtrar por línea si está seleccionada
+  // Filter by line if selected
   if (selectedLine.value) {
     filtered = filtered.filter(bus => bus.line === selectedLine.value);
   }
   
-  // Excluir guaguas ocultas del árbol
+  // Exclude buses hidden from tree
   filtered = filtered.filter(bus => !hiddenBusIds.value.has(bus.id));
   
   return filtered;
@@ -749,11 +770,19 @@ const onMapReady = () => {
   // Map initialized successfully
 };
 
-onMounted(() => {
+onMounted(async () => {
+  // Load bus data from API
+  try {
+    await loadBusData();
+  } catch (err) {
+    console.error('Failed to load bus data:', err);
+    return;
+  }
+  
   buses.value = generateBuses();
   
-  // Inicializar visibilidad: ocultar líneas que no son principales
-  // Las líneas principales se muestran por defecto
+  // Initialize visibility: hide lines that are not main
+  // Main lines are shown by default
   updateBusVisibility();
   
   // Update bus positions every 5 seconds
@@ -761,8 +790,16 @@ onMounted(() => {
     updateBusPositions();
   }, 5000);
   
-  // Agregar listener para resize
+  // Add resize listener
   window.addEventListener('resize', handleResize);
+});
+
+// Watch for data changes to regenerate buses
+watch(isDataLoaded, (loaded) => {
+  if (loaded) {
+    buses.value = generateBuses();
+    updateBusVisibility();
+  }
 });
 
 onUnmounted(() => {
@@ -770,13 +807,13 @@ onUnmounted(() => {
     clearInterval(updateInterval.value);
   }
   
-  // Remover listener de resize
+  // Remove resize listener
   window.removeEventListener('resize', handleResize);
 });
 </script>
 
 <style scoped>
-/* Estilo para iconos personalizados de bus sin fondo */
+/* Style for custom bus icons without background */
 :deep(.custom-bus-icon) {
   background: none !important;
   border: none !important;
@@ -806,7 +843,7 @@ onUnmounted(() => {
   margin: 12px;
 }
 
-/* Transición del árbol lateral */
+/* Sidebar tree transition */
 .slide-enter-active,
 .slide-leave-active {
   transition: transform 0.3s ease;
@@ -820,7 +857,7 @@ onUnmounted(() => {
   transform: translateX(100%);
 }
 
-/* Estilos para el árbol de Element Plus */
+/* Element Plus tree styles */
 :deep(.el-tree) {
   background: transparent !important;
   color: white !important;
@@ -849,7 +886,7 @@ onUnmounted(() => {
   color: white !important;
 }
 
-/* Scrollbar personalizado para el árbol */
+/* Custom scrollbar for tree */
 .overflow-y-auto::-webkit-scrollbar {
   width: 8px;
 }

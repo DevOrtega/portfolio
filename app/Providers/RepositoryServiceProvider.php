@@ -2,7 +2,13 @@
 
 namespace App\Providers;
 
+use App\Domain\Bus\Repositories\BusCompanyRepositoryInterface;
+use App\Domain\Bus\Repositories\BusLineRepositoryInterface;
+use App\Domain\Bus\Repositories\BusStopRepositoryInterface;
 use App\Domain\Portfolio\Repositories\ProjectRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\Repositories\EloquentBusCompanyRepository;
+use App\Infrastructure\Persistence\Eloquent\Repositories\EloquentBusLineRepository;
+use App\Infrastructure\Persistence\Eloquent\Repositories\EloquentBusStopRepository;
 use App\Infrastructure\Persistence\Eloquent\Repositories\EloquentProjectRepository;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,9 +31,21 @@ class RepositoryServiceProvider extends ServiceProvider
             EloquentProjectRepository::class
         );
 
-        // Future bindings for other repositories will go here
-        // Example:
-        // $this->app->bind(SkillRepositoryInterface::class, EloquentSkillRepository::class);
+        // Bind Bus Repositories
+        $this->app->bind(
+            BusCompanyRepositoryInterface::class,
+            EloquentBusCompanyRepository::class
+        );
+
+        $this->app->bind(
+            BusStopRepositoryInterface::class,
+            EloquentBusStopRepository::class
+        );
+
+        $this->app->bind(
+            BusLineRepositoryInterface::class,
+            EloquentBusLineRepository::class
+        );
     }
 
     /**

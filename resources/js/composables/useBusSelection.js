@@ -12,16 +12,23 @@
  *   updateBusVisibility
  * } = useBusSelection(buses, hiddenBusIds, mainLines);
  */
-import { ref, computed } from 'vue';
-import { MAIN_LINES } from '@/data/guaguas/config.js';
+import { ref, computed, unref } from 'vue';
+
+// Default main lines (fallback if API data not available)
+const DEFAULT_MAIN_LINES = {
+  municipales: ['1', '12', '17', '25', '26'],
+  global: ['1', '5', '30', '60', '91'],
+  night: ['L1', 'L2', 'L3']
+};
 
 /**
  * Bus selection composable
  * @param {Ref<Array>} buses - Reactive reference to all buses
  * @param {Ref<Set>} hiddenBusIds - Reactive reference to hidden bus IDs
+ * @param {Ref<Object>|Object} mainLinesConfig - Main lines configuration (optional)
  * @returns {Object} Selection state and methods
  */
-export function useBusSelection(buses, hiddenBusIds) {
+export function useBusSelection(buses, hiddenBusIds, mainLinesConfig = DEFAULT_MAIN_LINES) {
   // ============ STATE ============
   const selectedLines = ref(new Set());
   const exclusiveMode = ref(false);
@@ -38,6 +45,11 @@ export function useBusSelection(buses, hiddenBusIds) {
   const NIGHT_LINES = ['L1', 'L2', 'L3', '64', '65'];
 
   // ============ COMPUTED ============
+  
+  /**
+   * Get main lines (reactive or static)
+   */
+  const mainLines = computed(() => unref(mainLinesConfig) || DEFAULT_MAIN_LINES);
   
   /**
    * Number of selected lines
@@ -77,13 +89,14 @@ export function useBusSelection(buses, hiddenBusIds) {
    * @returns {boolean}
    */
   const isMainLine = (line, company) => {
+    const lines = mainLines.value;
     if (company === 'municipales') {
       if (NIGHT_LINES.includes(line)) {
-        return MAIN_LINES.night.includes(line);
+        return (lines.night || []).includes(line);
       }
-      return MAIN_LINES.municipales.includes(line);
+      return (lines.municipales || []).includes(line);
     }
-    return MAIN_LINES.global.includes(line);
+    return (lines.global || []).includes(line);
   };
 
   // ============ VISIBILITY MANAGEMENT ============

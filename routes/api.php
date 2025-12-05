@@ -8,6 +8,7 @@ use App\Http\Controllers\Api\SkillController;
 use App\Http\Controllers\Api\PersonalInfoController;
 use App\Http\Controllers\Api\EducationController;
 use App\Http\Controllers\Api\ContactController;
+use App\Http\Controllers\Api\BusController;
 use App\Http\Controllers\Admin\AdminAuthController;
 
 Route::get('/user', function (Request $request) {
@@ -20,6 +21,14 @@ Route::get('/experiences', [ExperienceController::class, 'index']);
 Route::get('/skills', [SkillController::class, 'index']);
 Route::get('/personal-info', [PersonalInfoController::class, 'index']);
 Route::get('/education', [EducationController::class, 'index']);
+
+// Bus tracker demo routes
+Route::prefix('bus')->group(function () {
+    Route::get('/data', [BusController::class, 'data']);
+    Route::get('/routes', [BusController::class, 'routes']);
+    Route::get('/stops', [BusController::class, 'stops']);
+    Route::get('/companies', [BusController::class, 'companies']);
+});
 
 // Contact form (rate limited)
 Route::post('/contact', [ContactController::class, 'send'])
