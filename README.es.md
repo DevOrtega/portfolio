@@ -1,8 +1,8 @@
 # Portfolio de Carlos Miguel Ortega Arencibia
 
 <p align="center">
-  <a href="README.es.md">🇪🇸 Español</a> •
-  <a href="README.md">🇬🇧 English</a>
+  <a href="README.es.md">Español</a> |
+  <a href="README.md">English</a>
 </p>
 
 [![Laravel](https://img.shields.io/badge/Laravel-12.39-FF2D20?style=flat&logo=laravel)](https://laravel.com)

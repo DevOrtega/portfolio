@@ -1,6 +1,6 @@
 # Guía de Desarrollo - Portfolio
 
-🌐 *Leer en otros idiomas: [English](DEVELOPMENT.en.md) • Español*
+*Leer en otros idiomas: [English](DEVELOPMENT.en.md) | Español*
 
 > **Referencia rápida para desarrolladores**: Guía completa para corregir fallos, añadir funcionalidades y realizar modificaciones de manera eficiente.
 
@@ -33,14 +33,14 @@ portfolio/
 │   │   ├── Portfolio/             # Dominio Portfolio
 │   │   │   ├── DTOs/              # Data Transfer Objects
 │   │   │   └── Services/          # Servicios (ProjectService, etc.)
-│   │   └── Bus/                   # 🚌 Dominio Bus
+│   │   └── Bus/                   # Dominio Bus
 │   │       └── Services/          # BusDataService
 │   │
 │   ├── Domain/                    # DOMINIO PURO
 │   │   ├── Portfolio/             # Entidades Portfolio
 │   │   │   ├── Entities/          # Project, etc.
 │   │   │   └── Repositories/      # Interfaces
-│   │   └── Bus/                   # 🚌 Entidades Bus
+│   │   └── Bus/                   # Entidades Bus
 │   │       ├── Entities/          # BusCompany, BusStop, BusLine, etc.
 │   │       └── Repositories/      # Interfaces de repositorios
 │   │
@@ -49,14 +49,14 @@ portfolio/
 │   │   │   ├── ProjectController.php
 │   │   │   ├── ExperienceController.php
 │   │   │   └── ...
-│   │   └── Bus/                   # 🚌 API Bus
+│   │   └── Bus/                   # API Bus
 │   │       └── BusController.php
 │   │
 │   ├── Infrastructure/Persistence/ # PERSISTENCIA
 │   │   ├── Eloquent/              # MySQL/SQLite Portfolio
 │   │   │   ├── Models/            # Modelos Eloquent
 │   │   │   └── Repositories/      # Implementaciones
-│   │   └── SQLite/                # 🚌 SQLite Bus
+│   │   └── SQLite/                # SQLite Bus
 │   │       ├── Models/            # BusCompanyModel, etc.
 │   │       └── Repositories/      # SQLiteBus*Repository
 │   │
@@ -64,14 +64,14 @@ portfolio/
 │
 ├── resources/js/                  # FRONTEND VUE.JS
 │   ├── components/               # Componentes reutilizables
-│   │   └── guaguas/              # 🚌 Componentes Bus
+│   │   └── guaguas/              # Componentes Bus
 │   ├── composables/              # Lógica reutilizable
-│   │   ├── useBusMap.js          # 🚌 Mapa
-│   │   ├── useBusSchedule.js     # 🚌 Horarios
-│   │   └── useBusData.js         # 🚌 Datos
+│   │   ├── useBusMap.js          # Mapa
+│   │   ├── useBusSchedule.js     # Horarios
+│   │   └── useBusData.js         # Datos
 │   ├── views/                    # Vistas/Páginas
 │   │   └── demos/
-│   │       └── GuaguasTracker.vue # 🚌 Demo Bus
+│   │       └── GuaguasTracker.vue # Demo Bus
 │   ├── locales/                  # Traducciones
 │   └── router/                   # Rutas SPA
 │

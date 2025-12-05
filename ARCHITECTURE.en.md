@@ -1,8 +1,8 @@
 # Project Architecture
 
-🌐 *Read this in other languages: English • [Español](ARCHITECTURE.md)*
+*Read this in other languages: English | [Español](ARCHITECTURE.md)*
 
-## 📐 Overview
+## Overview
 
 This project implements a **Hexagonal Architecture** (also known as Ports & Adapters) combined with **SOLID** principles, providing a clean, maintainable, and highly testable codebase.
 
@@ -10,7 +10,7 @@ The project has **two main domains**:
 - **Portfolio**: Management of projects, experiences, education, and skills
 - **Bus**: Real-time bus tracking system (TITSA - Tenerife)
 
-## 🎯 Architectural Goals
+## Architectural Goals
 
 1. **Separation of Concerns**: Each layer has a well-defined purpose
 2. **Framework Independence**: Business logic does not depend on Laravel
@@ -18,7 +18,7 @@ The project has **two main domains**:
 4. **Flexibility**: Allows changing implementations without affecting other layers
 5. **Maintainability**: Organized and easy-to-understand code
 
-## 🏛️ Architecture Layers
+## Architecture Layers
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,18 +58,18 @@ The project has **two main domains**:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Directory Structure
+## Directory Structure
 
 ```
 app/
-├── Domain/                          # 🎯 DOMAIN LAYER
+├── Domain/                          # DOMAIN LAYER
 │   ├── Portfolio/
 │   │   ├── Entities/                
 │   │   │   └── Project.php          # Domain entity (readonly)
 │   │   └── Repositories/            
 │   │       └── ProjectRepositoryInterface.php  # Port (interface)
 │   │
-│   └── Bus/                         # 🚌 BUS DOMAIN (NEW)
+│   └── Bus/                         # BUS DOMAIN
 │       ├── Entities/
 │       │   ├── BusCompany.php       # Bus company entity
 │       │   ├── BusStop.php          # Stop entity
@@ -81,16 +81,16 @@ app/
 │           ├── BusLineRepositoryInterface.php
 │           └── BusRouteStopRepositoryInterface.php
 │
-├── Application/                     # 🔧 APPLICATION LAYER
+├── Application/                     # APPLICATION LAYER
 │   ├── Portfolio/
 │   │   └── Services/                
 │   │       └── ProjectService.php   # Application service (readonly)
 │   │
-│   └── Bus/                         # 🚌 BUS SERVICES
+│   └── Bus/                         # BUS SERVICES
 │       └── Services/
 │           └── BusDataService.php   # Bus data service
 │
-├── Infrastructure/                  # 🗄️ INFRASTRUCTURE LAYER
+├── Infrastructure/                  # INFRASTRUCTURE LAYER
 │   └── Persistence/
 │       ├── Eloquent/
 │       │   ├── Models/              
@@ -98,7 +98,7 @@ app/
 │       │   └── Repositories/        
 │       │       └── EloquentProjectRepository.php  # Adapter (final)
 │       │
-│       └── SQLite/                  # 🚌 BUS PERSISTENCE
+│       └── SQLite/                  # BUS PERSISTENCE
 │           ├── Models/
 │           │   ├── BusCompanyModel.php
 │           │   ├── BusStopModel.php
@@ -110,15 +110,15 @@ app/
 │               ├── SQLiteBusLineRepository.php
 │               └── SQLiteBusRouteStopRepository.php
 │
-└── Http/                            # 🌐 PRESENTATION LAYER
+└── Http/                            # PRESENTATION LAYER
     └── Controllers/
         ├── Api/                     
         │   └── ProjectController.php # API controller (final)
         │
-        └── Bus/                     # 🚌 BUS CONTROLLER
+        └── Bus/                     # BUS CONTROLLER
             └── BusController.php    # Bus data API
 
-resources/js/                        # 🎨 FRONTEND (Vue.js)
+resources/js/                        # FRONTEND (Vue.js)
 ├── components/                      # Reusable components
 │   ├── StatsCard.vue
 │   ├── LoadingSpinner.vue
@@ -126,7 +126,7 @@ resources/js/                        # 🎨 FRONTEND (Vue.js)
 │   ├── ProjectCard.vue
 │   ├── TimelineItem.vue
 │   ├── SectionHeader.vue
-│   └── guaguas/                     # 🚌 BUS COMPONENTS
+│   └── guaguas/                     # BUS COMPONENTS
 │       ├── BusMap.vue
 │       ├── BusPopup.vue
 │       ├── BusMarker.vue
@@ -136,18 +136,18 @@ resources/js/                        # 🎨 FRONTEND (Vue.js)
 ├── composables/                     # Reusable logic
 │   ├── useBusMap.js                 # Map configuration
 │   ├── useBusSchedule.js            # Schedule management
-│   └── useBusData.js                # 🚌 Bus data (NEW)
+│   └── useBusData.js                # Bus data
 ├── views/                           # Main views
 │   ├── HomeView.vue
 │   ├── ProjectsView.vue
 │   ├── ResumeView.vue
 │   └── demos/
-│       └── GuaguasTracker.vue       # 🚌 Bus tracking demo
+│       └── GuaguasTracker.vue       # Bus tracking demo
 └── router/                          # Route configuration
     └── index.js
 ```
 
-## 🚌 Bus Domain Architecture
+## Bus Domain Architecture
 
 The Bus domain follows the same hexagonal architecture, with **SQLite** persistence for static route and stop data:
 
@@ -210,7 +210,7 @@ useBusData.js (Composable)
 useBusMap.js + Leaflet (Interactive map)
 ```
 
-## 🔄 Data Flow
+## Data Flow
 
 ### Portfolio Domain: Request Flow (User → Backend → Database)
 
@@ -274,27 +274,27 @@ private function toDomain(ProjectModel $model): Project
 }
 ```
 
-## 🎨 SOLID Principles Applied
+## SOLID Principles Applied
 
 ### 1. Single Responsibility Principle (SRP)
 **"A class should have only one reason to change"**
 
-✅ **Application in the project:**
+**Application in the project:**
 - `ProjectController`: Only handles HTTP requests/responses
 - `ProjectService`: Only contains business logic
 - `EloquentProjectRepository`: Only manages persistence
 
 ```php
-// ❌ BAD - Controller with multiple responsibilities
+// BAD - Controller with multiple responsibilities
 class ProjectController {
     public function index() {
-        $data = DB::table('projects')->get(); // ❌ Direct DB access
+        $data = DB::table('projects')->get(); // Direct DB access
         // ... business logic ...
         return response()->json($data);
     }
 }
 
-// ✅ GOOD - Separated responsibilities
+// GOOD - Separated responsibilities
 class ProjectController {
     public function index() {
         $projects = $this->projectService->getAllProjects();
@@ -306,7 +306,7 @@ class ProjectController {
 ### 2. Open/Closed Principle (OCP)
 **"Open for extension, closed for modification"**
 
-✅ **Application in the project:**
+**Application in the project:**
 - New repository implementations without modifying services
 - New project types without changing existing code
 
@@ -326,7 +326,7 @@ $this->app->bind(
 ### 3. Liskov Substitution Principle (LSP)
 **"Subtypes must be substitutable for their base types"**
 
-✅ **Application in the project:**
+**Application in the project:**
 - Any implementation of `ProjectRepositoryInterface` can substitute another
 - The service works the same with Eloquent, Mongo, or any other implementation
 
@@ -345,23 +345,23 @@ class InMemoryProjectRepository implements ProjectRepositoryInterface { }
 ### 4. Interface Segregation Principle (ISP)
 **"Clients should not depend on interfaces they don't use"**
 
-✅ **Application in the project:**
+**Application in the project:**
 - Small and specific interfaces
 - Only necessary methods
 
 ```php
-// ❌ BAD - "Fat" interface with unused methods
+// BAD - "Fat" interface with unused methods
 interface ProjectRepositoryInterface {
     public function findAll();
     public function findById(int $id);
     public function save(Project $project);
     public function delete(int $id);
-    public function sendEmail(Project $project);      // ❌
-    public function generatePDF(Project $project);    // ❌
-    public function exportToExcel(Collection $projects); // ❌
+    public function sendEmail(Project $project);      // Does not belong here
+    public function generatePDF(Project $project);    // Does not belong here
+    public function exportToExcel(Collection $projects); // Does not belong here
 }
 
-// ✅ GOOD - Specific interface
+// GOOD - Specific interface
 interface ProjectRepositoryInterface {
     public function findAll(): Collection;
     public function findById(int $id): ?Project;
@@ -373,29 +373,29 @@ interface ProjectRepositoryInterface {
 ### 5. Dependency Inversion Principle (DIP)
 **"Depend on abstractions, not implementations"**
 
-✅ **Application in the project:**
+**Application in the project:**
 - Services depend on interfaces, not concrete implementations
 - Inversion of control through dependency injection
 
 ```php
-// ❌ BAD - Dependency on concrete implementation
+// BAD - Dependency on concrete implementation
 class ProjectService {
     private EloquentProjectRepository $repository;
     
     public function __construct() {
-        $this->repository = new EloquentProjectRepository(); // ❌
+        $this->repository = new EloquentProjectRepository(); // Tight coupling
     }
 }
 
-// ✅ GOOD - Dependency on abstraction
+// GOOD - Dependency on abstraction
 class ProjectService {
     public function __construct(
-        private readonly ProjectRepositoryInterface $repository // ✅
+        private readonly ProjectRepositoryInterface $repository
     ) {}
 }
 ```
 
-## 🧪 Testing Strategy
+## Testing Strategy
 
 ### Unit Tests (Application Layer)
 Test business logic in isolation using **mocks**:
@@ -461,7 +461,7 @@ it('calculates responsive zoom correctly', () => {
 });
 ```
 
-## 🎨 Frontend Architecture (Vue.js)
+## Frontend Architecture (Vue.js)
 
 ### Composition API Pattern
 
@@ -525,7 +525,7 @@ components/
 │   └── InfoBanner.vue
 ├── Projects/            # Portfolio domain specific
 │   └── ProjectCard.vue
-├── guaguas/             # 🚌 Bus domain specific
+├── guaguas/             # Bus domain specific
 │   ├── BusMap.vue
 │   ├── BusPopup.vue
 │   ├── BusMarker.vue
@@ -537,40 +537,40 @@ components/
     └── Footer.vue
 ```
 
-## 🚀 Benefits of this Architecture
+## Benefits of this Architecture
 
-### ✅ Maintainability
+### Maintainability
 - Code organized by logical layers
 - Easy to understand and navigate
 - Changes localized to one layer
 
-### ✅ Testability
+### Testability
 - Simple unit tests with mocks
 - Complete integration tests
 - High code coverage
 
-### ✅ Scalability
+### Scalability
 - Easy to add new features
 - New implementations without changes
 - Code ready to grow
 
-### ✅ Flexibility
+### Flexibility
 - Change ORM (Eloquent → Doctrine)
 - Change DB (MySQL → MongoDB, SQLite)
 - Change cache (Redis → Memcached)
 - **Multi-database**: Portfolio uses MySQL, Bus uses SQLite
 
-### ✅ Independence
+### Independence
 - Business logic without Laravel
 - Testable without framework
 - Portable to other projects
 
-### ✅ Multi-Domain Support
+### Multi-Domain Support
 - Isolated domains (Portfolio, Bus)
 - Each domain with its own persistence
 - Horizontal scalability per domain
 
-## 📚 References
+## References
 
 - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
 - [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
