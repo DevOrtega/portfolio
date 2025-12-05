@@ -75,7 +75,7 @@
  *   @node-collapse="handleNodeCollapse"
  * />
  */
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { ElTree } from 'element-plus';
 
 const props = defineProps({
