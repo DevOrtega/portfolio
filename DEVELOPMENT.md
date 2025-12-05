@@ -1,5 +1,7 @@
 # Guía de Desarrollo - Portfolio
 
+🌐 *Leer en otros idiomas: [English](DEVELOPMENT.en.md) • Español*
+
 > **Referencia rápida para desarrolladores**: Guía completa para corregir fallos, añadir funcionalidades y realizar modificaciones de manera eficiente.
 
 ---
@@ -18,6 +20,7 @@
 | Ejecutar tests | [Testing](#testing---referencia-rápida) |
 | Debuggear tests fallidos | [Tests Fallidos](#debuggear-tests-fallidos) |
 | Desplegar cambios | [Despliegue](#despliegue) |
+| Trabajar con Bus Domain | [Bus Domain](#bus-domain) |
 
 ---
 
@@ -26,42 +29,54 @@
 ```
 portfolio/
 ├── app/
-│   ├── Application/Portfolio/     # LÓGICA DE NEGOCIO
-│   │   ├── DTOs/                  # Data Transfer Objects
-│   │   └── Services/              # Servicios (ProjectService, etc.)
+│   ├── Application/               # LÓGICA DE NEGOCIO
+│   │   ├── Portfolio/             # Dominio Portfolio
+│   │   │   ├── DTOs/              # Data Transfer Objects
+│   │   │   └── Services/          # Servicios (ProjectService, etc.)
+│   │   └── Bus/                   # 🚌 Dominio Bus
+│   │       └── Services/          # BusDataService
 │   │
-│   ├── Domain/Portfolio/          # DOMINIO PURO
-│   │   ├── Entities/              # Entidades (Project, etc.)
-│   │   └── Repositories/          # Interfaces de repositorios
+│   ├── Domain/                    # DOMINIO PURO
+│   │   ├── Portfolio/             # Entidades Portfolio
+│   │   │   ├── Entities/          # Project, etc.
+│   │   │   └── Repositories/      # Interfaces
+│   │   └── Bus/                   # 🚌 Entidades Bus
+│   │       ├── Entities/          # BusCompany, BusStop, BusLine, etc.
+│   │       └── Repositories/      # Interfaces de repositorios
 │   │
-│   ├── Http/Controllers/Api/      # CONTROLADORES API
-│   │   ├── ProjectController.php
-│   │   ├── ExperienceController.php
-│   │   ├── SkillController.php
-│   │   ├── EducationController.php
-│   │   └── PersonalInfoController.php
+│   ├── Http/Controllers/          # CONTROLADORES
+│   │   ├── Api/                   # API Portfolio
+│   │   │   ├── ProjectController.php
+│   │   │   ├── ExperienceController.php
+│   │   │   └── ...
+│   │   └── Bus/                   # 🚌 API Bus
+│   │       └── BusController.php
 │   │
 │   ├── Infrastructure/Persistence/ # PERSISTENCIA
-│   │   └── Eloquent/
-│   │       ├── Models/            # Modelos Eloquent
-│   │       └── Repositories/      # Implementaciones
+│   │   ├── Eloquent/              # MySQL/SQLite Portfolio
+│   │   │   ├── Models/            # Modelos Eloquent
+│   │   │   └── Repositories/      # Implementaciones
+│   │   └── SQLite/                # 🚌 SQLite Bus
+│   │       ├── Models/            # BusCompanyModel, etc.
+│   │       └── Repositories/      # SQLiteBus*Repository
 │   │
 │   └── Models/                    # Modelos Eloquent (legacy)
-│       ├── Project.php
-│       ├── Experience.php
-│       ├── Skill.php
-│       ├── Education.php
-│       └── PersonalInfo.php
 │
 ├── resources/js/                  # FRONTEND VUE.JS
 │   ├── components/               # Componentes reutilizables
+│   │   └── guaguas/              # 🚌 Componentes Bus
 │   ├── composables/              # Lógica reutilizable
+│   │   ├── useBusMap.js          # 🚌 Mapa
+│   │   ├── useBusSchedule.js     # 🚌 Horarios
+│   │   └── useBusData.js         # 🚌 Datos
 │   ├── views/                    # Vistas/Páginas
+│   │   └── demos/
+│   │       └── GuaguasTracker.vue # 🚌 Demo Bus
 │   ├── locales/                  # Traducciones
 │   └── router/                   # Rutas SPA
 │
 ├── routes/
-│   ├── api.php                   # Rutas API
+│   ├── api.php                   # Rutas API (incluye /api/bus-data)
 │   └── web.php                   # Rutas web
 │
 ├── tests/
@@ -71,7 +86,7 @@ portfolio/
 └── database/
     ├── migrations/               # Migraciones de BD
     ├── factories/                # Factories para tests
-    └── seeders/                  # Datos iniciales
+    └── seeders/                  # Datos iniciales (incluye Bus seeders)
 ```
 
 ---
@@ -750,6 +765,95 @@ public function findById(int $id): ?Entity;
 
 ---
 
+## Bus Domain
+
+### Arquitectura
+
+El dominio Bus sigue la misma arquitectura hexagonal que Portfolio, pero usa **SQLite** para datos estáticos:
+
+```
+Bus Domain
+├── Entities: BusCompany, BusStop, BusLine, BusRouteStop
+├── Repositories: Interfaces en app/Domain/Bus/Repositories/
+├── Services: BusDataService en app/Application/Bus/Services/
+├── Persistence: SQLite en app/Infrastructure/Persistence/SQLite/
+└── API: /api/bus-data
+```
+
+### Endpoint API
+
+```bash
+# Obtener datos de bus
+GET /api/bus-data?line=014&direction=outbound
+
+# Parámetros:
+# - line: número de línea (ej: "014", "015")
+# - direction: "outbound" (ida) o "inbound" (vuelta)
+```
+
+### Añadir Nueva Línea de Bus
+
+1. **Crear migración** para datos de paradas
+2. **Añadir seeder** con datos de la línea:
+
+```php
+// database/seeders/BusLine015Seeder.php
+public function run(): void
+{
+    $company = BusCompanyModel::where('slug', 'titsa')->first();
+    
+    $line = BusLineModel::create([
+        'company_id' => $company->id,
+        'line_number' => '015',
+        'name' => 'Santa Cruz - La Laguna',
+        'color' => '#00AA00',
+    ]);
+    
+    // Añadir paradas...
+}
+```
+
+3. **Ejecutar seeder**:
+```bash
+php artisan db:seed --class=BusLine015Seeder
+```
+
+### Composables Frontend
+
+```javascript
+// Usar datos de bus
+import { useBusData } from '@/composables/useBusData';
+
+const lineNumber = ref('014');
+const direction = ref('outbound');
+const { stops, lines, isLoading, fetchBusData } = useBusData(lineNumber, direction);
+
+// Cargar datos
+await fetchBusData();
+```
+
+### Testing Bus Domain
+
+```php
+// Test del endpoint
+it('returns bus data for line 014', function () {
+    // Seed data
+    $this->seed(BusCompanySeeder::class);
+    $this->seed(BusStopsSeeder::class);
+    $this->seed(BusLine014Seeder::class);
+    
+    $response = $this->getJson('/api/bus-data?line=014&direction=outbound');
+    
+    $response->assertStatus(200)
+        ->assertJsonStructure([
+            'stops' => [['id', 'name', 'latitude', 'longitude']],
+            'lines' => [['line_number', 'name', 'color']]
+        ]);
+});
+```
+
+---
+
 ## Enlaces Útiles
 
 - **Swagger UI Local**: http://localhost:8000/api/documentation
@@ -759,9 +863,11 @@ public function findById(int $id): ?Entity;
 - **Docs Vue 3**: https://vuejs.org/guide/
 - **Docs Pest**: https://pestphp.com/docs
 - **Docs Vitest**: https://vitest.dev/guide/
+- **Docs SQLite**: https://www.sqlite.org/docs.html
 
 ---
 
 **Guía de Desarrollo - Portfolio**
 
-Última actualización: Diciembre 2025
+Última actualización: Enero 2025  
+Versión: 2.1.0

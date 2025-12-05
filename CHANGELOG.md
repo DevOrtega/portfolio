@@ -7,6 +7,70 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.0] - 2025-12-05
+
+### 🚀 Major Updates
+
+#### Bus Tracking System - Database Migration
+- **Hexagonal Architecture**: Complete migration from hardcoded data to SQLite database
+- **Domain Entities**: Added `BusCompany`, `BusLine`, `BusStop` entities
+- **Repository Pattern**: Implemented repository interfaces and Eloquent implementations
+- **Application Service**: Added `BusService` for orchestrating bus data operations
+- **API Endpoint**: New `/api/bus/data` endpoint for fetching bus tracking data
+
+#### Code Internationalization
+- **Variable Naming**: Renamed all Spanish variables to English (`ida`/`vuelta` → `outbound`/`inbound`)
+- **Comments**: Translated all Spanish comments to English throughout the codebase
+- **API Keys**: Updated API response keys to English naming convention
+
+#### Documentation Structure
+- **Bilingual Documentation**: Added language selector to README files
+- **README.md**: Now in English (international standard)
+- **README.es.md**: Spanish version of README
+- **Open Source Standards**: Following common patterns for multilingual documentation
+
+### ✨ Added
+
+#### Backend
+- `app/Domain/Bus/Entities/BusCompany.php` - Bus company domain entity
+- `app/Domain/Bus/Entities/BusLine.php` - Bus line domain entity with route coordinates
+- `app/Domain/Bus/Entities/BusStop.php` - Bus stop domain entity with direction coordinates
+- `app/Domain/Bus/Repositories/*Interface.php` - Repository interfaces for bus domain
+- `app/Infrastructure/Persistence/Eloquent/Models/Bus*.php` - Eloquent models
+- `app/Infrastructure/Persistence/Eloquent/Repositories/EloquentBus*Repository.php` - Repository implementations
+- `app/Application/Bus/Services/BusService.php` - Application service
+- `app/Http/Controllers/Api/BusController.php` - API controller
+- `database/migrations/2025_12_05_*` - Bus-related migrations (4 tables)
+- `database/seeders/BusDataSeeder.php` - Seeder with real Gran Canaria bus data
+
+#### Frontend
+- `resources/js/api/busApi.js` - API client for bus data
+- `resources/js/api/index.js` - API module exports
+- `resources/js/composables/useBusData.js` - Composable for bus data management
+
+### 🔄 Changed
+
+#### Naming Convention Updates
+- Database columns: `lat_ida`, `lng_ida`, `lat_vuelta`, `lng_vuelta` → `lat_outbound`, `lng_outbound`, `lat_inbound`, `lng_inbound`
+- Route direction enum: `ida`, `vuelta` → `outbound`, `inbound`
+- API response keys: `route_coords_ida/vuelta` → `route_coords_outbound/inbound`
+- API response keys: `stops_ida/vuelta` → `stops_outbound/inbound`
+- Entity properties: `stopsIda/stopsVuelta` → `stopsOutbound/stopsInbound`
+- Frontend variables: Updated to match new API keys
+
+#### Components Updated
+- `GuaguasTracker.vue` - Updated API key references and translated comments
+- `BusPopup.vue` - Translated direction labels (`Outbound`/`Inbound`)
+- `BusLegend.vue` - Updated fallback texts to English
+- `useBusMap.js` - Translated comments and labels
+- `useBusSelection.js` - Already in English, verified
+
+### 📚 Documentation
+- Added language selector to README files
+- Created README.es.md (Spanish version)
+- Updated README.md to English
+- Updated CHANGELOG.md with detailed changes
+
 ## [2.0.0] - 2025-11-24
 
 ### 🚀 Major Updates
