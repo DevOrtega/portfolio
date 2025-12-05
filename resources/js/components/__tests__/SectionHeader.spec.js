@@ -111,7 +111,7 @@ describe('SectionHeader', () => {
     expect(heading.classes()).toContain('gap-2')
   })
 
-  it('icon has correct size classes', () => {
+  it('icon has correct size class', () => {
     const wrapper = mount(SectionHeader, {
       props: {
         title: 'Test',
@@ -120,7 +120,6 @@ describe('SectionHeader', () => {
     })
 
     const svg = wrapper.find('svg')
-    expect(svg.classes()).toContain('w-6')
-    expect(svg.classes()).toContain('h-6')
+    expect(svg.classes()).toContain('size-6')
   })
 })

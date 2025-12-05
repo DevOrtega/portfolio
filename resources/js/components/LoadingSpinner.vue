@@ -1,5 +1,8 @@
 <template>
-  <div class="flex justify-center items-center" :style="{ minHeight: size === 'large' ? '16rem' : 'auto' }">
+  <div 
+    class="flex justify-center items-center"
+    :class="containerClass"
+  >
     <div 
       class="animate-spin rounded-full border-t-2 border-b-2 border-indigo-500"
       :class="sizeClass"
@@ -35,10 +38,14 @@ const props = defineProps({
 
 const sizeClass = computed(() => {
   const sizes = {
-    small: 'h-6 w-6',
-    medium: 'h-12 w-12',
-    large: 'h-16 w-16'
+    small: 'size-6',
+    medium: 'size-12',
+    large: 'size-16'
   };
   return sizes[props.size];
+});
+
+const containerClass = computed(() => {
+  return props.size === 'large' ? 'min-h-64' : '';
 });
 </script>

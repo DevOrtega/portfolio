@@ -8,8 +8,7 @@ describe('LoadingSpinner', () => {
     
     const spinner = wrapper.find('.animate-spin')
     expect(spinner.exists()).toBe(true)
-    expect(spinner.classes()).toContain('h-12')
-    expect(spinner.classes()).toContain('w-12')
+    expect(spinner.classes()).toContain('size-12')
   })
 
   it('renders with small size', () => {
@@ -20,8 +19,7 @@ describe('LoadingSpinner', () => {
     })
     
     const spinner = wrapper.find('.animate-spin')
-    expect(spinner.classes()).toContain('h-6')
-    expect(spinner.classes()).toContain('w-6')
+    expect(spinner.classes()).toContain('size-6')
   })
 
   it('renders with large size', () => {
@@ -32,8 +30,7 @@ describe('LoadingSpinner', () => {
     })
     
     const spinner = wrapper.find('.animate-spin')
-    expect(spinner.classes()).toContain('h-16')
-    expect(spinner.classes()).toContain('w-16')
+    expect(spinner.classes()).toContain('size-16')
   })
 
   it('has proper accessibility attributes', () => {
@@ -62,7 +59,7 @@ describe('LoadingSpinner', () => {
     expect(container.classes()).toContain('items-center')
   })
 
-  it('applies large min-height for large size', () => {
+  it('applies large min-height class for large size', () => {
     const wrapper = mount(LoadingSpinner, {
       props: {
         size: 'large'
@@ -70,10 +67,10 @@ describe('LoadingSpinner', () => {
     })
     
     const container = wrapper.find('.flex')
-    expect(container.attributes('style')).toContain('min-height: 16rem')
+    expect(container.classes()).toContain('min-h-64')
   })
 
-  it('does not apply large min-height for small size', () => {
+  it('does not apply large min-height class for small size', () => {
     const wrapper = mount(LoadingSpinner, {
       props: {
         size: 'small'
@@ -81,6 +78,6 @@ describe('LoadingSpinner', () => {
     })
     
     const container = wrapper.find('.flex')
-    expect(container.attributes('style')).toContain('min-height: auto')
+    expect(container.classes()).not.toContain('min-h-64')
   })
 })

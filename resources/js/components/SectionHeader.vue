@@ -3,7 +3,7 @@
     <slot name="icon">
       <svg 
         v-if="defaultIcon" 
-        class="w-6 h-6 text-indigo-400" 
+        class="size-6 text-indigo-400" 
         fill="none" 
         stroke="currentColor" 
         viewBox="0 0 24 24"
