@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Portfolio\Services\SkillService;
 use App\Http\Controllers\Controller;
-use App\Models\Skill;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -14,6 +14,11 @@ use OpenApi\Annotations as OA;
  */
 final class SkillController extends Controller
 {
+    public function __construct(
+        private readonly SkillService $skillService
+    ) {
+    }
+
     /**
      * @OA\Get(
      *      path="/api/skills",
@@ -49,57 +54,12 @@ final class SkillController extends Controller
      */
     public function index(): JsonResponse
     {
-        $query = Skill::query();
+        $year = request()->has('year') && request('year') !== 'all' 
+            ? (int) request('year') 
+            : null;
 
-        // Filter by year if provided
-        if (request()->has('year') && request('year') !== 'all') {
-            $year = (int) request('year');
+        $skills = $this->skillService->getSkillsByYear($year);
 
-            // Get experiences active during the specified year
-            $relevantExperienceIds = \App\Models\Experience::where(function ($q) use ($year) {
-                $q->whereRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) <= ?", [$year])
-                    ->where(function ($subQ) use ($year) {
-                        $subQ->whereNull('end_date')
-                            ->orWhereRaw("CAST(SUBSTR(end_date, -4) AS INTEGER) >= ?", [$year]);
-                    });
-            })->pluck('id');
-
-            // Get educations active during the specified year
-            $relevantEducationIds = \App\Models\Education::where(function ($q) use ($year) {
-                $q->whereRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) <= ?", [$year])
-                    ->where(function ($subQ) use ($year) {
-                        $subQ->whereNull('end_date')
-                            ->orWhereRaw("CAST(SUBSTR(end_date, -4) AS INTEGER) >= ?", [$year]);
-                    });
-            })->pluck('id');
-
-            // Filter skills: show personal skills always OR skills related to experiences/educations
-            $query->where(function ($q) use ($relevantExperienceIds, $relevantEducationIds) {
-                // Always show personal skills
-                $q->where('is_personal', true);
-
-                // Also show skills from relevant experiences
-                if ($relevantExperienceIds->isNotEmpty()) {
-                    $q->orWhereHas('experiences', function ($subQ) use ($relevantExperienceIds) {
-                        $subQ->whereIn('experiences.id', $relevantExperienceIds);
-                    });
-                }
-
-                // Also show skills from relevant educations
-                if ($relevantEducationIds->isNotEmpty()) {
-                    $q->orWhereHas('educations', function ($subQ) use ($relevantEducationIds) {
-                        $subQ->whereIn('education.id', $relevantEducationIds);
-                    });
-                }
-            });
-        }
-
-        // Order by proficiency descending (highest first), then by category and name
-        $skills = $query->orderBy('proficiency', 'desc')
-            ->orderBy('category')
-            ->orderBy('name')
-            ->get();
-
-        return response()->json($skills);
+        return response()->json($skills->map(fn ($skill) => $skill->toArray())->values());
     }
 }

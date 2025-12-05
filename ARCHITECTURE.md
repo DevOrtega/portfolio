@@ -65,9 +65,17 @@ app/
 ├── Domain/                          # CAPA DE DOMINIO
 │   ├── Portfolio/
 │   │   ├── Entities/                
-│   │   │   └── Project.php          # Entidad de dominio (readonly)
+│   │   │   ├── Project.php          # Entidad proyecto (readonly)
+│   │   │   ├── Experience.php       # Entidad experiencia laboral
+│   │   │   ├── Education.php        # Entidad educación
+│   │   │   ├── Skill.php            # Entidad habilidad
+│   │   │   └── PersonalInfo.php     # Entidad información personal
 │   │   └── Repositories/            
-│   │       └── ProjectRepositoryInterface.php  # Puerto (interface)
+│   │       ├── ProjectRepositoryInterface.php
+│   │       ├── ExperienceRepositoryInterface.php
+│   │       ├── EducationRepositoryInterface.php
+│   │       ├── SkillRepositoryInterface.php
+│   │       └── PersonalInfoRepositoryInterface.php
 │   │
 │   └── Bus/                         # DOMINIO BUS
 │       ├── Entities/
@@ -84,7 +92,11 @@ app/
 ├── Application/                     # CAPA DE APLICACIÓN
 │   ├── Portfolio/
 │   │   └── Services/                
-│   │       └── ProjectService.php   # Servicio de aplicación (readonly)
+│   │       ├── ProjectService.php   # Servicio de proyectos
+│   │       ├── ExperienceService.php # Servicio de experiencias
+│   │       ├── EducationService.php  # Servicio de educación
+│   │       ├── SkillService.php      # Servicio de habilidades
+│   │       └── PersonalInfoService.php # Servicio de info personal
 │   │
 │   └── Bus/                         # SERVICIOS BUS
 │       └── Services/
@@ -92,28 +104,27 @@ app/
 │
 ├── Infrastructure/                  # CAPA DE INFRAESTRUCTURA
 │   └── Persistence/
-│       ├── Eloquent/
-│       │   ├── Models/              
-│       │   │   └── ProjectModel.php # Modelo Eloquent (final)
-│       │   └── Repositories/        
-│       │       └── EloquentProjectRepository.php  # Adaptador (final)
-│       │
-│       └── SQLite/                  # PERSISTENCIA BUS
-│           ├── Models/
-│           │   ├── BusCompanyModel.php
-│           │   ├── BusStopModel.php
-│           │   ├── BusLineModel.php
-│           │   └── BusRouteStopModel.php
-│           └── Repositories/
-│               ├── SQLiteBusCompanyRepository.php
-│               ├── SQLiteBusStopRepository.php
-│               ├── SQLiteBusLineRepository.php
-│               └── SQLiteBusRouteStopRepository.php
+│       └── Eloquent/
+│           ├── EloquentExperienceRepository.php
+│           ├── EloquentEducationRepository.php
+│           ├── EloquentSkillRepository.php
+│           ├── EloquentPersonalInfoRepository.php
+│           ├── Models/              
+│           │   └── ProjectModel.php # Modelo Eloquent (final)
+│           └── Repositories/        
+│               ├── EloquentProjectRepository.php
+│               ├── EloquentBusCompanyRepository.php
+│               ├── EloquentBusStopRepository.php
+│               └── EloquentBusLineRepository.php
 │
 └── Http/                            # CAPA DE PRESENTACIÓN
     └── Controllers/
         ├── Api/                     
-        │   └── ProjectController.php # Controlador API (final)
+        │   ├── ProjectController.php
+        │   ├── ExperienceController.php
+        │   ├── EducationController.php
+        │   ├── SkillController.php
+        │   └── PersonalInfoController.php
         │
         └── Bus/                     # CONTROLADOR BUS
             └── BusController.php    # API de datos de bus

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Portfolio\Services\EducationService;
 use App\Http\Controllers\Controller;
-use App\Models\Education;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -14,6 +14,11 @@ use OpenApi\Annotations as OA;
  */
 final class EducationController extends Controller
 {
+    public function __construct(
+        private readonly EducationService $educationService
+    ) {
+    }
+
     /**
      * @OA\Get(
      *      path="/api/education",
@@ -35,40 +40,12 @@ final class EducationController extends Controller
      */
     public function index(): JsonResponse
     {
-        $query = Education::query();
+        $year = request()->has('year') && request('year') !== 'all' 
+            ? (int) request('year') 
+            : null;
 
-        // Filter by year if provided
-        if (request()->has('year') && request('year') !== 'all') {
-            $year = (int) request('year');
+        $education = $this->educationService->getEducationByYear($year);
 
-            // Filter education that was active during the specified year
-            $query->where(function ($q) use ($year) {
-                $q->whereRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) <= ?", [$year])
-                    ->where(function ($subQ) use ($year) {
-                        $subQ->whereNull('end_date')
-                            ->orWhereRaw("CAST(SUBSTR(end_date, -4) AS INTEGER) >= ?", [$year]);
-                    });
-            });
-        }
-
-        // Order by start_date descending (most recent first)
-        $education = $query->orderByRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) DESC")
-            ->orderByRaw("CASE 
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Ene' THEN 1
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Feb' THEN 2
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Mar' THEN 3
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Abr' THEN 4
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'May' THEN 5
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Jun' THEN 6
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Jul' THEN 7
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Ago' THEN 8
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Sept' THEN 9
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Oct' THEN 10
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Nov' THEN 11
-                              WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Dic' THEN 12
-                              ELSE 0 END DESC")
-            ->get();
-
-        return response()->json($education);
+        return response()->json($education->map(fn ($edu) => $edu->toArray())->values());
     }
 }

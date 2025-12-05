@@ -248,25 +248,32 @@ Este proyecto sigue los principios **SOLID** y está estructurado usando **Arqui
 ```
 app/
 ├── Domain/                          # Capa de Dominio
-│   └── Portfolio/
-│       ├── Entities/                # Entidades de dominio (Project, Skill, etc.)
-│       └── Repositories/            # Interfaces de repositorios (contratos)
+│   ├── Portfolio/
+│   │   ├── Entities/                # Entidades de dominio (Project, Skill, etc.)
+│   │   └── Repositories/            # Interfaces de repositorios (contratos)
+│   └── Bus/
+│       ├── Entities/                # Entidades de bus (BusCompany, BusLine, BusStop)
+│       └── Repositories/            # Interfaces de repositorios de bus
 │
 ├── Application/                     # Capa de Aplicación
-│   └── Portfolio/
-│       ├── Services/                # Servicios de aplicación (lógica de negocio)
-│       └── DTOs/                    # Data Transfer Objects
+│   ├── Portfolio/
+│   │   ├── Services/                # Servicios de aplicación (lógica de negocio)
+│   │   └── DTOs/                    # Data Transfer Objects
+│   └── Bus/
+│       └── Services/                # Servicios de bus (BusService)
 │
 ├── Infrastructure/                  # Capa de Infraestructura
 │   └── Persistence/
 │       └── Eloquent/
-│           ├── Models/              # Modelos Eloquent (ProjectModel, etc.)
+│           ├── Models/              # Modelos Eloquent (ProjectModel, BusLineModel, etc.)
 │           └── Repositories/        # Implementaciones de repositorios
 │
 └── Http/                            # Capa de Presentación
     └── Controllers/
         └── Api/                     # Controladores API (solo HTTP)
 ```
+
+Para documentación detallada de la arquitectura, ver [ARCHITECTURE.md](ARCHITECTURE.md).
 
 ### Principios SOLID Aplicados
 

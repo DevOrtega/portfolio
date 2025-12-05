@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Portfolio\Services\PersonalInfoService;
 use App\Http\Controllers\Controller;
-use App\Models\PersonalInfo;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -14,6 +14,11 @@ use OpenApi\Annotations as OA;
  */
 final class PersonalInfoController extends Controller
 {
+    public function __construct(
+        private readonly PersonalInfoService $personalInfoService
+    ) {
+    }
+
     /**
      * @OA\Get(
      *      path="/api/personal-info",
@@ -32,7 +37,7 @@ final class PersonalInfoController extends Controller
      */
     public function index(): JsonResponse
     {
-        $personalInfo = PersonalInfo::first();
+        $personalInfo = $this->personalInfoService->getPersonalInfo();
         
         if (!$personalInfo) {
             return response()->json([
@@ -40,6 +45,6 @@ final class PersonalInfoController extends Controller
             ], 404);
         }
         
-        return response()->json($personalInfo);
+        return response()->json($personalInfo->toArray());
     }
 }

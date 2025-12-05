@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Portfolio\Services\ProjectService;
 use App\Http\Controllers\Controller;
-use App\Models\Project;
 use Illuminate\Http\JsonResponse;
 use OpenApi\Annotations as OA;
 
@@ -11,9 +11,15 @@ use OpenApi\Annotations as OA;
  * Project Controller
  * 
  * Handles HTTP requests for projects.
+ * Uses ProjectService following Hexagonal Architecture.
  */
-class ProjectController extends Controller
+final class ProjectController extends Controller
 {
+    public function __construct(
+        private readonly ProjectService $projectService
+    ) {
+    }
+
     /**
      * @OA\Get(
      *      path="/api/projects",
@@ -28,8 +34,8 @@ class ProjectController extends Controller
      */
     public function index(): JsonResponse
     {
-        $projects = Project::all();
+        $projects = $this->projectService->getAllProjects();
 
-        return response()->json($projects);
+        return response()->json($projects->map(fn($project) => $project->toArray()));
     }
 }
