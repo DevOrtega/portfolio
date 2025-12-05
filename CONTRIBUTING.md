@@ -2,7 +2,7 @@
 
 Thank you for your interest in contributing to this project! This document provides guidelines and instructions for contributing.
 
-## 📋 Table of Contents
+## Table of Contents
 
 - [Code of Conduct](#code-of-conduct)
 - [Getting Started](#getting-started)
@@ -21,7 +21,7 @@ Thank you for your interest in contributing to this project! This document provi
 - Focus on what's best for the community
 - Show empathy towards others
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -60,7 +60,7 @@ Thank you for your interest in contributing to this project! This document provi
    npm test
    ```
 
-## 🔄 Development Workflow
+## Development Workflow
 
 ### Branch Strategy
 
@@ -85,7 +85,7 @@ git fetch origin
 git rebase origin/main
 ```
 
-## 💻 Coding Standards
+## Coding Standards
 
 ### PHP Standards
 
@@ -100,13 +100,13 @@ We follow PSR-12 coding standards. Use Laravel Pint for formatting:
 Always use type declarations:
 
 ```php
-// ✅ Good
+// Good
 public function findById(int $id): ?Project
 {
     return $this->repository->find($id);
 }
 
-// ❌ Bad
+// Bad
 public function findById($id)
 {
     return $this->repository->find($id);
@@ -144,11 +144,11 @@ public function getAllProjects(): Collection
 Use modern JavaScript features:
 
 ```javascript
-// ✅ Good
+// Good
 const value = maybeNull ?? defaultValue;
 const property = object?.property;
 
-// ❌ Bad
+// Bad
 const value = maybeNull || defaultValue;
 const property = object && object.property;
 ```
@@ -169,10 +169,10 @@ const doubled = computed(() => count.value * 2);
 Use PascalCase for components:
 
 ```javascript
-// ✅ Good
+// Good
 import ProjectCard from '@/components/ProjectCard.vue';
 
-// ❌ Bad
+// Bad
 import projectCard from '@/components/project-card.vue';
 ```
 
@@ -196,7 +196,7 @@ resources/js/
 └── router/         # Route configuration
 ```
 
-## 🧪 Testing Guidelines
+## Testing Guidelines
 
 ### Test Requirements
 
@@ -269,7 +269,7 @@ npm run test:ui
 npm run test:coverage
 ```
 
-## 📝 Commit Message Guidelines
+## Commit Message Guidelines
 
 ### Format
 
@@ -377,7 +377,7 @@ Brief description of changes
 4. Wait for approval from maintainers
 5. PR will be merged once approved
 
-## 🎯 Areas for Contribution
+## Areas for Contribution
 
 ### High Priority
 
@@ -406,7 +406,7 @@ Brief description of changes
 - **Discussions**: [GitHub Discussions](https://github.com/DevOrtega/portfolio/discussions)
 - **Email**: contact@carlosmortega.dev
 
-## 🙏 Thank You
+## Thank You
 
 Your contributions help make this project better. We appreciate your time and effort!
 

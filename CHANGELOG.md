@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.1.0] - 2025-12-05
 
-### 🚀 Major Updates
+### Major Updates
 
 #### Bus Tracking System - Database Migration
 - **Hexagonal Architecture**: Complete migration from hardcoded data to SQLite database
@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `resources/js/api/index.js` - API module exports
 - `resources/js/composables/useBusData.js` - Composable for bus data management
 
-### 🔄 Changed
+### Changed
 
 #### Naming Convention Updates
 - Database columns: `lat_ida`, `lng_ida`, `lat_vuelta`, `lng_vuelta` → `lat_outbound`, `lng_outbound`, `lat_inbound`, `lng_inbound`
@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `useBusMap.js` - Translated comments and labels
 - `useBusSelection.js` - Already in English, verified
 
-### 📚 Documentation
+### Documentation
 - Added language selector to README files
 - Created README.es.md (Spanish version)
 - Updated README.md to English
@@ -73,7 +73,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [2.0.0] - 2025-11-24
 
-### 🚀 Major Updates
+### Major Updates
 
 #### System Upgrades
 - **PHP**: Upgraded from 8.2.29 to 8.3.28 (latest stable)
@@ -89,7 +89,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vitest: Updated to 4.0.13
 - All PHP and npm packages updated to latest compatible versions
 
-### ✨ Added
+### Added
 
 #### Features
 - **Comprehensive Testing Suite**:
@@ -141,7 +141,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **API Documentation**: Enhanced Swagger/OpenAPI annotations
 
-### 🔄 Changed
+### Changed
 
 #### Code Quality
 - **PHP 8.3 Modernization**:
@@ -179,7 +179,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Better validation messages
   - Enhanced error states in UI
 
-### 🐛 Fixed
+### Fixed
 
 - Fixed model fillable properties for mass assignment
 - Resolved SQLite driver requirement for PHP 8.3
@@ -187,13 +187,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Corrected ProjectCard RouterLink integration
 - Fixed TimelineItem badge Tailwind class handling
 
-### 🗑️ Removed
+### Removed
 
 - Removed obsolete projects from database
 - Cleaned up unused imports in controllers
 - Removed redundant code in components
 
-### 🔧 Configuration
+### Configuration
 
 - **nvm Installation**: Added for flexible Node.js version management
 - **Vitest Configuration**: 
@@ -206,7 +206,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `npm run test:ui`: Interactive test UI
   - `npm run test:coverage`: Coverage reports
 
-### 📦 Dependencies
+### Dependencies
 
 #### Added
 - @vitest/ui: 4.0.13
@@ -223,7 +223,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - leaflet: Updated to 1.9.4
 - All Laravel packages to latest versions
 
-### 🔒 Security
+### Security
 
 - No security vulnerabilities in dependencies
 - Rate limiting on API endpoints
@@ -232,7 +232,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - SQL injection prevention with Eloquent ORM
 - Secure headers configured
 
-### ⚡ Performance
+### Performance
 
 - PHP 8.3 performance improvements with `final` classes
 - Optimized build with code splitting

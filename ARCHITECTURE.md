@@ -1,8 +1,8 @@
 # Arquitectura del Proyecto
 
-🌐 *Read this in other languages: [English](ARCHITECTURE.en.md) • Español*
+*Read this in other languages: [English](ARCHITECTURE.en.md) | Español*
 
-## 📐 Visión General
+## Visión General
 
 Este proyecto implementa una **Arquitectura Hexagonal** (también conocida como Ports & Adapters) combinada con los principios **SOLID**, proporcionando una base de código limpia, mantenible y altamente testeable.
 
@@ -10,7 +10,7 @@ El proyecto cuenta con **dos dominios principales**:
 - **Portfolio**: Gestión de proyectos, experiencias, educación y habilidades
 - **Bus**: Sistema de tracking de guaguas en tiempo real (TITSA - Tenerife)
 
-## 🎯 Objetivos Arquitectónicos
+## Objetivos Arquitectónicos
 
 1. **Separación de Responsabilidades**: Cada capa tiene un propósito bien definido
 2. **Independencia de Framework**: La lógica de negocio no depende de Laravel
@@ -18,7 +18,7 @@ El proyecto cuenta con **dos dominios principales**:
 4. **Flexibilidad**: Permite cambiar implementaciones sin afectar otras capas
 5. **Mantenibilidad**: Código organizado y fácil de entender
 
-## 🏛️ Capas de la Arquitectura
+## Capas de la Arquitectura
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -58,18 +58,18 @@ El proyecto cuenta con **dos dominios principales**:
 └─────────────────────────────────────────────────────────────┘
 ```
 
-## 📁 Estructura de Directorios
+## Estructura de Directorios
 
 ```
 app/
-├── Domain/                          # 🎯 CAPA DE DOMINIO
+├── Domain/                          # CAPA DE DOMINIO
 │   ├── Portfolio/
 │   │   ├── Entities/                
 │   │   │   └── Project.php          # Entidad de dominio (readonly)
 │   │   └── Repositories/            
 │   │       └── ProjectRepositoryInterface.php  # Puerto (interface)
 │   │
-│   └── Bus/                         # 🚌 DOMINIO BUS (NUEVO)
+│   └── Bus/                         # DOMINIO BUS
 │       ├── Entities/
 │       │   ├── BusCompany.php       # Entidad compañía de guaguas
 │       │   ├── BusStop.php          # Entidad parada
@@ -81,16 +81,16 @@ app/
 │           ├── BusLineRepositoryInterface.php
 │           └── BusRouteStopRepositoryInterface.php
 │
-├── Application/                     # 🔧 CAPA DE APLICACIÓN
+├── Application/                     # CAPA DE APLICACIÓN
 │   ├── Portfolio/
 │   │   └── Services/                
 │   │       └── ProjectService.php   # Servicio de aplicación (readonly)
 │   │
-│   └── Bus/                         # 🚌 SERVICIOS BUS
+│   └── Bus/                         # SERVICIOS BUS
 │       └── Services/
 │           └── BusDataService.php   # Servicio de datos de bus
 │
-├── Infrastructure/                  # 🗄️ CAPA DE INFRAESTRUCTURA
+├── Infrastructure/                  # CAPA DE INFRAESTRUCTURA
 │   └── Persistence/
 │       ├── Eloquent/
 │       │   ├── Models/              
@@ -98,7 +98,7 @@ app/
 │       │   └── Repositories/        
 │       │       └── EloquentProjectRepository.php  # Adaptador (final)
 │       │
-│       └── SQLite/                  # 🚌 PERSISTENCIA BUS
+│       └── SQLite/                  # PERSISTENCIA BUS
 │           ├── Models/
 │           │   ├── BusCompanyModel.php
 │           │   ├── BusStopModel.php
@@ -110,15 +110,15 @@ app/
 │               ├── SQLiteBusLineRepository.php
 │               └── SQLiteBusRouteStopRepository.php
 │
-└── Http/                            # 🌐 CAPA DE PRESENTACIÓN
+└── Http/                            # CAPA DE PRESENTACIÓN
     └── Controllers/
         ├── Api/                     
         │   └── ProjectController.php # Controlador API (final)
         │
-        └── Bus/                     # 🚌 CONTROLADOR BUS
+        └── Bus/                     # CONTROLADOR BUS
             └── BusController.php    # API de datos de bus
 
-resources/js/                        # 🎨 FRONTEND (Vue.js)
+resources/js/                        # FRONTEND (Vue.js)
 ├── components/                      # Componentes reutilizables
 │   ├── StatsCard.vue
 │   ├── LoadingSpinner.vue
@@ -126,7 +126,7 @@ resources/js/                        # 🎨 FRONTEND (Vue.js)
 │   ├── ProjectCard.vue
 │   ├── TimelineItem.vue
 │   ├── SectionHeader.vue
-│   └── guaguas/                     # 🚌 COMPONENTES BUS
+│   └── guaguas/                     # COMPONENTES BUS
 │       ├── BusMap.vue
 │       ├── BusPopup.vue
 │       ├── BusMarker.vue
@@ -136,18 +136,18 @@ resources/js/                        # 🎨 FRONTEND (Vue.js)
 ├── composables/                     # Lógica reutilizable
 │   ├── useBusMap.js                 # Configuración del mapa
 │   ├── useBusSchedule.js            # Gestión de horarios
-│   └── useBusData.js                # 🚌 Datos de bus (NUEVO)
+│   └── useBusData.js                # Datos de bus
 ├── views/                           # Vistas principales
 │   ├── HomeView.vue
 │   ├── ProjectsView.vue
 │   ├── ResumeView.vue
 │   └── demos/
-│       └── GuaguasTracker.vue       # 🚌 Demo tracking bus
+│       └── GuaguasTracker.vue       # Demo tracking bus
 └── router/                          # Configuración de rutas
     └── index.js
 ```
 
-## 🚌 Bus Domain Architecture
+## Bus Domain Architecture
 
 El dominio Bus sigue la misma arquitectura hexagonal, con persistencia en **SQLite** para datos estáticos de rutas y paradas:
 
@@ -209,7 +209,7 @@ useBusData.js (Composable)
      ▼
 useBusMap.js + Leaflet (Mapa interactivo)
 
-## 🔄 Flujo de Datos
+## Flujo de Datos
 
 ### Portfolio Domain: Request Flow (Usuario → Backend → Base de Datos)
 
@@ -273,27 +273,27 @@ private function toDomain(ProjectModel $model): Project
 }
 ```
 
-## 🎨 Principios SOLID Aplicados
+## Principios SOLID Aplicados
 
 ### 1. Single Responsibility Principle (SRP)
 **"Una clase debe tener una sola razón para cambiar"**
 
-✅ **Aplicación en el proyecto:**
+**Aplicación en el proyecto:**
 - `ProjectController`: Solo maneja HTTP requests/responses
 - `ProjectService`: Solo contiene lógica de negocio
 - `EloquentProjectRepository`: Solo gestiona persistencia
 
 ```php
-// ❌ MAL - Controller con múltiples responsabilidades
+// MAL - Controller con múltiples responsabilidades
 class ProjectController {
     public function index() {
-        $data = DB::table('projects')->get(); // ❌ Acceso directo a DB
+        $data = DB::table('projects')->get(); // Acceso directo a DB
         // ... lógica de negocio ...
         return response()->json($data);
     }
 }
 
-// ✅ BIEN - Responsabilidades separadas
+// BIEN - Responsabilidades separadas
 class ProjectController {
     public function index() {
         $projects = $this->projectService->getAllProjects();
@@ -305,7 +305,7 @@ class ProjectController {
 ### 2. Open/Closed Principle (OCP)
 **"Abierto a extensión, cerrado a modificación"**
 
-✅ **Aplicación en el proyecto:**
+**Aplicación en el proyecto:**
 - Nuevas implementaciones de repositorios sin modificar servicios
 - Nuevos tipos de proyectos sin cambiar código existente
 
@@ -325,7 +325,7 @@ $this->app->bind(
 ### 3. Liskov Substitution Principle (LSP)
 **"Las subclases deben ser sustituibles por sus clases base"**
 
-✅ **Aplicación en el proyecto:**
+**Aplicación en el proyecto:**
 - Cualquier implementación de `ProjectRepositoryInterface` puede sustituir a otra
 - El service funciona igual con Eloquent, Mongo o cualquier otra implementación
 
@@ -344,23 +344,23 @@ class InMemoryProjectRepository implements ProjectRepositoryInterface { }
 ### 4. Interface Segregation Principle (ISP)
 **"Los clientes no deben depender de interfaces que no usan"**
 
-✅ **Aplicación en el proyecto:**
+**Aplicación en el proyecto:**
 - Interfaces pequeñas y específicas
 - Solo métodos necesarios
 
 ```php
-// ❌ MAL - Interface "gorda" con métodos no usados
+// MAL - Interface "gorda" con métodos no usados
 interface ProjectRepositoryInterface {
     public function findAll();
     public function findById(int $id);
     public function save(Project $project);
     public function delete(int $id);
-    public function sendEmail(Project $project);      // ❌
-    public function generatePDF(Project $project);    // ❌
-    public function exportToExcel(Collection $projects); // ❌
+    public function sendEmail(Project $project);      // No pertenece aquí
+    public function generatePDF(Project $project);    // No pertenece aquí
+    public function exportToExcel(Collection $projects); // No pertenece aquí
 }
 
-// ✅ BIEN - Interface específica
+// BIEN - Interface específica
 interface ProjectRepositoryInterface {
     public function findAll(): Collection;
     public function findById(int $id): ?Project;
@@ -372,29 +372,29 @@ interface ProjectRepositoryInterface {
 ### 5. Dependency Inversion Principle (DIP)
 **"Depender de abstracciones, no de implementaciones"**
 
-✅ **Aplicación en el proyecto:**
+**Aplicación en el proyecto:**
 - Services dependen de interfaces, no de implementaciones concretas
 - Inversión de control mediante inyección de dependencias
 
 ```php
-// ❌ MAL - Dependencia de implementación concreta
+// MAL - Dependencia de implementación concreta
 class ProjectService {
     private EloquentProjectRepository $repository;
     
     public function __construct() {
-        $this->repository = new EloquentProjectRepository(); // ❌
+        $this->repository = new EloquentProjectRepository(); // Acoplamiento fuerte
     }
 }
 
-// ✅ BIEN - Dependencia de abstracción
+// BIEN - Dependencia de abstracción
 class ProjectService {
     public function __construct(
-        private readonly ProjectRepositoryInterface $repository // ✅
+        private readonly ProjectRepositoryInterface $repository
     ) {}
 }
 ```
 
-## 🧪 Testing Strategy
+## Testing Strategy
 
 ### Tests Unitarios (Application Layer)
 Prueban la lógica de negocio en aislamiento usando **mocks**:
@@ -460,7 +460,7 @@ it('calculates responsive zoom correctly', () => {
 });
 ```
 
-## 🎨 Frontend Architecture (Vue.js)
+## Frontend Architecture (Vue.js)
 
 ### Composition API Pattern
 
@@ -524,7 +524,7 @@ components/
 │   └── InfoBanner.vue
 ├── Projects/            # Específicos de dominio Portfolio
 │   └── ProjectCard.vue
-├── guaguas/             # 🚌 Específicos de dominio Bus
+├── guaguas/             # Específicos de dominio Bus
 │   ├── BusMap.vue
 │   ├── BusPopup.vue
 │   ├── BusMarker.vue
@@ -536,40 +536,40 @@ components/
     └── Footer.vue
 ```
 
-## 🚀 Ventajas de esta Arquitectura
+## Ventajas de esta Arquitectura
 
-### ✅ Mantenibilidad
+### Mantenibilidad
 - Código organizado por capas lógicas
 - Fácil de entender y navegar
 - Cambios localizados en una capa
 
-### ✅ Testabilidad
+### Testabilidad
 - Tests unitarios simples con mocks
 - Tests de integración completos
 - Alta cobertura de código
 
-### ✅ Escalabilidad
+### Escalabilidad
 - Fácil añadir nuevas features
 - Nuevas implementaciones sin cambios
 - Código preparado para crecer
 
-### ✅ Flexibilidad
+### Flexibilidad
 - Cambiar de ORM (Eloquent → Doctrine)
 - Cambiar de BD (MySQL → MongoDB, SQLite)
 - Cambiar de cache (Redis → Memcached)
 - **Multi-database**: Portfolio usa MySQL, Bus usa SQLite
 
-### ✅ Independencia
+### Independencia
 - Lógica de negocio sin Laravel
 - Testeable sin framework
 - Portable a otros proyectos
 
-### ✅ Multi-Domain Support
+### Multi-Domain Support
 - Dominios aislados (Portfolio, Bus)
 - Cada dominio con su propia persistencia
 - Escalabilidad horizontal por dominio
 
-## 📚 Referencias
+## Referencias
 
 - [Hexagonal Architecture](https://alistair.cockburn.us/hexagonal-architecture/)
 - [SOLID Principles](https://en.wikipedia.org/wiki/SOLID)
