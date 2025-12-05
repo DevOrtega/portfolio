@@ -1,8 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios';
-import LoadingSpinner from '../components/LoadingSpinner.vue';
-import ProjectCard from '../components/ProjectCard.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import ProjectCard from '@/components/ProjectCard.vue';
 
 const projects = ref([]);
 const loading = ref(true);

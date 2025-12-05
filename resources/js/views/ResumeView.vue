@@ -1,9 +1,9 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import axios from 'axios';
-import LoadingSpinner from '../components/LoadingSpinner.vue';
-import SectionHeader from '../components/SectionHeader.vue';
-import TimelineItem from '../components/TimelineItem.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import SectionHeader from '@/components/SectionHeader.vue';
+import TimelineItem from '@/components/TimelineItem.vue';
 
 const skills = ref([]);
 const experiences = ref([]);
