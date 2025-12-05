@@ -9,16 +9,16 @@
         <h1 class="text-3xl font-bold mb-2">{{ $t('guaguas.title') }}</h1>
         <p class="text-gray-400">{{ $t('guaguas.subtitle') }}</p>
         <InfoBanner type="info" class="mt-2">
-          ℹ️ Demo with simulation based on real routes and schedules from <strong>Guaguas Municipales</strong> (yellow - urban), <strong>Global</strong> (blue - interurban) and <strong>Night Lines</strong> (purple - L1, L2, L3, 64, 65). 
-          Buses only appear within their operating hours and move along geographically accurate routes of Gran Canaria.
-          <br><small class="opacity-80">Note: Gran Canaria does not have public GTFS feeds. Data is simulated with maximum fidelity to reality.</small>
+          {{ $t('guaguas.infoBanner') }} <strong>Guaguas Municipales</strong> {{ $t('guaguas.infoBannerColors') }}, <strong>Global</strong> {{ $t('guaguas.infoBannerGlobal') }} {{ $t('guaguas.infoBannerNight') }}. 
+          {{ $t('guaguas.infoBannerHours') }}
+          <br><small class="opacity-80">{{ $t('guaguas.infoBannerNote') }}</small>
         </InfoBanner>
       </div>
 
       <!-- Loading state -->
       <div v-if="isLoadingData" class="flex flex-col items-center justify-center py-20">
         <LoadingSpinner size="large" />
-        <p class="mt-4 text-gray-400">Loading route data...</p>
+        <p class="mt-4 text-gray-400">{{ $t('guaguas.loadingRoutes') }}</p>
       </div>
 
       <!-- Error state -->
