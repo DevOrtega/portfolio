@@ -6,11 +6,11 @@
     <div class="flex flex-wrap gap-4 text-sm mb-4">
       <div class="flex items-center gap-2">
         <div class="size-6 rounded bg-yellow-500"></div>
-        <span>{{ $t('guaguas.municipales', 'Guaguas Municipales') }}</span>
+        <span>{{ $t('guaguas.municipalesFull') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="size-6 rounded bg-blue-600"></div>
-        <span>{{ $t('guaguas.global', 'Global') }}</span>
+        <span>{{ $t('guaguas.global') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="size-6 rounded bg-purple-500"></div>
@@ -18,11 +18,11 @@
       </div>
       <div class="flex items-center gap-2">
         <div class="size-5 rounded-full bg-green-500 flex items-center justify-center text-white text-xs font-bold">→</div>
-        <span>{{ $t('guaguas.outbound', 'Outbound') }}</span>
+        <span>{{ $t('guaguas.outbound') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <div class="size-5 rounded-full bg-orange-500 flex items-center justify-center text-white text-xs font-bold">←</div>
-        <span>{{ $t('guaguas.inbound', 'Inbound') }}</span>
+        <span>{{ $t('guaguas.inbound') }}</span>
       </div>
       <div class="flex items-center gap-2">
         <svg class="size-5 text-yellow-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
@@ -36,72 +36,72 @@
     <div class="border-t border-gray-700 my-3"></div>
 
     <!-- Interaction instructions -->
-    <h4 class="font-semibold mb-2 text-sm text-gray-300">🎮 {{ $t('guaguas.howToUsePanel', 'How to use the line panel') }}</h4>
+    <h4 class="font-semibold mb-2 text-sm text-gray-300">{{ $t('guaguas.howToUsePanel') }}</h4>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
       <!-- Click instruction -->
       <div class="bg-gray-700/50 p-2 rounded">
         <div class="flex items-center gap-2 mb-1">
-          <span class="bg-indigo-500 text-white px-2 py-0.5 rounded text-xs font-bold">CLICK</span>
-          <span class="text-gray-300">{{ $t('guaguas.onALine', 'on a line') }}</span>
+          <span class="bg-indigo-500 text-white px-2 py-0.5 rounded text-xs font-bold">{{ $t('guaguas.click') }}</span>
+          <span class="text-gray-300">{{ $t('guaguas.onALine') }}</span>
         </div>
         <p class="text-gray-400">
-          {{ $t('guaguas.clickInstruction', 'Add/remove line from your selection.') }}
-          <span class="text-white font-bold">{{ $t('guaguas.selectedInBold', 'bold') }}</span> 
-          {{ $t('guaguas.with', 'with') }} ✓
+          {{ $t('guaguas.clickInstruction') }}
+          <span class="text-white font-bold">{{ $t('guaguas.selectedInBold') }}</span> 
+          {{ $t('guaguas.with') }} ✓
         </p>
       </div>
       
       <!-- Double click instruction -->
       <div class="bg-gray-700/50 p-2 rounded">
         <div class="flex items-center gap-2 mb-1">
-          <span class="bg-purple-500 text-white px-2 py-0.5 rounded text-xs font-bold">DOUBLE CLICK</span>
-          <span class="text-gray-300">{{ $t('guaguas.onALine', 'on a line') }}</span>
+          <span class="bg-purple-500 text-white px-2 py-0.5 rounded text-xs font-bold">{{ $t('guaguas.doubleClick') }}</span>
+          <span class="text-gray-300">{{ $t('guaguas.onALine') }}</span>
         </div>
         <p class="text-gray-400">
-          {{ $t('guaguas.exclusiveMode', 'Exclusive mode: shows') }} 
-          <strong class="text-white">{{ $t('guaguas.onlyThatLine', 'only that line') }}</strong>. 
-          {{ $t('guaguas.doubleClickToExit', 'Double click again to return to previous state.') }}
+          {{ $t('guaguas.exclusiveMode') }} 
+          <strong class="text-white">{{ $t('guaguas.onlyThatLine') }}</strong>. 
+          {{ $t('guaguas.doubleClickToExit') }}
         </p>
       </div>
       
       <!-- Selected line example -->
       <div class="bg-gray-700/50 p-2 rounded">
         <div class="flex items-center gap-2 mb-1">
-          <span class="font-bold text-white">Line 1</span>
+          <span class="font-bold text-white">{{ $t('guaguas.line') }} 1</span>
           <span class="text-green-400">✓</span>
         </div>
         <p class="text-gray-400">
-          {{ $t('guaguas.boldLinesVisible', 'Lines in') }} 
-          <strong class="text-white">{{ $t('guaguas.bold', 'bold') }}</strong> 
-          {{ $t('guaguas.areSelected', 'are selected and their buses are visible on the map.') }}
+          {{ $t('guaguas.boldLinesVisible') }} 
+          <strong class="text-white">{{ $t('guaguas.bold') }}</strong> 
+          {{ $t('guaguas.areSelected') }}
         </p>
       </div>
       
       <!-- Hidden line example -->
       <div class="bg-gray-700/50 p-2 rounded">
         <div class="flex items-center gap-2 mb-1">
-          <span class="text-gray-400 opacity-60">Line 50</span>
+          <span class="text-gray-400 opacity-60">{{ $t('guaguas.line') }} 50</span>
         </div>
         <p class="text-gray-400">
-          {{ $t('guaguas.dimmedLines', 'Lines that are') }} 
-          <strong class="text-gray-400">{{ $t('guaguas.dimmed', 'dimmed') }}</strong> 
-          {{ $t('guaguas.areHidden', 'are hidden. Click to show them.') }}
+          {{ $t('guaguas.dimmedLines') }} 
+          <strong class="text-gray-400">{{ $t('guaguas.dimmed') }}</strong> 
+          {{ $t('guaguas.areHidden') }}
         </p>
       </div>
     </div>
 
     <!-- Current state -->
     <div class="mt-3 p-2 bg-gray-700/30 rounded text-xs">
-      <span class="text-gray-400">{{ $t('guaguas.currentState', 'Current state:') }} </span>
+      <span class="text-gray-400">{{ $t('guaguas.currentState') }} </span>
       <span v-if="exclusiveMode" class="text-purple-400 font-semibold">
-        🔒 {{ $t('guaguas.exclusiveModeActive', 'Exclusive mode') }} - Line {{ exclusiveLine?.line }} 
-        ({{ $t('guaguas.doubleClickExit', 'double click to exit') }})
+        🔒 {{ $t('guaguas.exclusiveModeActive') }} - {{ $t('guaguas.line') }} {{ exclusiveLine?.line }} 
+        ({{ $t('guaguas.doubleClickExit') }})
       </span>
       <span v-else-if="selectedCount > 0" class="text-green-400">
-        {{ selectedCount }} {{ $t('guaguas.linesSelected', 'line(s) selected') }}
+        {{ selectedCount }} {{ $t('guaguas.linesSelected') }}
       </span>
       <span v-else class="text-gray-500">
-        {{ $t('guaguas.noLinesSelected', 'No lines selected - showing main lines') }}
+        {{ $t('guaguas.noLinesSelected') }}
       </span>
     </div>
   </div>

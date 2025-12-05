@@ -19,7 +19,7 @@
       
       <!-- Direction -->
       <p>
-        <strong>{{ $t('guaguas.direction', 'Direction') }}:</strong> 
+        <strong>{{ $t('guaguas.direction') }}:</strong> 
         <span :class="directionClass">
           {{ directionLabel }}
         </span>
@@ -75,6 +75,9 @@
  * </l-popup>
  */
 import { computed } from 'vue';
+import { useI18n } from 'vue-i18n';
+
+const { t } = useI18n();
 
 const props = defineProps({
   /**
@@ -94,8 +97,8 @@ const props = defineProps({
  */
 const companyLabel = computed(() => {
   const labels = {
-    municipales: 'Guaguas Municipales',
-    global: 'Global'
+    municipales: t('guaguas.municipalesFull'),
+    global: t('guaguas.global')
   };
   return labels[props.bus.company] || props.bus.company;
 });
@@ -105,9 +108,9 @@ const companyLabel = computed(() => {
  */
 const typeLabel = computed(() => {
   const labels = {
-    urban: 'Urban',
-    interurban: 'Interurban',
-    night: 'Night'
+    urban: t('guaguas.urban'),
+    interurban: t('guaguas.interurban'),
+    night: t('guaguas.night')
   };
   return labels[props.bus.type] || props.bus.type;
 });
@@ -116,7 +119,9 @@ const typeLabel = computed(() => {
  * Direction label based on trip direction
  */
 const directionLabel = computed(() => {
-  return props.bus.tripDirection === 'outbound' ? '→ Outbound' : '← Inbound';
+  return props.bus.tripDirection === 'outbound' 
+    ? t('guaguas.outboundArrow') 
+    : t('guaguas.inboundArrow');
 });
 
 /**
