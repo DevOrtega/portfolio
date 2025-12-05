@@ -16,6 +16,9 @@ class DatabaseSeeder extends Seeder
         // Run Admin User Seeder
         $this->call(AdminUserSeeder::class);
 
+        // Run Bus Data Seeder
+        $this->call(BusDataSeeder::class);
+
         // Personal Info - Solo crear si no existe
         PersonalInfo::firstOrCreate(
             ['email' => 'carloso2103@gmail.com'],

@@ -11,10 +11,10 @@ export function useBusMap() {
    * Adjusted to keep buses within the island
    */
   const BOUNDS = {
-    north: 28.18,   // Norte de Las Palmas
-    south: 27.74,   // Sur de Maspalomas
-    east: -15.35,   // Este (Telde/Jinámar)
-    west: -15.60    // Oeste (hasta Maspalomas/Puerto Rico, evitando el océano)
+    north: 28.18,   // North of Las Palmas
+    south: 27.74,   // South of Maspalomas
+    east: -15.35,   // East (Telde/Jinámar)
+    west: -15.60    // West (up to Maspalomas/Puerto Rico, avoiding the ocean)
   };
 
   /**
@@ -65,30 +65,30 @@ export function useBusMap() {
       default: { fill: '#9933FF', stroke: '#7722CC', text: '#FFF' }
     };
 
-    // Usar color morado para nocturnas
+    // Use purple color for night buses
     const color = bus.type === 'night' ? colors.default : (colors[bus.company] ?? colors.default);
     
-    // Indicador de dirección (ida = →, vuelta = ←)
+    // Direction indicator (outbound = →, inbound = ←)
     const directionArrow = bus.tripDirection === 'outbound' ? '→' : '←';
-    const arrowColor = bus.tripDirection === 'outbound' ? '#22C55E' : '#F97316'; // Verde ida, naranja vuelta
+    const arrowColor = bus.tripDirection === 'outbound' ? '#22C55E' : '#F97316'; // Green outbound, orange inbound
 
     const svgIcon = `
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
         <g>
-          <!-- Cuerpo del bus -->
+          <!-- Bus body -->
           <rect x="4" y="10" width="28" height="18" rx="3" fill="${color.fill}" stroke="${color.stroke}" stroke-width="1.5"/>
-          <!-- Ventanas -->
+          <!-- Windows -->
           <rect x="7" y="13" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.8"/>
           <rect x="14" y="13" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.8"/>
           <rect x="21" y="13" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.8"/>
-          <!-- Ruedas -->
+          <!-- Wheels -->
           <circle cx="11" cy="28" r="3" fill="#2C2C2C"/>
           <circle cx="11" cy="28" r="1.5" fill="#666"/>
           <circle cx="25" cy="28" r="3" fill="#2C2C2C"/>
           <circle cx="25" cy="28" r="1.5" fill="#666"/>
-          <!-- Número de línea -->
+          <!-- Line number -->
           <text x="18" y="24" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="${color.text}" text-anchor="middle">${bus.line}</text>
-          <!-- Indicador de dirección -->
+          <!-- Direction indicator -->
           <circle cx="34" cy="8" r="5" fill="${arrowColor}" stroke="white" stroke-width="1"/>
           <text x="34" y="11" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="white" text-anchor="middle">${directionArrow}</text>
         </g>
@@ -104,7 +104,7 @@ export function useBusMap() {
   };
 
   /**
-   * Get company label in Spanish
+   * Get company label
    * @param {string} company - Company code
    * @returns {string} Company label
    */
@@ -112,21 +112,21 @@ export function useBusMap() {
     const labels = {
       municipales: 'Guaguas Municipales',
       global: 'Global',
-      night: 'Línea Nocturna'
+      night: 'Night Line'
     };
     return labels[company] || company;
   };
 
   /**
-   * Get bus type label in Spanish
+   * Get bus type label
    * @param {string} type - Bus type
    * @returns {string} Type label
    */
   const getBusTypeLabel = (type) => {
     const types = {
-      urban: 'Urbana',
-      interurban: 'Interurbana',
-      night: 'Nocturna'
+      urban: 'Urban',
+      interurban: 'Interurban',
+      night: 'Night'
     };
     return types[type] || type;
   };

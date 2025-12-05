@@ -19,7 +19,7 @@
       
       <!-- Direction -->
       <p>
-        <strong>{{ $t('guaguas.direction', 'Sentido') }}:</strong> 
+        <strong>{{ $t('guaguas.direction', 'Direction') }}:</strong> 
         <span :class="directionClass">
           {{ directionLabel }}
         </span>
@@ -105,9 +105,9 @@ const companyLabel = computed(() => {
  */
 const typeLabel = computed(() => {
   const labels = {
-    urban: 'Urbana',
-    interurban: 'Interurbana',
-    night: 'Nocturna'
+    urban: 'Urban',
+    interurban: 'Interurban',
+    night: 'Night'
   };
   return labels[props.bus.type] || props.bus.type;
 });
@@ -116,7 +116,7 @@ const typeLabel = computed(() => {
  * Direction label based on trip direction
  */
 const directionLabel = computed(() => {
-  return props.bus.tripDirection === 'outbound' ? '→ Ida' : '← Vuelta';
+  return props.bus.tripDirection === 'outbound' ? '→ Outbound' : '← Inbound';
 });
 
 /**
