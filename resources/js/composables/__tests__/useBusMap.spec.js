@@ -98,8 +98,8 @@ describe('useBusMap', () => {
       
       expect(icon).toBeInstanceOf(L.DivIcon)
       expect(icon.options.className).toBe('custom-bus-icon')
-      expect(icon.options.iconSize).toEqual([32, 32])
-      expect(icon.options.iconAnchor).toEqual([16, 16])
+      expect(icon.options.iconSize).toEqual([40, 40])
+      expect(icon.options.iconAnchor).toEqual([20, 20])
     })
 
     it('creates icon for global bus', () => {

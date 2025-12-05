@@ -1,8 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import HomeView from '../views/HomeView.vue';
-import ProjectsView from '../views/ProjectsView.vue';
-import ResumeView from '../views/ResumeView.vue';
-import ContactView from '../views/ContactView.vue';
+import HomeView from '@/views/HomeView.vue';
+import ProjectsView from '@/views/ProjectsView.vue';
+import ResumeView from '@/views/ResumeView.vue';
+import ContactView from '@/views/ContactView.vue';
 
 const routes = [
     {
@@ -18,12 +18,12 @@ const routes = [
     {
         path: '/projects/demo/atm-manager',
         name: 'atm-manager',
-        component: () => import('../views/MapDemoView.vue')
+        component: () => import('@/views/MapDemoView.vue')
     },
     {
         path: '/projects/demo/guaguas-tracker',
         name: 'guaguas-tracker',
-        component: () => import('../views/demos/GuaguasTracker.vue')
+        component: () => import('@/views/demos/GuaguasTracker.vue')
     },
     {
         path: '/resume',

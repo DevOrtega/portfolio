@@ -54,8 +54,8 @@ export function useBusMap() {
   };
 
   /**
-   * Create custom bus icon
-   * @param {Object} bus - Bus object with company and line properties
+   * Create custom bus icon with direction indicator
+   * @param {Object} bus - Bus object with company, line, angle and tripDirection properties
    * @returns {L.DivIcon} Leaflet div icon
    */
   const createBusIcon = (bus) => {
@@ -65,18 +65,32 @@ export function useBusMap() {
       default: { fill: '#9933FF', stroke: '#7722CC', text: '#FFF' }
     };
 
-    const color = colors[bus.company] ?? colors.default;
+    // Usar color morado para nocturnas
+    const color = bus.type === 'night' ? colors.default : (colors[bus.company] ?? colors.default);
+    
+    // Indicador de dirección (ida = →, vuelta = ←)
+    const directionArrow = bus.tripDirection === 'outbound' ? '→' : '←';
+    const arrowColor = bus.tripDirection === 'outbound' ? '#22C55E' : '#F97316'; // Verde ida, naranja vuelta
 
     const svgIcon = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" width="40" height="40">
         <g>
-          <rect x="4" y="8" width="24" height="16" rx="2" fill="${color.fill}" stroke="${color.stroke}" stroke-width="1.2"/>
-          <rect x="6" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
-          <rect x="13" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
-          <rect x="20" y="10" width="5" height="6" rx="0.8" fill="#87CEEB" opacity="0.7"/>
-          <circle cx="10" cy="24" r="2.5" fill="#2C2C2C"/>
-          <circle cx="22" cy="24" r="2.5" fill="#2C2C2C"/>
-          <text x="16" y="22" font-family="Arial, sans-serif" font-size="6" font-weight="bold" fill="${color.text}" text-anchor="middle">${bus.line}</text>
+          <!-- Cuerpo del bus -->
+          <rect x="4" y="10" width="28" height="18" rx="3" fill="${color.fill}" stroke="${color.stroke}" stroke-width="1.5"/>
+          <!-- Ventanas -->
+          <rect x="7" y="13" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.8"/>
+          <rect x="14" y="13" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.8"/>
+          <rect x="21" y="13" width="5" height="5" rx="1" fill="#87CEEB" opacity="0.8"/>
+          <!-- Ruedas -->
+          <circle cx="11" cy="28" r="3" fill="#2C2C2C"/>
+          <circle cx="11" cy="28" r="1.5" fill="#666"/>
+          <circle cx="25" cy="28" r="3" fill="#2C2C2C"/>
+          <circle cx="25" cy="28" r="1.5" fill="#666"/>
+          <!-- Número de línea -->
+          <text x="18" y="24" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="${color.text}" text-anchor="middle">${bus.line}</text>
+          <!-- Indicador de dirección -->
+          <circle cx="34" cy="8" r="5" fill="${arrowColor}" stroke="white" stroke-width="1"/>
+          <text x="34" y="11" font-family="Arial, sans-serif" font-size="7" font-weight="bold" fill="white" text-anchor="middle">${directionArrow}</text>
         </g>
       </svg>
     `;
@@ -84,8 +98,8 @@ export function useBusMap() {
     return L.divIcon({
       html: svgIcon,
       className: 'custom-bus-icon',
-      iconSize: [32, 32],
-      iconAnchor: [16, 16]
+      iconSize: [40, 40],
+      iconAnchor: [20, 20]
     });
   };
 

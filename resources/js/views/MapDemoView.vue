@@ -2,7 +2,7 @@
   <div class="max-w-4xl mx-auto px-4 py-8">
     <div class="mb-8">
       <router-link to="/projects" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2 mb-4 transition-colors">
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+        <svg class="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
         {{ $t('mapDemo.backToProjects') }}
       </router-link>
       <h1 class="text-3xl font-bold text-white mb-2">{{ $t('mapDemo.title') }}</h1>
@@ -36,5 +36,5 @@
 </template>
 
 <script setup>
-import MapDemo from '../components/MapDemo.vue';
+import MapDemo from '@/components/MapDemo.vue';
 </script>
