@@ -8,7 +8,7 @@ import { fetchBusData } from '@/api/busApi';
 
 // Shared state (singleton pattern for caching)
 const busData = ref(null);
-const isLoading = ref(false);
+const isLoading = ref(true); // Start as loading to prevent map init before data
 const error = ref(null);
 const isLoaded = ref(false);
 
