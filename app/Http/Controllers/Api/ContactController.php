@@ -2,16 +2,24 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Application\Portfolio\Services\ContactService;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\ContactRequest;
-use App\Mail\ContactFormMail;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\RateLimiter;
 
-class ContactController extends Controller
+/**
+ * Contact Controller
+ * 
+ * Handles HTTP requests for contact form submissions.
+ * Uses ContactService following Hexagonal Architecture.
+ */
+final class ContactController extends Controller
 {
+    public function __construct(
+        private readonly ContactService $contactService
+    ) {
+    }
+
     /**
      * Handle contact form submission.
      * 
@@ -49,63 +57,36 @@ class ContactController extends Controller
      */
     public function send(ContactRequest $request): JsonResponse
     {
-        // Additional rate limiting per IP (beyond route throttle)
-        $key = 'contact-form:' . $request->ip();
+        // Check rate limiting
+        $rateLimit = $this->contactService->checkRateLimit($request->ip());
         
-        if (RateLimiter::tooManyAttempts($key, 5)) {
-            $seconds = RateLimiter::availableIn($key);
-            $minutes = ceil($seconds / 60);
-            
+        if ($rateLimit['exceeded']) {
             return response()->json([
                 'success' => false,
-                'message' => "Demasiados intentos. Por favor, espera {$minutes} minutos.",
+                'message' => "Demasiados intentos. Por favor, espera {$rateLimit['minutes']} minutos.",
             ], 429);
         }
         
-        RateLimiter::hit($key, 600); // 10 minutes decay
+        // Record attempt
+        $this->contactService->recordAttempt($request->ip());
 
         try {
-            // Get validated and sanitized data
-            $data = $request->validated();
+            // Prepare contact data with metadata
+            $data = $this->contactService->prepareContactData(
+                $request->validated(),
+                $request->ip(),
+                $request->userAgent()
+            );
             
-            // Remove honeypot field and extract locale
-            unset($data['website']);
-            $locale = $data['locale'] ?? 'es';
-            unset($data['locale']);
-            
-            // Add metadata for security logging
-            $data['ip_address'] = $request->ip();
-            $data['user_agent'] = substr($request->userAgent() ?? '', 0, 500);
-            $data['submitted_at'] = now()->toDateTimeString();
-            $data['locale'] = $locale;
-            
-            // Send email
-            Mail::to(config('mail.contact_email', 'carloso2103@gmail.com'))
-                ->send(new ContactFormMail($data));
-            
-            // Log successful submission
-            Log::info('Contact form submitted', [
-                'from' => $data['email'],
-                'subject' => $data['subject'],
-                'ip' => $data['ip_address'],
-            ]);
-            
-            // Return message in user's locale
-            $successMessage = $locale === 'en' 
-                ? 'Message sent successfully. Thank you for contacting!'
-                : 'Mensaje enviado correctamente. ¡Gracias por contactar!';
+            // Send email via service
+            $this->contactService->sendContactEmail($data);
             
             return response()->json([
                 'success' => true,
-                'message' => $successMessage,
+                'message' => $this->contactService->getSuccessMessage($data['locale']),
             ]);
             
         } catch (\Exception $e) {
-            Log::error('Contact form error', [
-                'error' => $e->getMessage(),
-                'ip' => $request->ip(),
-            ]);
-            
             return response()->json([
                 'success' => false,
                 'message' => 'Error al enviar el mensaje. Por favor, inténtalo más tarde.',
