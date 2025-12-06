@@ -4,14 +4,19 @@ namespace App\Infrastructure\Persistence\Eloquent;
 
 use App\Domain\Portfolio\Entities\Experience;
 use App\Domain\Portfolio\Repositories\ExperienceRepositoryInterface;
+use App\Infrastructure\Persistence\Eloquent\Traits\SpanishDateOrdering;
 use App\Models\Experience as ExperienceModel;
 use Illuminate\Support\Collection;
 
 /**
  * Eloquent implementation of ExperienceRepositoryInterface
+ * 
+ * Uses SpanishDateOrdering trait for consistent date ordering.
  */
 final class EloquentExperienceRepository implements ExperienceRepositoryInterface
 {
+    use SpanishDateOrdering;
+
     public function __construct(
         private readonly ExperienceModel $model
     ) {
@@ -19,52 +24,20 @@ final class EloquentExperienceRepository implements ExperienceRepositoryInterfac
 
     public function findAll(): Collection
     {
-        return $this->model
-            ->orderByRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) DESC")
-            ->orderByRaw("CASE 
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Ene' THEN 1
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Feb' THEN 2
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Mar' THEN 3
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Abr' THEN 4
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'May' THEN 5
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Jun' THEN 6
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Jul' THEN 7
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Ago' THEN 8
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Sept' THEN 9
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Oct' THEN 10
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Nov' THEN 11
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Dic' THEN 12
-                ELSE 0 END DESC")
-            ->get()
+        $query = $this->model->newQuery();
+        $this->applyDateOrdering($query);
+        
+        return $query->get()
             ->map(fn (ExperienceModel $model) => $this->toDomainEntity($model));
     }
 
     public function findByYear(int $year): Collection
     {
-        return $this->model
-            ->where(function ($q) use ($year) {
-                $q->whereRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) <= ?", [$year])
-                    ->where(function ($subQ) use ($year) {
-                        $subQ->whereNull('end_date')
-                            ->orWhereRaw("CAST(SUBSTR(end_date, -4) AS INTEGER) >= ?", [$year]);
-                    });
-            })
-            ->orderByRaw("CAST(SUBSTR(start_date, -4) AS INTEGER) DESC")
-            ->orderByRaw("CASE 
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Ene' THEN 1
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Feb' THEN 2
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Mar' THEN 3
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Abr' THEN 4
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'May' THEN 5
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Jun' THEN 6
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Jul' THEN 7
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Ago' THEN 8
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Sept' THEN 9
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Oct' THEN 10
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Nov' THEN 11
-                WHEN SUBSTR(start_date, 1, INSTR(start_date, '.') - 1) = 'Dic' THEN 12
-                ELSE 0 END DESC")
-            ->get()
+        $query = $this->model->newQuery();
+        $this->applyYearFilter($query, $year);
+        $this->applyDateOrdering($query);
+        
+        return $query->get()
             ->map(fn (ExperienceModel $model) => $this->toDomainEntity($model));
     }
 
