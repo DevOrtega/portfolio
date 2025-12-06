@@ -21,10 +21,16 @@
 </template>
 
 <script setup>
+/**
+ * @component LanguageSwitcher
+ * @description Language toggle buttons for switching between ES and EN
+ * 
+ * Uses useLocale composable for reactive locale changes without page reload.
+ */
 import { computed } from 'vue';
-import { useI18n } from 'vue-i18n';
+import { useLocale } from '@/composables/useLocale';
 
-const { locale } = useI18n();
+const { locale, changeLocale } = useLocale();
 
 const availableLanguages = [
   { code: 'es', label: 'ES', name: 'Español', flagCode: 'es' },
@@ -33,13 +39,12 @@ const availableLanguages = [
 
 const currentLocale = computed(() => locale.value);
 
+/**
+ * Change application language
+ * Uses reactive locale management - no page reload needed
+ */
 const changeLanguage = (lang) => {
-  locale.value = lang;
-  localStorage.setItem('locale', lang);
-  document.documentElement.lang = lang;
-  
-  // Force full page reload to fetch data with new locale
-  window.location.reload();
+  changeLocale(lang);
 };
 </script>
 

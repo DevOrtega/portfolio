@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue';
 import axios from 'axios';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import SectionHeader from '@/components/SectionHeader.vue';
 import TimelineItem from '@/components/TimelineItem.vue';
+import { useLocale } from '@/composables/useLocale';
 
 const skills = ref([]);
 const experiences = ref([]);
@@ -16,6 +17,8 @@ const allEducation = ref([]);
 
 // Year filter for skills and experiences
 const selectedYear = ref('all');
+
+const { onLocaleChange } = useLocale();
 
 // Fetch data function
 const fetchData = async () => {
@@ -44,8 +47,15 @@ const fetchData = async () => {
   }
 };
 
+// Subscribe to locale changes
+let unsubscribe;
 onMounted(async () => {
   await fetchData();
+  unsubscribe = onLocaleChange(() => fetchData());
+});
+
+onUnmounted(() => {
+  if (unsubscribe) unsubscribe();
 });
 
 // Watch for year changes and refetch data
