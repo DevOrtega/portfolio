@@ -9,12 +9,14 @@ use App\Domain\Bus\Repositories\BusLineRepositoryInterface;
 use App\Infrastructure\Persistence\Eloquent\Models\BusLineModel;
 use App\Infrastructure\Persistence\Eloquent\Models\BusStopModel;
 use App\Infrastructure\Persistence\Eloquent\Models\BusCompanyModel;
+use App\Infrastructure\Services\OsrmService;
 use Illuminate\Support\Collection;
 
 final class EloquentBusLineRepository implements BusLineRepositoryInterface
 {
     public function __construct(
-        private readonly EloquentBusStopRepository $stopRepository
+        private readonly EloquentBusStopRepository $stopRepository,
+        private readonly OsrmService $osrmService
     ) {
     }
 
@@ -70,6 +72,26 @@ final class EloquentBusLineRepository implements BusLineRepositoryInterface
             ->map(fn(BusStopModel $stop) => $this->stopRepository->toEntity($stop))
             ->all();
 
+        // Get stop coordinates for OSRM routing
+        $outboundCoords = array_map(
+            fn(BusStop $stop) => [$stop->latOutbound, $stop->lngOutbound],
+            $stopsOutbound
+        );
+        
+        $inboundCoords = array_map(
+            fn(BusStop $stop) => [$stop->latInbound, $stop->lngInbound],
+            $stopsInbound
+        );
+        
+        // Get OSRM routes (cached)
+        $osrmRouteOutbound = count($outboundCoords) >= 2 
+            ? $this->osrmService->getRoute($outboundCoords) 
+            : $outboundCoords;
+        
+        $osrmRouteInbound = count($inboundCoords) >= 2 
+            ? $this->osrmService->getRoute($inboundCoords) 
+            : $inboundCoords;
+
         return new BusLine(
             id: $model->id,
             lineNumber: $model->line_number,
@@ -80,7 +102,9 @@ final class EloquentBusLineRepository implements BusLineRepositoryInterface
             isMainLine: $model->is_main_line,
             company: $company,
             stopsOutbound: $stopsOutbound,
-            stopsInbound: $stopsInbound
+            stopsInbound: $stopsInbound,
+            osrmRouteOutbound: $osrmRouteOutbound,
+            osrmRouteInbound: $osrmRouteInbound
         );
     }
 
