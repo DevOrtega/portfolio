@@ -4,7 +4,7 @@
         "title": "Portfolio API",
         "description": "API documentation for the Portfolio project",
         "contact": {
-            "email": "carlos@example.com"
+            "email": "carloso2103@gmail.com"
         },
         "version": "1.0.0"
     },
@@ -204,6 +204,169 @@
                 ]
             }
         },
+        "/api/bus/data": {
+            "get": {
+                "tags": [
+                    "Bus"
+                ],
+                "summary": "Get all bus data for the tracker demo",
+                "description": "Returns companies, lines, routes, stops and configuration",
+                "operationId": "getBusData",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "companies": {
+                                            "type": "object"
+                                        },
+                                        "bus_lines": {
+                                            "type": "object"
+                                        },
+                                        "main_lines": {
+                                            "type": "object"
+                                        },
+                                        "routes": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object"
+                                            }
+                                        },
+                                        "stops": {
+                                            "type": "object"
+                                        },
+                                        "map_config": {
+                                            "type": "object"
+                                        },
+                                        "simulation_config": {
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/api/bus/routes": {
+            "get": {
+                "tags": [
+                    "Bus"
+                ],
+                "summary": "Get all bus routes with coordinates",
+                "operationId": "getBusRoutes",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/bus/stops": {
+            "get": {
+                "tags": [
+                    "Bus"
+                ],
+                "summary": "Get all bus stops",
+                "operationId": "getBusStops",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/bus/companies": {
+            "get": {
+                "tags": [
+                    "Bus"
+                ],
+                "summary": "Get all bus companies",
+                "operationId": "getBusCompanies",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation"
+                    }
+                }
+            }
+        },
+        "/api/contact": {
+            "post": {
+                "tags": [
+                    "Contact"
+                ],
+                "summary": "Send contact form message",
+                "description": "Handle contact form submission.",
+                "operationId": "9ae6c90eb61192febf25c5af341ce70d",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "name",
+                                    "email",
+                                    "subject",
+                                    "message"
+                                ],
+                                "properties": {
+                                    "name": {
+                                        "type": "string",
+                                        "example": "John Doe"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "format": "email",
+                                        "example": "john@example.com"
+                                    },
+                                    "subject": {
+                                        "type": "string",
+                                        "example": "Project Inquiry"
+                                    },
+                                    "message": {
+                                        "type": "string",
+                                        "example": "Hello, I would like to discuss a project..."
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Message sent successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "success": {
+                                            "type": "boolean",
+                                            "example": true
+                                        },
+                                        "message": {
+                                            "type": "string",
+                                            "example": "Mensaje enviado correctamente"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "422": {
+                        "description": "Validation error"
+                    },
+                    "429": {
+                        "description": "Too many requests"
+                    }
+                }
+            }
+        },
         "/api/education": {
             "get": {
                 "tags": [
@@ -358,6 +521,14 @@
         {
             "name": "Admin Auth",
             "description": "Endpoints de autenticación para el panel de administración"
+        },
+        {
+            "name": "Bus",
+            "description": "Bus routes and stops data"
+        },
+        {
+            "name": "Contact",
+            "description": "Contact"
         },
         {
             "name": "Education",
