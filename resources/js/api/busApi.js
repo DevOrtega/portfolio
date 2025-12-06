@@ -1,6 +1,9 @@
 /**
  * @file busApi.js
  * @description API client for bus data
+ * 
+ * Provides methods to fetch bus-related data from the backend API.
+ * All methods return Promises and handle errors appropriately.
  */
 
 import axios from 'axios';
@@ -8,12 +11,45 @@ import axios from 'axios';
 const API_BASE = '/api/bus';
 
 /**
+ * Create an axios instance with default configuration
+ */
+const apiClient = axios.create({
+  baseURL: API_BASE,
+  timeout: 10000,
+  headers: {
+    'Accept': 'application/json',
+  }
+});
+
+/**
+ * Handle API errors consistently
+ * @param {Error} error - The error object
+ * @throws {Error} Re-throws with a user-friendly message
+ */
+const handleError = (error) => {
+  if (error.response) {
+    // Server responded with error status
+    throw new Error(error.response.data?.message || `Error ${error.response.status}`);
+  } else if (error.request) {
+    // Request made but no response received
+    throw new Error('Network error: Unable to reach the server');
+  } else {
+    // Error setting up the request
+    throw new Error(error.message || 'An unexpected error occurred');
+  }
+};
+
+/**
  * Fetch all bus data from the API
  * @returns {Promise<Object>} Complete bus data
  */
 export const fetchBusData = async () => {
-  const response = await axios.get(`${API_BASE}/data`);
-  return response.data;
+  try {
+    const response = await apiClient.get('/data');
+    return response.data;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 /**
@@ -21,8 +57,12 @@ export const fetchBusData = async () => {
  * @returns {Promise<Array>} Array of routes
  */
 export const fetchBusRoutes = async () => {
-  const response = await axios.get(`${API_BASE}/routes`);
-  return response.data.routes;
+  try {
+    const response = await apiClient.get('/routes');
+    return response.data.routes;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 /**
@@ -30,8 +70,12 @@ export const fetchBusRoutes = async () => {
  * @returns {Promise<Object>} Map of stops
  */
 export const fetchBusStops = async () => {
-  const response = await axios.get(`${API_BASE}/stops`);
-  return response.data.stops;
+  try {
+    const response = await apiClient.get('/stops');
+    return response.data.stops;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 /**
@@ -39,8 +83,12 @@ export const fetchBusStops = async () => {
  * @returns {Promise<Object>} Company colors
  */
 export const fetchBusCompanies = async () => {
-  const response = await axios.get(`${API_BASE}/companies`);
-  return response.data.companies;
+  try {
+    const response = await apiClient.get('/companies');
+    return response.data.companies;
+  } catch (error) {
+    handleError(error);
+  }
 };
 
 export default {
