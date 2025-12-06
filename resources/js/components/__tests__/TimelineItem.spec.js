@@ -118,7 +118,7 @@ describe('TimelineItem', () => {
         title: 'Test Title',
         subtitle: 'Test Subtitle',
         dateRange: '2020 - 2021',
-        content: 'Test content',
+        description: 'Test description',
         color: 'indigo',
       },
     })
