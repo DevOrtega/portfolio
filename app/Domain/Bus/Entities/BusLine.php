@@ -12,6 +12,8 @@ final readonly class BusLine
     /**
      * @param array<BusStop> $stopsOutbound
      * @param array<BusStop> $stopsInbound
+     * @param array $osrmRouteOutbound Pre-computed OSRM route for outbound direction
+     * @param array $osrmRouteInbound Pre-computed OSRM route for inbound direction
      */
     public function __construct(
         public int $id,
@@ -23,14 +25,16 @@ final readonly class BusLine
         public bool $isMainLine,
         public BusCompany $company,
         public array $stopsOutbound = [],
-        public array $stopsInbound = []
+        public array $stopsInbound = [],
+        public array $osrmRouteOutbound = [],
+        public array $osrmRouteInbound = []
     ) {
     }
 
     /**
-     * Get route coordinates for the specified direction
+     * Get stop coordinates for the specified direction (simple waypoints)
      */
-    public function getRouteCoordinates(string $direction = 'outbound'): array
+    public function getStopCoordinates(string $direction = 'outbound'): array
     {
         $stops = $direction === 'outbound' ? $this->stopsOutbound : $this->stopsInbound;
         
@@ -38,6 +42,22 @@ final readonly class BusLine
             fn(BusStop $stop) => $stop->getCoordinates($direction),
             $stops
         );
+    }
+
+    /**
+     * Get OSRM route coordinates for the specified direction (real road route)
+     * Falls back to stop coordinates if OSRM route is not available
+     */
+    public function getRouteCoordinates(string $direction = 'outbound'): array
+    {
+        $osrmRoute = $direction === 'outbound' ? $this->osrmRouteOutbound : $this->osrmRouteInbound;
+        
+        // Use OSRM route if available, otherwise fall back to stop coordinates
+        if (!empty($osrmRoute)) {
+            return $osrmRoute;
+        }
+        
+        return $this->getStopCoordinates($direction);
     }
 
     public function toArray(): array

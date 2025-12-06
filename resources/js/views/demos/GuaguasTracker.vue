@@ -412,55 +412,8 @@ const treeData = computed(() => {
   ];
 });
 
-/**
- * Get real route using OSRM (Open Source Routing Machine)
- * Converts simple points to a route that follows real roads
- */
-const getRouteFromOSRM = async (coordinates) => {
-  try {
-    // Input coordinates (STOPS) are already verified
-    if (coordinates.length < 2) {
-      console.warn('Not enough coordinates to calculate route');
-      return coordinates;
-    }
-    
-    // OSRM expects format: lon,lat;lon,lat;...
-    const coordString = coordinates
-      .map(([lat, lng]) => `${lng},${lat}`)
-      .join(';');
-    
-    // OSRM public API - routing profile "driving"
-    const url = `https://router.project-osrm.org/route/v1/driving/${coordString}?overview=full&geometries=geojson`;
-    
-    const response = await fetch(url);
-    const data = await response.json();
-    
-    if (data.code === 'Ok' && data.routes && data.routes[0]) {
-      // Convert GeoJSON coordinates [lng, lat] to Leaflet [lat, lng]
-      const routeCoordinates = data.routes[0].geometry.coordinates.map(
-        ([lng, lat]) => [lat, lng]
-      );
-      
-      // Only filter if there are points clearly in the Atlantic Ocean (too far east)
-      const filteredRoute = routeCoordinates.filter(([lat, lng]) => {
-        // Only exclude points very clearly in the sea (lng > -15.35)
-        return lng <= -15.35;
-      });
-      
-      return filteredRoute.length > 1 ? filteredRoute : coordinates;
-    }
-    
-    // If OSRM fails, return original coordinates
-    return coordinates;
-  } catch (error) {
-    console.warn('Error getting route from OSRM:', error);
-    // If there's an error, return original coordinates
-    return coordinates;
-  }
-};
-
-// Route cache to avoid repeated OSRM calls
-const routeCache = new Map();
+// Note: Routes now come pre-computed from backend (OSRM cached on server)
+// No need for frontend OSRM calls anymore - buses follow real roads
 
 // Handle tree clicks
 const handleNodeClick = async (data, node) => {
@@ -480,29 +433,8 @@ const handleNodeClick = async (data, node) => {
         }
       });
       
-      // Get real route from OSRM
-      const cacheKey = `${bus.company}-${bus.line}-${bus.tripDirection}`;
-      let realRoute;
-      
-      if (routeCache.has(cacheKey)) {
-        realRoute = routeCache.get(cacheKey);
-      } else {
-        const numPoints = Math.min(10, bus.routeCoords.length);
-        const step = Math.floor(bus.routeCoords.length / numPoints);
-        const keyPoints = [];
-        
-        for (let i = 0; i < bus.routeCoords.length; i += step) {
-          keyPoints.push(bus.routeCoords[i]);
-        }
-        if (keyPoints[keyPoints.length - 1] !== bus.routeCoords[bus.routeCoords.length - 1]) {
-          keyPoints.push(bus.routeCoords[bus.routeCoords.length - 1]);
-        }
-        
-        realRoute = await getRouteFromOSRM(keyPoints);
-        routeCache.set(cacheKey, realRoute);
-      }
-      
-      selectedRoute.value = realRoute;
+      // Route now comes pre-computed from backend (OSRM cached on server)
+      selectedRoute.value = bus.routeCoords || [];
       selectedRouteColor.value = bus.type === 'night' ? '#9933FF' : (bus.company === 'municipales' ? '#FDB913' : '#0066CC');
       selectedBusId.value = bus.id;
     }
