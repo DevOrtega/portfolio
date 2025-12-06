@@ -5,7 +5,20 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Project extends Model
+/**
+ * Project Model
+ * 
+ * @property int $id
+ * @property string $title
+ * @property string|null $title_en
+ * @property string $description
+ * @property string|null $description_en
+ * @property string|null $url
+ * @property string|null $github_url
+ * @property string|null $image_path
+ * @property array $tags
+ */
+final class Project extends Model
 {
     use HasFactory;
 
