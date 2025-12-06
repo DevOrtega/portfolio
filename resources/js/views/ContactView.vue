@@ -1,10 +1,12 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import axios from 'axios';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { useLocale } from '@/composables/useLocale';
 
 const { t, locale } = useI18n();
+const { onLocaleChange } = useLocale();
 
 const personalInfo = ref(null);
 const loading = ref(true);
@@ -30,7 +32,11 @@ const subjectMaxLength = 200;
 const messageLength = computed(() => form.value.message.length);
 const subjectLength = computed(() => form.value.subject.length);
 
-onMounted(async () => {
+/**
+ * Fetch personal info from API
+ */
+const fetchData = async () => {
+  loading.value = true;
   try {
     const response = await axios.get('/api/personal-info');
     personalInfo.value = response.data;
@@ -39,6 +45,17 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+};
+
+// Subscribe to locale changes
+let unsubscribe;
+onMounted(async () => {
+  await fetchData();
+  unsubscribe = onLocaleChange(() => fetchData());
+});
+
+onUnmounted(() => {
+  if (unsubscribe) unsubscribe();
 });
 
 const validateForm = () => {

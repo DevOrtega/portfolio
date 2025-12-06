@@ -1,12 +1,19 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import { useLocale } from '@/composables/useLocale';
 
 const personalInfo = ref(null);
 const loading = ref(true);
 
-onMounted(async () => {
+const { onLocaleChange } = useLocale();
+
+/**
+ * Fetch personal info from API
+ */
+const fetchData = async () => {
+  loading.value = true;
   try {
     const response = await axios.get('/api/personal-info');
     personalInfo.value = response.data;
@@ -15,6 +22,17 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+};
+
+// Subscribe to locale changes
+let unsubscribe;
+onMounted(async () => {
+  await fetchData();
+  unsubscribe = onLocaleChange(() => fetchData());
+});
+
+onUnmounted(() => {
+  if (unsubscribe) unsubscribe();
 });
 </script>
 

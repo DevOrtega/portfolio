@@ -1,11 +1,14 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import axios from 'axios';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import ProjectCard from '@/components/ProjectCard.vue';
+import { useLocale } from '@/composables/useLocale';
 
 const projects = ref([]);
 const loading = ref(true);
+
+const { onLocaleChange } = useLocale();
 
 const upcomingDemos = [
   {
@@ -22,7 +25,11 @@ const upcomingDemos = [
   }
 ];
 
-onMounted(async () => {
+/**
+ * Fetch projects from API
+ */
+const fetchData = async () => {
+  loading.value = true;
   try {
     const response = await axios.get('/api/projects');
     projects.value = response.data;
@@ -31,6 +38,17 @@ onMounted(async () => {
   } finally {
     loading.value = false;
   }
+};
+
+// Subscribe to locale changes
+let unsubscribe;
+onMounted(async () => {
+  await fetchData();
+  unsubscribe = onLocaleChange(() => fetchData());
+});
+
+onUnmounted(() => {
+  if (unsubscribe) unsubscribe();
 });
 </script>
 
