@@ -9,7 +9,7 @@
         <h1 class="text-3xl font-bold mb-2">{{ $t('guaguas.title') }}</h1>
         <p class="text-gray-400">{{ $t('guaguas.subtitle') }}</p>
         <InfoBanner type="info" class="mt-2">
-          {{ $t('guaguas.infoBanner') }} <strong>Guaguas Municipales</strong> {{ $t('guaguas.infoBannerColors') }}, <strong>Global</strong> {{ $t('guaguas.infoBannerGlobal') }} {{ $t('guaguas.infoBannerNight') }}. 
+          {{ $t('guaguas.infoBanner') }} <strong>Guaguas Municipales</strong> {{ $t('guaguas.infoBannerColors') }}, <strong>Guaguas Global</strong> {{ $t('guaguas.infoBannerGlobal') }} {{ $t('guaguas.infoBannerNight') }}. 
           {{ $t('guaguas.infoBannerHours') }}
           <br><small class="opacity-80">{{ $t('guaguas.infoBannerNote') }}</small>
         </InfoBanner>
@@ -187,7 +187,7 @@ const updateInterval = ref(null);
 const isMobile = () => window.innerWidth < 640;
 const treeVisible = ref(!isMobile());
 const hiddenBusIds = ref(new Set());
-const expandedKeys = ref(['municipales', 'global']);
+const expandedKeys = ref(['municipales', 'guaguas_global']);
 
 // Initialize bus selection composable (pass mainLines from API)
 const {
@@ -326,7 +326,7 @@ const generateBuses = () => {
 // Generate tree structure for Element Plus
 const treeData = computed(() => {
   const municipalesBuses = buses.value.filter(b => b.company === 'municipales' && b.type !== 'night');
-  const globalBuses = buses.value.filter(b => b.company === 'global');
+  const globalBuses = buses.value.filter(b => b.company === 'guaguas_global');
   const nightBusesList = buses.value.filter(b => b.type === 'night');
   
   // Group by line
@@ -352,7 +352,7 @@ const treeData = computed(() => {
       type: 'company',
       children: Object.entries(municipalesGrouped).map(([line, busList]) => ({
         id: `municipales-line-${line}`,
-        label: `Line ${line} (${busList.length})`,
+        label: `Línea ${line} (${busList.length})`,
         type: 'line',
         line: line,
         company: 'municipales',
@@ -368,15 +368,15 @@ const treeData = computed(() => {
       }))
     },
     {
-      id: 'global',
-      label: `Global (${globalBuses.length})`,
+      id: 'guaguas_global',
+      label: `Guaguas Global (${globalBuses.length})`,
       type: 'company',
       children: Object.entries(globalGrouped).map(([line, busList]) => ({
-        id: `global-line-${line}`,
-        label: `Line ${line} (${busList.length})`,
+        id: `guaguas_global-line-${line}`,
+        label: `Línea ${line} (${busList.length})`,
         type: 'line',
         line: line,
-        company: 'global',
+        company: 'guaguas_global',
         children: busList.map((bus, idx) => {
           const dirIcon = bus.tripDirection === 'outbound' ? '🟢→' : '🟠←';
           return {
@@ -390,7 +390,7 @@ const treeData = computed(() => {
     },
     {
       id: 'night',
-      label: `Night Lines (${nightBusesList.length})`,
+      label: `Líneas nocturnas (${nightBusesList.length})`,
       type: 'company',
       children: Object.entries(nightGrouped).map(([line, busList]) => ({
         id: `night-line-${line}`,
@@ -677,7 +677,7 @@ const delayedBuses = computed(() => buses.value.filter(bus => bus.delayed));
 
 const municipalesBuses = computed(() => buses.value.filter(bus => bus.company === 'municipales' && bus.type !== 'night'));
 
-const globalBuses = computed(() => buses.value.filter(bus => bus.company === 'global'));
+const globalBuses = computed(() => buses.value.filter(bus => bus.company === 'guaguas_global'));
 
 const nightBuses = computed(() => buses.value.filter(bus => bus.type === 'night'));
 
@@ -685,7 +685,7 @@ const nightBuses = computed(() => buses.value.filter(bus => bus.type === 'night'
 const busStats = computed(() => ({
   active: activeBuses.value.length,
   municipales: municipalesBuses.value.length,
-  global: globalBuses.value.length,
+  guaguas_global: globalBuses.value.length,
   night: nightBuses.value.length,
   delayed: delayedBuses.value.length
 }));

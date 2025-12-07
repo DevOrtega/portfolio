@@ -54,6 +54,8 @@ final readonly class OsrmService
             
             $url = self::OSRM_URL . '/' . $coordString . '?overview=full&geometries=geojson';
             
+            Log::debug('OSRM request', ['url' => $url, 'waypoints_count' => count($waypoints)]);
+            
             $response = Http::timeout(10)->get($url);
             
             if (!$response->successful()) {
@@ -67,7 +69,7 @@ final readonly class OsrmService
             $data = $response->json();
             
             if (($data['code'] ?? '') !== 'Ok' || empty($data['routes'][0]['geometry']['coordinates'])) {
-                Log::warning('OSRM returned no route', ['response' => $data]);
+                Log::warning('OSRM returned no route', ['code' => $data['code'] ?? 'none', 'message' => $data['message'] ?? 'none']);
                 return $coordinates;
             }
             
@@ -77,12 +79,14 @@ final readonly class OsrmService
                 $data['routes'][0]['geometry']['coordinates']
             );
             
-            // Filter out coordinates that are clearly in the ocean (east of -15.35)
-            $filteredCoords = array_filter($routeCoords, function ($coord) {
-                return $coord[1] <= -15.35;
-            });
+            Log::debug('OSRM route success', [
+                'input_count' => count($coordinates),
+                'output_count' => count($routeCoords),
+                'first' => $routeCoords[0] ?? null,
+                'last' => $routeCoords[count($routeCoords) - 1] ?? null,
+            ]);
             
-            return count($filteredCoords) > 1 ? array_values($filteredCoords) : $coordinates;
+            return count($routeCoords) > 1 ? $routeCoords : $coordinates;
             
         } catch (\Exception $e) {
             Log::error('OSRM error', [
