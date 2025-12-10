@@ -22,6 +22,11 @@
         "vite-plugin-vue-mcp": "^0.3.2",
         "vitest": "^4.0.13"
     },
+    "overrides": {
+        "vite-plugin-vue-mcp": {
+            "vite": "$vite"
+        }
+    },
     "dependencies": {
         "@element-plus/icons-vue": "^2.3.2",
         "@vitejs/plugin-vue": "^6.0.2",
