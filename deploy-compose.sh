@@ -3,8 +3,9 @@
 # Portfolio deployment script for Docker Compose
 # Usage: ./deploy-compose.sh [option]
 # Options:
-#   build   - Rebuild and restart
-#   restart - Just restart
+#   build   - Rebuild, start, seed DB (GTFS) and warmup cache
+#   restart - Just restart services
+#   seed    - Run database seeders and cache warmup only
 #   logs    - Show logs
 #   stop    - Stop services
 #   clean   - Remove everything (containers, volumes, images)
@@ -16,8 +17,17 @@ case "$1" in
     echo "🔨 Building and starting services..."
     docker compose build --no-cache
     docker compose up -d
-    echo "✅ Services started. Checking health..."
-    sleep 5
+    
+    echo "⏳ Waiting for services to initialize (Migrations running via AUTORUN)..."
+    sleep 10
+    
+    echo "🌱 Seeding database (includes GTFS import)..."
+    docker compose exec -T portfolio php artisan db:seed --force
+    
+    echo "🔥 Warming up Bus Cache..."
+    docker compose exec -T portfolio php artisan bus:cache-warmup
+    
+    echo "✅ Deployment complete. Checking status..."
     docker compose ps
     ;;
     
@@ -26,6 +36,15 @@ case "$1" in
     docker compose restart
     echo "✅ Services restarted"
     docker compose ps
+    ;;
+
+  seed)
+    echo "🌱 Seeding database (includes GTFS import)..."
+    docker compose exec -T portfolio php artisan db:seed --force
+    
+    echo "🔥 Warming up Bus Cache..."
+    docker compose exec -T portfolio php artisan bus:cache-warmup
+    echo "✅ Data refreshed"
     ;;
     
   logs)
@@ -57,15 +76,16 @@ case "$1" in
     echo "Usage: ./deploy-compose.sh [option]"
     echo ""
     echo "Options:"
-    echo "  build   - Rebuild and restart containers"
+    echo "  build   - Rebuild, start, seed DB (GTFS) and warmup cache"
     echo "  restart - Restart containers without rebuilding"
+    echo "  seed    - Run database seeders and cache warmup only"
     echo "  logs    - Show container logs (real-time)"
     echo "  stop    - Stop all services"
     echo "  clean   - Remove everything (containers, volumes, images)"
     echo ""
     echo "Examples:"
-    echo "  ./deploy-compose.sh build    # First deployment or after code changes"
-    echo "  ./deploy-compose.sh restart  # Quick restart"
+    echo "  ./deploy-compose.sh build    # Full deployment (recommended)"
+    echo "  ./deploy-compose.sh seed     # Refresh data only"
     echo "  ./deploy-compose.sh logs     # Monitor logs"
     ;;
 esac
