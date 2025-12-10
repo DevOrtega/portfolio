@@ -18,8 +18,11 @@ case "$1" in
     docker compose build --no-cache
     docker compose up -d
     
-    echo "⏳ Waiting for services to initialize (Migrations running via AUTORUN)..."
-    sleep 10
+    echo "⏳ Waiting for services to initialize..."
+    sleep 5
+    
+    echo "📦 Running migrations..."
+    docker compose exec -T portfolio php artisan migrate --force
     
     echo "🌱 Seeding database (includes GTFS import)..."
     docker compose exec -T portfolio php artisan db:seed --force
