@@ -39,8 +39,8 @@ RUN if [ ! -f .env ]; then \
         cp .env.example .env; \
     fi && \
     php artisan key:generate --force && \
-    touch database/database.sqlite && \
-    chown www-data:www-data database/database.sqlite
+    touch storage/database.sqlite && \
+    chown www-data:www-data storage/database.sqlite
 
 # Generate API documentation
 RUN php artisan l5-swagger:generate
