@@ -61,7 +61,7 @@ export function useBusMap() {
   const createBusIcon = (bus) => {
     const colors = {
       municipales: { fill: '#FDB913', stroke: '#D49400', text: '#333' },
-      guaguas_global: { fill: '#0066CC', stroke: '#004C99', text: '#FFF' },
+      global: { fill: '#0066CC', stroke: '#004C99', text: '#FFF' },
       default: { fill: '#9933FF', stroke: '#7722CC', text: '#FFF' }
     };
 
