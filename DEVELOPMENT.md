@@ -689,15 +689,44 @@ docker compose up -d --build
 docker compose logs -f
 ```
 
-### Rollback de Emergencia
-
-```bash
-# Rollback última migración
-php artisan migrate:rollback
-
-# Rollback de Docker
+### Rollback de Docker
 docker compose down
 docker compose up -d  # Levanta versión anterior si la imagen no cambió
+```
+
+---
+
+## Entorno Docker
+
+El proyecto utiliza Docker para un entorno de desarrollo y producción consistente.
+
+### Configuración
+
+- **Base Image**: `serversideup/php:8.3-fpm-nginx` (Optimizada para Laravel)
+- **Servidor Web**: Nginx integrado
+- **Base de Datos**: SQLite (en archivo montado)
+- **Node.js**: Integrado para build de assets
+
+### Variables de Entorno Docker
+
+El archivo `docker-compose.yml` gestiona las variables críticas. Puedes sobreescribir `OSRM_SERVER` si tienes una instancia propia.
+
+```yaml
+environment:
+  - OSRM_SERVER=${OSRM_SERVER:-https://router.project-osrm.org/route/v1/driving}
+```
+
+### Comandos Docker Útiles
+
+```bash
+# Reconstruir sin caché (útil tras cambios en Dockerfile)
+docker compose build --no-cache
+
+# Entrar al contenedor
+docker compose exec portfolio bash
+
+# Ver logs de Nginx/PHP
+docker compose logs -f
 ```
 
 ---
