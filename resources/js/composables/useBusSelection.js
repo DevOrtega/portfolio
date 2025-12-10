@@ -18,7 +18,7 @@ import { ref, computed, unref } from 'vue';
 const DEFAULT_MAIN_LINES = {
   municipales: ['1', '12', '17', '25', '26'],
   global: ['1', '5', '30', '60', '91'],
-  night: []
+  night: ['L1', 'L2', 'L3']
 };
 
 /**
