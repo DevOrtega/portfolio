@@ -14,11 +14,10 @@ services:
       - DB_CONNECTION=sqlite
       - DB_DATABASE=/var/www/html/database/database.sqlite
       - SESSION_DRIVER=database
-      - SESSION_LIFETIME=120
+      - QUEUE_CONNECTION=sync
       - CACHE_STORE=database
       - LOG_CHANNEL=stack
       - LOG_LEVEL=error
-      - QUEUE_CONNECTION=sync
       # Mail configuration (Resend)
       - MAIL_MAILER=smtp
       - MAIL_HOST=smtp.resend.com
@@ -28,6 +27,8 @@ services:
       - MAIL_ENCRYPTION=tls
       - MAIL_FROM_ADDRESS=onboarding@resend.dev
       - MAIL_FROM_NAME=Carlos Ortega Portfolio
+      # Services
+      - OSRM_SERVER=${OSRM_SERVER:-https://router.project-osrm.org/route/v1/driving}
     volumes:
       - portfolio_storage:/var/www/html/storage
       - portfolio_db:/var/www/html/database

@@ -127,15 +127,41 @@ final readonly class BusService
      */
     public function getBusData(): array
     {
-        return [
-            'companies' => $this->getCompanyColors(),
-            'bus_lines' => $this->getLinesByCompany(),
-            'main_lines' => $this->getMainLines(),
-            'routes' => $this->getRoutes(),
-            'stops' => $this->getStops(),
-            'map_config' => $this->getMapConfig(),
-            'simulation_config' => $this->getSimulationConfig(),
-        ];
+        // Cache the entire payload for 1 hour to ensure instant response
+        return \Illuminate\Support\Facades\Cache::remember('api_bus_data_full', 3600, function () {
+            // Fetch lines once to avoid multiple DB/OSRM calls
+            $allLines = $this->lineRepository->findAll();
+            
+            // Group lines by company manually to avoid re-fetching
+            $linesByCompany = [
+                'municipales' => [],
+                'global' => [],
+                'night' => [],
+            ];
+            foreach ($allLines as $line) {
+                $companyCode = $line->company->code;
+                if (isset($linesByCompany[$companyCode])) {
+                    $linesByCompany[$companyCode][] = $line->lineNumber;
+                }
+            }
+
+            // Get routes from the already fetched lines
+            $routes = $allLines->map(function($line) {
+                $data = $line->toArray();
+                $data['company'] = $line->company->code;
+                return $data;
+            })->all();
+
+            return [
+                'companies' => $this->getCompanyColors(),
+                'bus_lines' => $linesByCompany,
+                'main_lines' => $this->getMainLines(),
+                'routes' => $routes,
+                'stops' => $this->getStops(),
+                'map_config' => $this->getMapConfig(),
+                'simulation_config' => $this->getSimulationConfig(),
+            ];
+        });
     }
 
     /**

@@ -103,19 +103,27 @@ app/
 │           └── BusDataService.php   # Servicio de datos de bus
 │
 ├── Infrastructure/                  # CAPA DE INFRAESTRUCTURA
-│   └── Persistence/
-│       └── Eloquent/
-│           ├── EloquentExperienceRepository.php
-│           ├── EloquentEducationRepository.php
-│           ├── EloquentSkillRepository.php
-│           ├── EloquentPersonalInfoRepository.php
-│           ├── Models/              
-│           │   └── ProjectModel.php # Modelo Eloquent (final)
-│           └── Repositories/        
-│               ├── EloquentProjectRepository.php
-│               ├── EloquentBusCompanyRepository.php
-│               ├── EloquentBusStopRepository.php
-│               └── EloquentBusLineRepository.php
+│   ├── Persistence/
+│   │   └── Eloquent/
+│   │       ├── EloquentExperienceRepository.php
+│   │       ├── EloquentEducationRepository.php
+│   │       ├── EloquentSkillRepository.php
+│   │       ├── EloquentPersonalInfoRepository.php
+│   │       ├── Models/              
+│   │       │   └── ProjectModel.php # Modelo Eloquent (final)
+│   │       └── Repositories/        
+│   │           ├── EloquentProjectRepository.php
+│   │           ├── EloquentBusCompanyRepository.php
+│   │           ├── EloquentBusStopRepository.php
+│   │           └── EloquentBusLineRepository.php
+│   │
+│   └── Services/                    # SERVICIOS DE INFRAESTRUCTURA
+│       ├── OsrmService.php          # Servicio de integración OSRM
+│       └── GtfsImporter.php         # Importador de datos GTFS
+│
+├── Mcp/                             # MODEL CONTEXT PROTOCOL
+│   ├── Servers/                     # Servidores MCP
+│   └── Tools/                       # Herramientas para agentes IA
 │
 └── Http/                            # CAPA DE PRESENTACIÓN
     └── Controllers/
@@ -593,6 +601,6 @@ components/
 
 <div align="center">
   <p><strong>Architecture Documentation</strong></p>
-  <p>Last updated: January 2025</p>
-  <p>Version: 2.1.0</p>
+  <p>Last updated: December 2025</p>
+  <p>Version: 2.2.0</p>
 </div>

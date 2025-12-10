@@ -5,7 +5,7 @@ USER root
 
 # Install Node.js and required PHP extensions
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs libicu-dev && \
+    apt-get install -y nodejs libicu-dev zip unzip && \
     docker-php-ext-install bcmath intl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
@@ -42,13 +42,10 @@ RUN if [ ! -f .env ]; then \
     touch database/database.sqlite && \
     chown www-data:www-data database/database.sqlite
 
-# Run migrations and seeders
-RUN php artisan migrate:fresh --seed --force
-
 # Generate API documentation
 RUN php artisan l5-swagger:generate
 
-# Build frontend assets (needed before tests for ExampleTest)
+# Build frontend assets
 RUN npm run build
 
 # Run tests (Laravel + Vitest)
@@ -73,9 +70,10 @@ USER www-data
 # Expose port
 EXPOSE 8080
 
+# Environment variables for serversideup image
+ENV AUTORUN_ENABLED=true
+ENV AUTORUN_LARAVEL_MIGRATION=true
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s \
   CMD curl -f http://localhost:8080/up || exit 1
-
-# Start command
-CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8080"]

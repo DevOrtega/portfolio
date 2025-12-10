@@ -14,36 +14,40 @@ class BusDataSeeder extends Seeder
 {
     private function seedRouteStops(): void
     {
-        $lines = BusLineModel::all()->keyBy('line_number');
+        $lines = BusLineModel::with('company')->get();
+        $linesMap = [];
+        foreach ($lines as $line) {
+            $linesMap[$line->company->code . '|' . $line->line_number] = $line;
+        }
+        
         $stops = BusStopModel::all()->keyBy('code');
 
         $relations = [
             // GLOBAL
-            ['line' => '1', 'direction' => 'outbound', 'stops' => ['estacionSanTelmo', 'telde', 'aeropuerto', 'vecindario', 'sanAgustin', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan']],
-            ['line' => '1', 'direction' => 'inbound', 'stops' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'sanAgustin', 'vecindario', 'aeropuerto', 'telde', 'estacionSanTelmo']],
-            ['line' => '5', 'direction' => 'outbound', 'stops' => ['estacionSanTelmo', 'telde', 'aeropuerto', 'vecindario', 'sanAgustin', 'playaIngles', 'faroMaspalomas']],
-            ['line' => '5', 'direction' => 'inbound', 'stops' => ['faroMaspalomas', 'playaIngles', 'sanAgustin', 'vecindario', 'aeropuerto', 'telde', 'estacionSanTelmo']],
-            ['line' => '30', 'direction' => 'outbound', 'stops' => ['santaCatalina', 'autopistaSur', 'faroMaspalomas']],
-            ['line' => '30', 'direction' => 'inbound', 'stops' => ['faroMaspalomas', 'autopistaSur', 'santaCatalina']],
-            ['line' => '60', 'direction' => 'outbound', 'stops' => ['santaCatalina', 'autopistaSur', 'aeropuerto']],
-            ['line' => '60', 'direction' => 'inbound', 'stops' => ['aeropuerto', 'autopistaSur', 'santaCatalina']],
-            ['line' => '91', 'direction' => 'outbound', 'stops' => ['santaCatalina', 'autopistaSur', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan']],
-            ['line' => '91', 'direction' => 'inbound', 'stops' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'autopistaSur', 'santaCatalina']],
-            ['line' => '105', 'direction' => 'outbound', 'stops' => ['estacionSanTelmo', 'tamaraceite', 'arucas', 'guia', 'galdar']],
-            ['line' => '105', 'direction' => 'inbound', 'stops' => ['galdar', 'guia', 'arucas', 'tamaraceite', 'estacionSanTelmo']],
-            // NIGHT
-            ['line' => 'L1', 'direction' => 'outbound', 'stops' => ['puerto', 'santaCatalina', 'mesaYLopez', 'leonCastillo35', 'triana', 'sanJose', 'ciudadJusticia', 'hoyaDeLaPlata']],
-            ['line' => 'L1', 'direction' => 'inbound', 'stops' => ['hoyaDeLaPlata', 'ciudadJusticia', 'sanJose', 'triana', 'leonCastillo35', 'mesaYLopez', 'santaCatalina', 'puerto']],
-            ['line' => 'L2', 'direction' => 'outbound', 'stops' => ['teatro', 'sanTelmo', 'rehoyas', 'cruzDePiedra', 'schamann', 'escaleritas', 'laMinilla', 'hospitalNegrin', 'guanarteme', 'mesaYLopez', 'santaCatalina']],
-            ['line' => 'L2', 'direction' => 'inbound', 'stops' => ['santaCatalina', 'mesaYLopez', 'guanarteme', 'hospitalNegrin', 'laMinilla', 'escaleritas', 'schamann', 'cruzDePiedra', 'rehoyas', 'sanTelmo', 'teatro']],
-            ['line' => 'L3', 'direction' => 'outbound', 'stops' => ['teatro', 'sanTelmo', 'donZoilo', 'escaleritas', 'laFeria', 'sietePalmas', 'tamaraceite']],
-            ['line' => 'L3', 'direction' => 'inbound', 'stops' => ['tamaraceite', 'sietePalmas', 'laFeria', 'escaleritas', 'donZoilo', 'sanTelmo', 'teatro']],
+            ['company' => 'global', 'line' => '1', 'direction' => 'outbound', 'stops' => ['estacionSanTelmo', 'telde', 'aeropuerto', 'vecindario', 'sanAgustin', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan']],
+            ['company' => 'global', 'line' => '1', 'direction' => 'inbound', 'stops' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'sanAgustin', 'vecindario', 'aeropuerto', 'telde', 'estacionSanTelmo']],
+            ['company' => 'global', 'line' => '5', 'direction' => 'outbound', 'stops' => ['estacionSanTelmo', 'telde', 'aeropuerto', 'vecindario', 'sanAgustin', 'playaIngles', 'faroMaspalomas']],
+            ['company' => 'global', 'line' => '5', 'direction' => 'inbound', 'stops' => ['faroMaspalomas', 'playaIngles', 'sanAgustin', 'vecindario', 'aeropuerto', 'telde', 'estacionSanTelmo']],
+            ['company' => 'global', 'line' => '30', 'direction' => 'outbound', 'stops' => ['santaCatalina', 'autopistaSur', 'faroMaspalomas']],
+            ['company' => 'global', 'line' => '30', 'direction' => 'inbound', 'stops' => ['faroMaspalomas', 'autopistaSur', 'santaCatalina']],
+            ['company' => 'global', 'line' => '60', 'direction' => 'outbound', 'stops' => ['santaCatalina', 'autopistaSur', 'aeropuerto']],
+            ['company' => 'global', 'line' => '60', 'direction' => 'inbound', 'stops' => ['aeropuerto', 'autopistaSur', 'santaCatalina']],
+            ['company' => 'global', 'line' => '91', 'direction' => 'outbound', 'stops' => ['santaCatalina', 'autopistaSur', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan']],
+            ['company' => 'global', 'line' => '91', 'direction' => 'inbound', 'stops' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'autopistaSur', 'santaCatalina']],
+            ['company' => 'global', 'line' => '105', 'direction' => 'outbound', 'stops' => ['estacionSanTelmo', 'tamaraceite', 'arucas', 'guia', 'galdar']],
+            ['company' => 'global', 'line' => '105', 'direction' => 'inbound', 'stops' => ['galdar', 'guia', 'arucas', 'tamaraceite', 'estacionSanTelmo']],
         ];
 
         $bulkRouteStops = [];
         foreach ($relations as $rel) {
-            $lineId = $lines[$rel['line']]->id ?? null;
-            if (!$lineId) continue;
+            $key = $rel['company'] . '|' . $rel['line'];
+            $lineId = $linesMap[$key]->id ?? null;
+            
+            if (!$lineId) {
+                $this->command->warn("Line not found for legacy seeding: {$rel['line']} ({$rel['company']})");
+                continue;
+            }
+
             foreach ($rel['stops'] as $order => $stopCode) {
                 $stopId = $stops[$stopCode]->id ?? null;
                 if (!$stopId) continue;
@@ -86,10 +90,6 @@ class BusDataSeeder extends Seeder
     }
     private function seedLines(): void
     {
-        // Inserción legacy con SQL puro para máxima velocidad
-        DB::statement('DELETE FROM bus_lines');
-        DB::statement('DELETE FROM bus_route_stops');
-
         // Obtener IDs de compañías
         $companies = DB::table('bus_companies')->pluck('id', 'code');
 
@@ -102,10 +102,6 @@ class BusDataSeeder extends Seeder
             ['line_number' => '60', 'type' => 'interurban', 'origin' => 'Las Palmas', 'destination' => 'Aeropuerto', 'color' => '#0066CC', 'company_code' => 'global'],
             ['line_number' => '91', 'type' => 'interurban', 'origin' => 'Santa Catalina', 'destination' => 'Puerto de Mogán', 'color' => '#0066CC', 'company_code' => 'global'],
             ['line_number' => '105', 'type' => 'interurban', 'origin' => 'Las Palmas', 'destination' => 'Gáldar', 'color' => '#0066CC', 'company_code' => 'global'],
-            // NIGHT
-            ['line_number' => 'L1', 'type' => 'night', 'origin' => 'Puerto', 'destination' => 'Hoya de La Plata', 'color' => '#9933FF', 'company_code' => 'night'],
-            ['line_number' => 'L2', 'type' => 'night', 'origin' => 'Teatro', 'destination' => 'Santa Catalina', 'color' => '#9933FF', 'company_code' => 'night'],
-            ['line_number' => 'L3', 'type' => 'night', 'origin' => 'Teatro', 'destination' => 'Tamaraceite', 'color' => '#9933FF', 'company_code' => 'night'],
         ];
 
         $bulk = [];
@@ -126,10 +122,103 @@ class BusDataSeeder extends Seeder
         $this->command->info('✓ Lines seeded');
     }
 
+    private function seedGtfsStops(GtfsImporter $importer): void
+    {
+        $stops = $importer->getAllStops();
+        $bulk = [];
+        foreach ($stops as $stop) {
+            $bulk[] = [
+                'code' => $stop['code'],
+                'name' => $stop['name'],
+                'lat_outbound' => $stop['lat'],
+                'lng_outbound' => $stop['lng'],
+                'lat_inbound' => $stop['lat'], 
+                'lng_inbound' => $stop['lng'],
+                'zone' => 'URBAN',
+            ];
+        }
+        
+        DB::transaction(function () use ($bulk) {
+             BusStopModel::upsert($bulk, ['code'], ['name', 'lat_outbound', 'lng_outbound', 'lat_inbound', 'lng_inbound', 'zone']);
+        });
+        $this->command->info('✓ GTFS Stops seeded');
+    }
+
+    private function seedGtfsLines(GtfsImporter $importer): void
+    {
+        $routes = $importer->getAllMunicipalRoutes();
+        $companies = DB::table('bus_companies')->pluck('id', 'code');
+        $stops = DB::table('bus_stops')->pluck('id', 'code');
+        
+        $municipalesId = $companies['municipales'] ?? null;
+        $nightId = $companies['night'] ?? null;
+
+        if (!$municipalesId) {
+            $this->command->error('Compañía Municipales no encontrada');
+            return;
+        }
+
+        foreach ($routes as $route) {
+            // Determinar ID de compañía basado en el dato que viene del importador
+            $companyId = ($route['company'] === 'night') ? $nightId : $municipalesId;
+            
+            // Fallback por seguridad
+            if (!$companyId) $companyId = $municipalesId;
+
+            // Insert Line
+            $lineId = DB::table('bus_lines')->insertGetId([
+                'line_number' => $route['line'],
+                'type' => $route['type'],
+                'origin' => $route['origin'],
+                'destination' => $route['destination'],
+                'color' => $route['color'],
+                'company_id' => $municipalesId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
+            // Insert Route Stops (Outbound)
+            $bulkStops = [];
+            foreach ($route['stopsOutbound'] as $order => $stopCode) {
+                if (isset($stops[$stopCode])) {
+                    $bulkStops[] = [
+                        'line_id' => $lineId,
+                        'stop_id' => $stops[$stopCode],
+                        'direction' => 'outbound',
+                        'order' => $order,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+            // Insert Route Stops (Inbound)
+             foreach ($route['stopsInbound'] as $order => $stopCode) {
+                if (isset($stops[$stopCode])) {
+                    $bulkStops[] = [
+                        'line_id' => $lineId,
+                        'stop_id' => $stops[$stopCode],
+                        'direction' => 'inbound',
+                        'order' => $order,
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+            }
+
+            if (!empty($bulkStops)) {
+                DB::table('bus_route_stops')->insert($bulkStops);
+            }
+        }
+        $this->command->info('✓ GTFS Lines seeded');
+    }
+
     public function run(): void
     {
+        $importer = new GtfsImporter();
+
         // Disable foreign key checks for truncation
         DB::statement('PRAGMA foreign_keys = OFF');
+        DB::table('bus_route_stops')->truncate();
         DB::table('bus_lines')->truncate();
         DB::table('bus_stops')->truncate();
         DB::table('bus_companies')->truncate();
@@ -137,13 +226,15 @@ class BusDataSeeder extends Seeder
 
         $this->seedCompanies();
         $this->seedStops();
+        $this->seedGtfsStops($importer);
         $this->seedLines();
-        // Solo insertar datos legacy si la tabla está vacía (no sobrescribir GTFS)
-        if (DB::table('bus_route_stops')->count() === 0) {
-            $this->seedRouteStops();
-        } else {
-            $this->command->info('✓ Route stops legacy NO insertados (ya existen datos GTFS)');
-        }
+        $this->seedGtfsLines($importer);
+        
+        // Solo insertar datos legacy si la tabla está vacía de datos legacy? 
+        // No, bus_route_stops ya tendrá datos GTFS.
+        // seedRouteStops() inserta las paradas para las líneas legacy (Global/Night).
+        // Deberíamos ejecutarlo siempre para poblar esas líneas.
+        $this->seedRouteStops();
     }
 
     private function seedCompanies(): void
@@ -184,6 +275,30 @@ class BusDataSeeder extends Seeder
     private function getGlobalStopsData(): array
     {
         return [
+            // URBANAS / NOCTURNAS (L1, L2, L3)
+            'puerto' => ['outbound' => [28.1480, -15.4285], 'inbound' => [28.1480, -15.4285], 'zone' => 'PUERTO'],
+            'santaCatalina' => ['outbound' => [28.1400, -15.4295], 'inbound' => [28.1400, -15.4295], 'zone' => 'PUERTO'],
+            'mesaYLopez' => ['outbound' => [28.1330, -15.4350], 'inbound' => [28.1330, -15.4350], 'zone' => 'PUERTO'],
+            'leonCastillo35' => ['outbound' => [28.1150, -15.4250], 'inbound' => [28.1150, -15.4250], 'zone' => 'CENTRO'],
+            'triana' => ['outbound' => [28.1060, -15.4160], 'inbound' => [28.1060, -15.4160], 'zone' => 'TRIANA'],
+            'sanJose' => ['outbound' => [28.0950, -15.4160], 'inbound' => [28.0950, -15.4160], 'zone' => 'VEGUETA'],
+            'ciudadJusticia' => ['outbound' => [28.0850, -15.4180], 'inbound' => [28.0850, -15.4180], 'zone' => 'VEGUETA'],
+            'hoyaDeLaPlata' => ['outbound' => [28.0750, -15.4200], 'inbound' => [28.0750, -15.4200], 'zone' => 'SUR'],
+            'teatro' => ['outbound' => [28.1040, -15.4140], 'inbound' => [28.1040, -15.4140], 'zone' => 'TRIANA'],
+            'sanTelmo' => ['outbound' => [28.1080, -15.4170], 'inbound' => [28.1080, -15.4170], 'zone' => 'TRIANA'],
+            'estacionSanTelmo' => ['outbound' => [28.1085, -15.4175], 'inbound' => [28.1085, -15.4175], 'zone' => 'TRIANA'], // Alias
+            'rehoyas' => ['outbound' => [28.1150, -15.4300], 'inbound' => [28.1150, -15.4300], 'zone' => 'ALTA'],
+            'cruzDePiedra' => ['outbound' => [28.1200, -15.4350], 'inbound' => [28.1200, -15.4350], 'zone' => 'ALTA'],
+            'schamann' => ['outbound' => [28.1250, -15.4400], 'inbound' => [28.1250, -15.4400], 'zone' => 'ALTA'],
+            'escaleritas' => ['outbound' => [28.1200, -15.4450], 'inbound' => [28.1200, -15.4450], 'zone' => 'ALTA'],
+            'laMinilla' => ['outbound' => [28.1280, -15.4500], 'inbound' => [28.1280, -15.4500], 'zone' => 'ALTA'],
+            'hospitalNegrin' => ['outbound' => [28.1300, -15.4550], 'inbound' => [28.1300, -15.4550], 'zone' => 'ALTA'],
+            'guanarteme' => ['outbound' => [28.1350, -15.4450], 'inbound' => [28.1350, -15.4450], 'zone' => 'PUERTO'],
+            'donZoilo' => ['outbound' => [28.1150, -15.4350], 'inbound' => [28.1150, -15.4350], 'zone' => 'ALTA'],
+            'laFeria' => ['outbound' => [28.1100, -15.4450], 'inbound' => [28.1100, -15.4450], 'zone' => 'ALTA'],
+            'sietePalmas' => ['outbound' => [28.1050, -15.4550], 'inbound' => [28.1050, -15.4550], 'zone' => 'ALTA'],
+            'tamaraceite' => ['outbound' => [28.1000, -15.4700], 'inbound' => [28.1000, -15.4700], 'zone' => 'ALTA'],
+
             // GLOBAL - INTERURBANAS
             'telde' => ['outbound' => [27.9941, -15.4166], 'inbound' => [27.9941, -15.4166], 'zone' => 'TELDE'],
             'teldeIntercambiador' => ['outbound' => [27.9945, -15.4170], 'inbound' => [27.9945, -15.4170], 'zone' => 'TELDE'],

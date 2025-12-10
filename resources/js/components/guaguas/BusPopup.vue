@@ -98,8 +98,10 @@ const props = defineProps({
 const companyLabel = computed(() => {
   const labels = {
     municipales: t('guaguas.municipalesFull'),
-    global: t('guaguas.global')
+    guaguas_global: t('guaguas.global'),
+    global: t('guaguas.global') // Keep for backward compatibility
   };
+  return labels[props.bus.company] || props.bus.company || 'Unknown';
   return labels[props.bus.company] || props.bus.company;
 });
 
@@ -108,10 +110,11 @@ const companyLabel = computed(() => {
  */
 const typeLabel = computed(() => {
   const labels = {
-    urban: t('guaguas.urban'),
-    interurban: t('guaguas.interurban'),
-    night: t('guaguas.night')
+    municipales: t('guaguas.municipalesFull'),
+    guaguas_global: t('guaguas.global'),
+    global: t('guaguas.global') // Keep for backward compatibility
   };
+  return labels[props.bus.company] || props.bus.company || 'Unknown';
   return labels[props.bus.type] || props.bus.type;
 });
 

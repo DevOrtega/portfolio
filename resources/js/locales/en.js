@@ -57,6 +57,7 @@ export default {
     filterByLine: 'Filter by line',
     allLines: 'All lines',
     line: 'Line',
+    lineFormat: 'Line {line} ({from}-{to})',
     activeBuses: 'Active buses',
     municipales: 'Municipal',
     global: 'Global',
@@ -116,7 +117,8 @@ export default {
     infoBannerGlobal: '(blue - interurban)',
     infoBannerNight: '(purple - L1, L2, L3, 64, 65)',
     infoBannerHours: 'Buses only appear within their operating hours and move along geographically accurate routes of Gran Canaria.',
-    infoBannerNote: 'Note: Gran Canaria does not have public GTFS feeds. Data is simulated with maximum fidelity to reality.'
+    infoBannerNote: 'Note: Gran Canaria does not have public GTFS feeds. Data is simulated with maximum fidelity to reality.',
+    stops: 'Bus Stops'
   },
   experience: {
     title: 'Work Experience',

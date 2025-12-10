@@ -33,27 +33,9 @@ final readonly class OsrmService
         // Create cache key from coordinates
         $cacheKey = 'osrm_route_' . md5(json_encode($coordinates));
         
-        // Try to get from cache
-        $cached = Cache::get($cacheKey);
-        if ($cached) {
-            return $cached;
-        }
-
-        // Fetch from API
-        $route = $this->fetchRoute($coordinates);
-        
-        // Only cache if we got a real route (more points than input, or at least successful response)
-        // If we got fallback (same count as input), do not cache (or cache for short time)
-        // But some routes might be straight lines? Unlikely for buses.
-        // Let's assume if it returns same coords as input, it failed or is trivial.
-        // To be safe, we check if fetchRoute found a real route.
-        // Actually fetchRoute returns inputs on failure.
-        
-        if ($route !== $coordinates) {
-            Cache::put($cacheKey, $route, self::CACHE_TTL);
-        }
-        
-        return $route;
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($coordinates) {
+            return $this->fetchRoute($coordinates);
+        });
     }
     
     /**
@@ -61,8 +43,6 @@ final readonly class OsrmService
      */
     private function fetchRoute(array $coordinates): array
     {
-        $baseUrl = config('services.osrm.server') ?? env('OSRM_SERVER', 'https://router.project-osrm.org/route/v1/driving');
-
         try {
             // Reduce waypoints if too many (take key points)
             $waypoints = $this->reduceWaypoints($coordinates, self::MAX_WAYPOINTS);
@@ -72,8 +52,7 @@ final readonly class OsrmService
                 ->map(fn($coord) => $coord[1] . ',' . $coord[0]) // [lat,lng] -> lng,lat
                 ->join(';');
             
-            // Clean URL to remove double slashes if any, but preserve protocol
-            $url = $baseUrl . '/' . $coordString . '?overview=full&geometries=geojson';
+            $url = self::OSRM_URL . '/' . $coordString . '?overview=full&geometries=geojson';
             
             Log::debug('OSRM request', ['url' => $url, 'waypoints_count' => count($waypoints)]);
             

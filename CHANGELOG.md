@@ -48,6 +48,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Removed unused `resources/js/data/guaguas/` folder (~4000 lines of hardcoded data)
 - Removed unused `computed` import from `BusLinesTree.vue`
 
+## [2.2.0] - 2025-12-10
+
+### Major Updates
+
+#### Model Context Protocol (MCP) Integration
+- **MCP Server**: Implemented full MCP server capabilities within Laravel
+- **Tools**: Added `osrm_get_route` tool, allowing AI agents to query real driving routes
+- **Prompts**: Added expert prompts for Testing (`experto_pest`), Architecture (`experto_hexagonal`), SOLID (`experto_solid`), and Documentation
+- **Infrastructure**: Added `McpServiceProvider` and `config/mcp.php` for seamless integration
+
+#### Advanced Bus Tracking (OSRM)
+- **Real-Road Routing**: Integrated OSRM (Open Source Routing Machine) to replace straight-line interpolation with real road geometry
+- **OsrmService**: Implemented caching service for route optimization
+- **Spatial Optimization**: Added spatial indexes to `bus_stops` for faster geographical queries
+
+### Added
+- `app/Providers/McpServiceProvider.php` - Service Provider for MCP tools and prompts
+- `app/Infrastructure/Services/OsrmService.php` - Service for OSRM interaction
+- `app/Http/Controllers/Api/BusRouteStatusController.php` - Controller for monitoring route status
+- `database/migrations/2025_12_09_005345_create_mcp_sessions_table.php` - Migration for MCP sessions
+
+### Changed
+- **Internationalization**: Refactored `GuaguasTracker.vue` to remove hardcoded strings and use `useI18n`
+- **Locales**: Added `lineFormat` key to `es.js` and `en.js` for consistent bus line display
+- **Architecture**: Updated `OsrmService` to follow hexagonal architecture patterns (Infrastructure layer)
+
 ## [2.1.0] - 2025-12-05
 
 ### Major Updates
