@@ -22,7 +22,7 @@ case "$1" in
     sleep 5
     
     echo "📦 Running migrations..."
-    docker compose exec -T portfolio php artisan migrate --force
+    docker compose exec -T portfolio php artisan migrate:fresh --force
     
     echo "🌱 Seeding database (includes GTFS import)..."
     docker compose exec -T portfolio php artisan db:seed --force
