@@ -97,7 +97,7 @@ const props = defineProps({
    * Set of hidden bus IDs
    */
   hiddenBusIds: {
-    type: Set,
+    type: [Set, Array, Object],
     default: () => new Set()
   },
   /**

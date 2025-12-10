@@ -3,32 +3,16 @@
     <!-- Filter dropdown -->
     <div class="bg-gray-800 p-3 sm:p-4 rounded-lg col-span-2 md:col-span-3 lg:col-span-1">
       <h3 class="text-xs sm:text-sm font-semibold mb-2">{{ $t('guaguas.filterByLine') }}</h3>
-      <el-select 
-        :model-value="selectedLine" 
-        @update:model-value="val => emit('update:selectedLine', val)"
-        class="w-full"
-        :placeholder="$t('guaguas.allLines')"
-        clearable
-        filterable
+      <select 
+        :value="selectedLine" 
+        @change="onLineChange"
+        class="w-full bg-gray-700 text-white px-2 sm:px-3 py-1.5 sm:py-2 rounded text-sm"
       >
-        <el-option-group
-          v-for="group in groupedLines"
-          :key="group.label"
-          :label="group.label"
-        >
-          <el-option
-            v-for="item in group.options"
-            :key="item.value"
-            :label="item.label"
-            :value="item.value"
-          >
-            <span class="flex items-center gap-2">
-              <span class="w-2 h-2 rounded-full" :style="{ backgroundColor: item.color }"></span>
-              {{ item.label }}
-            </span>
-          </el-option>
-        </el-option-group>
-      </el-select>
+        <option value="">{{ $t('guaguas.allLines') }}</option>
+        <option v-for="line in availableLines" :key="line" :value="line">
+          {{ $t('guaguas.line') }} {{ line }}
+        </option>
+      </select>
     </div>
     
     <!-- Stats cards -->
@@ -61,39 +45,58 @@
 </template>
 
 <script setup>
-import { ElSelect, ElOption, ElOptionGroup } from 'element-plus';
+/**
+ * @component BusStatsPanel
+ * @description Stats panel showing bus counts by category with line filter
+ * 
+ * @example
+ * <BusStatsPanel
+ *   v-model:selected-line="selectedLine"
+ *   :stats="busStats"
+ *   :available-lines="busLines"
+ * />
+ */
 import StatsCard from '@/components/StatsCard.vue';
 
 defineProps({
+  /**
+   * Currently selected line filter
+   */
   selectedLine: {
     type: String,
     default: ''
   },
+  /**
+   * Statistics object with bus counts
+   */
   stats: {
     type: Object,
-    required: true
+    required: true,
+    validator: (value) => {
+      return ['active', 'municipales', 'global', 'night', 'delayed'].every(
+        key => typeof value[key] === 'number'
+      );
+    }
   },
-  groupedLines: {
+  /**
+   * List of available bus lines for the filter dropdown
+   */
+  availableLines: {
     type: Array,
     default: () => []
   }
 });
 
 const emit = defineEmits(['update:selectedLine']);
+
+/**
+ * Handle line selection change
+ */
+const onLineChange = (event) => {
+  emit('update:selectedLine', event.target.value);
+};
 </script>
 
 <style scoped>
-:deep(.el-input__wrapper) {
-  background-color: #374151; /* bg-gray-700 */
-  box-shadow: none;
-  border: 1px solid #4b5563; /* border-gray-600 */
-}
-
-:deep(.el-input__inner) {
-  color: white;
-}
-
-:deep(.el-select .el-input.is-focus .el-input__wrapper) {
-  box-shadow: 0 0 0 1px #60a5fa !important; /* ring-blue-400 */
-}
+/* Component-specific styles if needed */
 </style>

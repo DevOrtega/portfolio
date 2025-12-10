@@ -30,6 +30,10 @@
         </svg>
         <span>{{ $t('guaguas.withDelay') }}</span>
       </div>
+      <div class="flex items-center gap-2">
+        <div class="size-3 rounded-full bg-white border-2 border-gray-500 shadow-sm"></div>
+        <span>{{ $t('guaguas.stops') }}</span>
+      </div>
     </div>
 
     <!-- Separator -->

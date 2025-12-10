@@ -57,6 +57,7 @@ export default {
     filterByLine: 'Filtrar por línea',
     allLines: 'Todas las líneas',
     line: 'Línea',
+    lineFormat: 'Línea {line} ({from}-{to})',
     activeBuses: 'Guaguas activas',
     municipales: 'Municipales',
     global: 'Global',
@@ -116,7 +117,8 @@ export default {
     infoBannerGlobal: '(azul - interurbanas)',
     infoBannerNight: '(morado - L1, L2, L3, 64, 65)',
     infoBannerHours: 'Las guaguas solo aparecen dentro de su horario de operación y se mueven por rutas geográficamente precisas de Gran Canaria.',
-    infoBannerNote: 'Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos están simulados con la máxima fidelidad a la realidad.'
+    infoBannerNote: 'Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos están simulados con la máxima fidelidad a la realidad.',
+    stops: 'Paradas'
   },
   experience: {
     title: 'Experiencia Laboral',

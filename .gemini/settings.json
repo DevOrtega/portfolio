@@ -1,0 +1,27 @@
+{
+  "mcpServers": {
+    "archivos": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "/mnt/c/Users/carlo/portfolio"
+      ]
+    },
+    "laravel": {
+      "command": "php",
+      "args": [
+        "artisan",
+        "mcp:serve",
+        "-q"
+      ]
+    },
+    "github": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@modelcontextprotocol/server-github"
+      ]
+    }
+  }
+}

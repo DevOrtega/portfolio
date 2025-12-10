@@ -9,7 +9,7 @@
         <h1 class="text-3xl font-bold mb-2">{{ $t('guaguas.title') }}</h1>
         <p class="text-gray-400">{{ $t('guaguas.subtitle') }}</p>
         <InfoBanner type="info" class="mt-2">
-          {{ $t('guaguas.infoBanner') }} <strong>{{ $t('guaguas.municipalesFull') }}</strong> {{ $t('guaguas.infoBannerColors') }}, <strong>{{ $t('guaguas.global') }}</strong> {{ $t('guaguas.infoBannerGlobal') }} {{ $t('guaguas.infoBannerNight') }}. 
+          {{ $t('guaguas.infoBanner') }} <strong>Guaguas Municipales</strong> {{ $t('guaguas.infoBannerColors') }}, <strong>Guaguas Global</strong> {{ $t('guaguas.infoBannerGlobal') }} {{ $t('guaguas.infoBannerNight') }}. 
           {{ $t('guaguas.infoBannerHours') }}
           <br><small class="opacity-80">{{ $t('guaguas.infoBannerNote') }}</small>
         </InfoBanner>
@@ -32,7 +32,7 @@
         <BusStatsPanel 
           v-model:selected-line="selectedLine"
           :stats="busStats"
-          :grouped-lines="groupedBusLines"
+          :available-lines="busLines"
           class="mb-4"
         />
 
@@ -88,35 +88,6 @@
             :weight="4"
             :opacity="0.7"
           />
-
-          <!-- Route Stops Markers -->
-          <l-marker
-            v-for="stop in visibleStops"
-            :key="stop.code"
-            :lat-lng="stop.coords"
-            :icon="stopIcon"
-            :z-index-offset="-1000"
-          >
-            <l-popup class="bus-popup">
-              <div class="font-bold text-sm mb-1">{{ stop.name }}</div>
-              <div class="text-xs text-gray-600 mb-2">
-                <span class="font-semibold">{{ $t('guaguas.line') }}:</span> {{ selectedLine }}
-              </div>
-              
-              <div v-if="stop.nextBus" class="text-xs border-t pt-2 mt-1">
-                <div class="flex justify-between items-center">
-                  <span class="font-semibold text-indigo-600">Próxima guagua:</span>
-                  <span class="bg-indigo-100 text-indigo-800 px-1.5 py-0.5 rounded">{{ stop.nextBus.timeToNext }} min</span>
-                </div>
-                <div class="text-[10px] text-gray-500 mt-1">
-                  Bus #{{ stop.nextBus.id.split('-').pop() }}
-                </div>
-              </div>
-              <div v-else class="text-xs text-gray-500 italic border-t pt-2 mt-1">
-                Sin guaguas en ruta
-              </div>
-            </l-popup>
-          </l-marker>
           
           <!-- Bus markers -->
           <l-marker
@@ -148,7 +119,6 @@
 
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import { LMap, LTileLayer, LMarker, LPopup, LPolyline } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -180,17 +150,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl,
 });
 
-const { t } = useI18n();
-
-// Custom Stop Icon (Small circle)
-const stopIcon = L.divIcon({
-  className: 'custom-stop-icon',
-  html: `<div style="background-color: white; border: 2px solid #666; border-radius: 50%; width: 12px; height: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.3);"></div>`,
-  iconSize: [12, 12],
-  iconAnchor: [6, 6],
-  popupAnchor: [0, -6]
-});
-
 // Initialize composables
 const { mapOptions, getResponsiveZoom, createBusIcon } = useBusMap();
 const { isNightTime, isInService } = useBusSchedule();
@@ -199,7 +158,6 @@ const {
   busLines: apiBusLines, 
   mainLines,
   companies: apiCompanies,
-  stops: apiStops,
   isLoading: isLoadingData,
   error: dataError,
   loadBusData,
@@ -223,15 +181,13 @@ const handleResize = () => {
 const selectedLine = ref('');
 const selectedBusId = ref(null);
 const buses = ref([]);
-const visibleStops = ref([]); // Stops for the selected route
-
 const updateInterval = ref(null);
 
 // Sidebar tree control - closed by default on mobile
 const isMobile = () => window.innerWidth < 640;
 const treeVisible = ref(!isMobile());
 const hiddenBusIds = ref(new Set());
-const expandedKeys = ref(['municipales', 'guaguas_global']); // Default, updated on load
+const expandedKeys = ref(['municipales', 'guaguas_global']);
 
 // Initialize bus selection composable (pass mainLines from API)
 const {
@@ -252,43 +208,7 @@ const previousSelectedLines = ref(new Set());
 const selectedRoute = ref(null);
 const selectedRouteColor = ref('#FDB913');
 
-// Grouped bus lines for Element Plus Select
-const groupedBusLines = computed(() => {
-  if (!apiRoutes.value) return [];
-  
-  const groups = [
-    { label: t('guaguas.municipalesFull'), options: [], id: 'municipales' },
-    { label: t('guaguas.global'), options: [], id: 'global' },
-    { label: t('guaguas.nightLines'), options: [], id: 'night' }
-  ];
-
-  apiRoutes.value.forEach(route => {
-    let groupIndex = -1;
-    if (route.type === 'night') groupIndex = 2;
-    else if (route.company === 'municipales') groupIndex = 0;
-    else groupIndex = 1;
-
-    // Check duplicates
-    if (!groups[groupIndex].options.find(o => o.value === route.line)) {
-      groups[groupIndex].options.push({
-        label: t('guaguas.lineFormat', { line: route.line, from: route.origin, to: route.destination }),
-        value: route.line,
-        color: route.color
-      });
-    }
-  });
-  
-  // Sort
-  groups.forEach(g => g.options.sort((a, b) => {
-    const aNum = parseInt(a.value.replace(/\D/g, '')) || 0;
-    const bNum = parseInt(b.value.replace(/\D/g, '')) || 0;
-    return aNum - bNum;
-  }));
-
-  return groups.filter(g => g.options.length > 0);
-});
-
-// Available bus lines (Computed from API data - legacy prop support if needed)
+// Available bus lines - Computed from API data
 const busLines = computed(() => {
   const lines = new Set();
   Object.values(apiBusLines.value).forEach(companyLines => {
@@ -298,15 +218,9 @@ const busLines = computed(() => {
 });
 
 /**
- * Validate route coordinates before generating buses
+ * Generate simulated buses based on real routes from API
+ * Data sourced from database (originally from guaguas.com and globalsu.net)
  */
-const validateRouteCoords = (routeCoords, routeLine, direction) => {
-  if (!routeCoords || routeCoords.length < 2) {
-    return false;
-  }
-  return true;
-};
-
 const generateBuses = () => {
   // Get routes from API
   const routes = apiRoutes.value;
@@ -339,7 +253,8 @@ const generateBuses = () => {
         : route.route_coords_inbound;
       
       // Validate that coordinates exist
-      if (!validateRouteCoords(routeCoords, route.line, tripDirection)) {
+      if (!routeCoords || routeCoords.length < 2) {
+        console.warn(`Route ${route.line} ${tripDirection} does not have enough valid points`);
         continue;
       }
       
@@ -410,168 +325,91 @@ const generateBuses = () => {
 
 // Generate tree structure for Element Plus
 const treeData = computed(() => {
-  const allRoutes = apiRoutes.value || [];
-
-  // Helper to group routes and build nodes
-  const buildCompanyNodes = (filterFn, companyId) => {
-    const relevantRoutes = allRoutes.filter(filterFn);
-    
-    // Group by line number to handle potential duplicates (though unlikely with current API)
-    // and sort them
-    const sortedRoutes = [...relevantRoutes].sort((a, b) => {
-      // Extract number from line string (e.g. "L1" -> 1, "30" -> 30)
-      const aNum = parseInt(a.line.replace(/\D/g, '')) || 0;
-      const bNum = parseInt(b.line.replace(/\D/g, '')) || 0;
-      
-      if (aNum !== bNum) return aNum - bNum;
-      return a.line.localeCompare(b.line);
+  const municipalesBuses = buses.value.filter(b => b.company === 'municipales' && b.type !== 'night');
+  const globalBuses = buses.value.filter(b => b.company === 'guaguas_global');
+  const nightBusesList = buses.value.filter(b => b.type === 'night');
+  
+  // Group by line
+  const groupByLine = (busList) => {
+    const grouped = {};
+    busList.forEach(bus => {
+      if (!grouped[bus.line]) {
+        grouped[bus.line] = [];
+      }
+      grouped[bus.line].push(bus);
     });
-
-    return sortedRoutes.map(route => {
-      // Find active buses for this line
-      const lineBuses = buses.value.filter(b => b.line === route.line && b.company === route.company);
-      
-      return {
-        id: `${companyId}-line-${route.line}`,
-        label: `${t('guaguas.line')} ${route.line} (${lineBuses.length})`,
-        type: 'line',
-        line: route.line,
-        company: route.company,
-        routeData: route, // Pass full route data for click handling
-        children: lineBuses.map((bus, idx) => {
-          const dirIcon = bus.tripDirection === 'outbound' ? '🟢→' : '🟠←';
-          return {
-            id: bus.id,
-            label: `${dirIcon} ${route.line}-${idx + 1}: ${bus.origin} → ${bus.destination}`,
-            type: 'bus',
-            bus: bus
-          };
-        })
-      };
-    });
+    return grouped;
   };
-
-  const municipalesNodes = buildCompanyNodes(
-    r => r.company === 'municipales' && r.type !== 'night', 
-    'municipales'
-  );
   
-  const globalNodes = buildCompanyNodes(
-    r => (r.company === 'guaguas_global' || r.company === 'global'), 
-    'guaguas_global'
-  );
-  
-  const nightNodes = buildCompanyNodes(
-    r => r.type === 'night', 
-    'night'
-  );
+  const municipalesGrouped = groupByLine(municipalesBuses);
+  const globalGrouped = groupByLine(globalBuses);
+  const nightGrouped = groupByLine(nightBusesList);
   
   return [
     {
       id: 'municipales',
-      label: t('guaguas.municipalesFull'),
+      label: `Guaguas Municipales (${municipalesBuses.length})`,
       type: 'company',
-      children: municipalesNodes
+      children: Object.entries(municipalesGrouped).map(([line, busList]) => ({
+        id: `municipales-line-${line}`,
+        label: `Línea ${line} (${busList.length})`,
+        type: 'line',
+        line: line,
+        company: 'municipales',
+        children: busList.map((bus, idx) => {
+          const dirIcon = bus.tripDirection === 'outbound' ? '🟢→' : '🟠←';
+          return {
+            id: bus.id,
+            label: `${dirIcon} ${line}-${idx + 1}: ${bus.origin} → ${bus.destination}`,
+            type: 'bus',
+            bus: bus
+          };
+        })
+      }))
     },
     {
       id: 'guaguas_global',
-      label: t('guaguas.global'),
+      label: `Guaguas Global (${globalBuses.length})`,
       type: 'company',
-      children: globalNodes
+      children: Object.entries(globalGrouped).map(([line, busList]) => ({
+        id: `guaguas_global-line-${line}`,
+        label: `Línea ${line} (${busList.length})`,
+        type: 'line',
+        line: line,
+        company: 'guaguas_global',
+        children: busList.map((bus, idx) => {
+          const dirIcon = bus.tripDirection === 'outbound' ? '🟢→' : '🟠←';
+          return {
+            id: bus.id,
+            label: `${dirIcon} ${line}-${idx + 1}: ${bus.origin} → ${bus.destination}`,
+            type: 'bus',
+            bus: bus
+          };
+        })
+      }))
     },
     {
       id: 'night',
-      label: t('guaguas.nightLines'),
+      label: `Líneas nocturnas (${nightBusesList.length})`,
       type: 'company',
-      children: nightNodes
+      children: Object.entries(nightGrouped).map(([line, busList]) => ({
+        id: `night-line-${line}`,
+        label: `Line ${line} (${busList.length})`,
+        type: 'line',
+        line: line,
+        company: 'municipales',
+        children: busList.map((bus, idx) => {
+          const dirIcon = bus.tripDirection === 'outbound' ? '🟢→' : '🟠←';
+          return {
+            id: bus.id,
+            label: `${dirIcon} ${line}-${idx + 1}: ${bus.origin} → ${bus.destination}`,
+            type: 'bus',
+            bus: bus
+          };
+        })
+      }))
     }
   ];
-});
-
-// Calculate closest bus for a stop
-const findNextBusForStop = (stopCode, line) => {
-  // Find buses on this line
-  const lineBuses = buses.value.filter(b => b.line === line);
-  if (!lineBuses.length) return null;
-  
-  // Simple simulation: just return the first bus found for simulation purposes
-  // In a real app we would calculate distance along route
-  return lineBuses[0];
-};
-
-// Helper to show route and stops
-const showRouteAndStops = (routeData) => {
-  if (!routeData) {
-    selectedRoute.value = null;
-    visibleStops.value = [];
-    return;
-  }
-
-  // Set Polyline
-  selectedRoute.value = routeData.route_coords_outbound || [];
-  selectedRouteColor.value = routeData.type === 'night' ? '#9933FF' : (routeData.company === 'municipales' ? '#FDB913' : '#0066CC');
-  
-  // Set Stops (Markers)
-  // Use outbound stops by default for visualization
-  const stopsList = routeData.stops_outbound || [];
-  visibleStops.value = stopsList.map(code => {
-    const stopInfo = apiStops.value[code];
-    if (!stopInfo) return null;
-    
-    return {
-      code: code,
-      name: code.charAt(0).toUpperCase() + code.slice(1).replace(/([A-Z])/g, ' $1').trim(), // Format camelCase to text
-      coords: stopInfo.outbound, // [lat, lng]
-      nextBus: findNextBusForStop(code, routeData.line)
-    };
-  }).filter(s => s !== null);
-};
-
-// Watch for filter selection change
-watch(selectedLine, (newLine) => {
-  if (!newLine) {
-    // Cleared filter -> Reset selection
-    if (exclusiveMode.value) {
-      exclusiveMode.value = false;
-      exclusiveLine.value = null;
-      selectedLines.value = new Set(previousSelectedLines.value);
-      hiddenBusIds.value = new Set(previousHiddenBusIds.value);
-      updateBusVisibility();
-    }
-    // Hide route
-    selectedRoute.value = null;
-    visibleStops.value = [];
-    return;
-  }
-
-  // Treat as clicking a line in the tree
-  // Find the route data for this line
-  const route = apiRoutes.value.find(r => r.line === newLine);
-  
-  if (route) {
-    // Simulate node click logic for "Line"
-    // Enter exclusive mode
-    if (!exclusiveMode.value) {
-      previousSelectedLines.value = new Set(selectedLines.value);
-      previousHiddenBusIds.value = new Set(hiddenBusIds.value);
-    }
-    
-    exclusiveMode.value = true;
-    exclusiveLine.value = { line: route.line, company: route.company };
-    selectedLines.value = new Set([`${route.company}-${route.line}`]);
-    
-    // Hide others
-    const newHiddenBusIds = new Set();
-    buses.value.forEach(bus => {
-      if (bus.line !== route.line) {
-        newHiddenBusIds.add(bus.id);
-      }
-    });
-    hiddenBusIds.value = newHiddenBusIds;
-    
-    // Show route and stops
-    showRouteAndStops(route);
-  }
 });
 
 // Note: Routes now come pre-computed from backend (OSRM cached on server)
@@ -595,26 +433,10 @@ const handleNodeClick = async (data, node) => {
         }
       });
       
-      // Show route specific to this bus
+      // Route now comes pre-computed from backend (OSRM cached on server)
       selectedRoute.value = bus.routeCoords || [];
       selectedRouteColor.value = bus.type === 'night' ? '#9933FF' : (bus.company === 'municipales' ? '#FDB913' : '#0066CC');
       selectedBusId.value = bus.id;
-      
-      // Calculate stops for this specific bus's direction
-      const stops = bus.stops || [];
-      visibleStops.value = stops.map(code => {
-        const stopInfo = apiStops.value[code];
-        if (!stopInfo) return null;
-        // Direction matters for stop coordinates
-        const coords = bus.tripDirection === 'outbound' ? stopInfo.outbound : stopInfo.inbound;
-        
-        return {
-          code: code,
-          name: code.charAt(0).toUpperCase() + code.slice(1).replace(/([A-Z])/g, ' $1').trim(),
-          coords: coords,
-          nextBus: bus // This bus is the one
-        };
-      }).filter(s => s !== null);
     }
     
     // Force reactivity
@@ -626,19 +448,12 @@ const handleNodeClick = async (data, node) => {
     const lineKey = `${data.company}-${data.line}`;
     const isDoubleClick = lastClickedLine.value === lineKey && (now - lastClickTime.value) < DOUBLE_CLICK_THRESHOLD;
     
-    // Always update selector to match click
-    if (selectedLine.value !== data.line) {
-        selectedLine.value = data.line; // This triggers the watcher, which handles exclusive mode
-        return; // Watcher will handle the rest
-    }
-
     if (isDoubleClick) {
       // DOUBLE CLICK - Exclusive mode
       if (exclusiveMode.value && exclusiveLine.value?.line === data.line && exclusiveLine.value?.company === data.company) {
         // We're already in exclusive mode for this line - EXIT exclusive mode
         exclusiveMode.value = false;
         exclusiveLine.value = null;
-        selectedLine.value = ''; // Reset filter
         
         // Restore previous state
         selectedLines.value = new Set(previousSelectedLines.value);
@@ -648,41 +463,42 @@ const handleNodeClick = async (data, node) => {
         if (selectedLines.value.size === 0) {
           updateBusVisibility();
         }
+      } else {
+        // ENTER exclusive mode
+        // Save current state before entering
+        previousSelectedLines.value = new Set(selectedLines.value);
+        previousHiddenBusIds.value = new Set(hiddenBusIds.value);
         
-        // Clear route
-        showRouteAndStops(null);
+        // Activate exclusive mode
+        exclusiveMode.value = true;
+        exclusiveLine.value = { line: data.line, company: data.company };
+        
+        // Select ONLY this line
+        selectedLines.value = new Set([lineKey]);
+        
+        // Hide all buses except those from this line
+        const newHiddenBusIds = new Set();
+        buses.value.forEach(bus => {
+          if (bus.line !== data.line || bus.company !== data.company) {
+            newHiddenBusIds.add(bus.id);
+          }
+        });
+        hiddenBusIds.value = newHiddenBusIds;
       }
     } else {
-      // SIMPLE CLICK - Toggle Selection
-      // If toggling off the currently selected line (which showed the route)
-      if (selectedLines.value.has(lineKey) && selectedRoute.value && exclusiveLine.value?.line === data.line) {
-         // Deselecting current line
-         showRouteAndStops(null);
-      } else {
-         // Selecting a line (show route)
-         showRouteAndStops(data.routeData);
-      }
-
+      // SIMPLE CLICK - Add/remove from selection
       if (exclusiveMode.value) {
         // If we're in exclusive mode, exit first
         exclusiveMode.value = false;
         exclusiveLine.value = null;
-        selectedLine.value = ''; // Reset filter
         selectedLines.value = new Set(previousSelectedLines.value);
       }
       
       // Toggle the line in selection
       if (selectedLines.value.has(lineKey)) {
         selectedLines.value.delete(lineKey);
-        // If we deselected, clear route if it was this one
-        if (selectedRoute.value && data.routeData && 
-            (selectedRouteColor.value === data.routeData.color || true)) {
-             showRouteAndStops(null);
-        }
       } else {
         selectedLines.value.add(lineKey);
-        // If added, show route
-        showRouteAndStops(data.routeData);
       }
       
       // Update bus visibility
@@ -693,6 +509,9 @@ const handleNodeClick = async (data, node) => {
     lastClickTime.value = now;
     lastClickedLine.value = lineKey;
     
+    // Clear selected route
+    selectedRoute.value = null;
+    
     // Force reactivity
     selectedLines.value = new Set(selectedLines.value);
     return;
@@ -701,18 +520,17 @@ const handleNodeClick = async (data, node) => {
   if (data.type === 'company') {
     // Click on a company - toggle all lines of that company
     const companyId = data.id;
-    
-    // Find lines for this company from apiRoutes instead of active buses
-    const companyRoutes = apiRoutes.value.filter(r => {
-        if (companyId === 'night') return r.type === 'night';
-        if (companyId === 'guaguas_global') return r.company === 'guaguas_global' || r.company === 'global';
-        return r.company === companyId && r.type !== 'night';
+    const companyBuses = buses.value.filter(b => {
+      if (companyId === 'night') {
+        return b.type === 'night';
+      }
+      return b.company === companyId && b.type !== 'night';
     });
-
-    // Get all unique lines keys
+    
+    // Get all unique lines from this company
     const companyLineKeys = new Set();
-    companyRoutes.forEach(r => {
-      companyLineKeys.add(`${r.company}-${r.line}`);
+    companyBuses.forEach(bus => {
+      companyLineKeys.add(`${bus.company}-${bus.line}`);
     });
     
     // Check if all are selected
@@ -730,13 +548,12 @@ const handleNodeClick = async (data, node) => {
     if (exclusiveMode.value) {
       exclusiveMode.value = false;
       exclusiveLine.value = null;
-      selectedLine.value = '';
     }
     
     updateBusVisibility();
     
     // Clear selected route
-    showRouteAndStops(null);
+    selectedRoute.value = null;
     
     // Force reactivity
     selectedLines.value = new Set(selectedLines.value);
@@ -767,30 +584,24 @@ const updateBusPositions = () => {
     const currentIndex = bus.currentRouteIndex || 0;
     const progress = bus.routeProgress || 0;
     
-    // Route density adjustment:
-    const densityFactor = Math.max(1, (bus.routeCoords.length || 2) / 30);
-
     // Variable speed: interurban buses are faster
     const baseSpeed = bus.type === 'interurban' ? 0.035 : 0.025;
     // Add small variation so they don't all move the same
     const speedVariation = 1 + (Math.sin(Date.now() / 1000 + bus.id.charCodeAt(4)) * 0.1);
-    
-    // Apply density factor to speed
-    const speedFactor = baseSpeed * speedVariation * densityFactor;
+    const speedFactor = baseSpeed * speedVariation;
     
     let newProgress = progress + speedFactor;
     let newIndex = currentIndex;
     
-    // Allow advancing multiple segments per tick (important for dense OSRM routes)
-    while (newProgress >= 1.0) {
+    // If completed current segment, advance to next point
+    if (newProgress >= 1.0) {
       newProgress = newProgress - 1.0; // Keep the excess for continuity
-      newIndex = newIndex + 1;
+      newIndex = currentIndex + 1;
       
       // If reached the end of route, return to start (circular route)
       if (newIndex >= bus.routeCoords.length - 1) {
         newIndex = 0;
         newProgress = 0;
-        break; // Stop the while loop to avoid infinite loops if speed is huge
       }
     }
     
@@ -874,7 +685,7 @@ const nightBuses = computed(() => buses.value.filter(bus => bus.type === 'night'
 const busStats = computed(() => ({
   active: activeBuses.value.length,
   municipales: municipalesBuses.value.length,
-  global: globalBuses.value.length,
+  guaguas_global: globalBuses.value.length,
   night: nightBuses.value.length,
   delayed: delayedBuses.value.length
 }));
@@ -897,40 +708,18 @@ onMounted(async () => {
     await loadBusData();
   } catch (err) {
     console.error('Failed to load bus data:', err);
-    // Error is already set in useBusData state
     return;
   }
   
   buses.value = generateBuses();
   
-  // Smart expansion: Expand the company with most active buses
-  const counts = {
-    municipales: municipalesBuses.value.length,
-    guaguas_global: globalBuses.value.length,
-    night: nightBuses.value.length
-  };
-  
-  // Find key with max value
-  const winner = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
-  
-  // If winner has 0 (all empty), default to 'municipales' or whatever logic you prefer
-  if (counts[winner] > 0) {
-    expandedKeys.value = [winner];
-  } else {
-    expandedKeys.value = ['municipales']; // Fallback
-  }
-
   // Initialize visibility: hide lines that are not main
   // Main lines are shown by default
   updateBusVisibility();
   
   // Update bus positions every 5 seconds
   updateInterval.value = setInterval(() => {
-    try {
-      updateBusPositions();
-    } catch (error) {
-      console.error('Error updating bus positions:', error);
-    }
+    updateBusPositions();
   }, 5000);
   
   // Add resize listener
@@ -939,7 +728,7 @@ onMounted(async () => {
 
 // Watch for data changes to regenerate buses
 watch(isDataLoaded, (loaded) => {
-  if (loaded && apiRoutes.value?.length > 0) {
+  if (loaded) {
     buses.value = generateBuses();
     updateBusVisibility();
   }

@@ -3,6 +3,7 @@ import laravel from 'laravel-vite-plugin';
 import tailwindcss from '@tailwindcss/vite';
 import vue from '@vitejs/plugin-vue';
 import path from 'path';
+import { VueMcp } from 'vite-plugin-vue-mcp';
 
 export default defineConfig({
     resolve: {
@@ -17,6 +18,7 @@ export default defineConfig({
         }),
         tailwindcss(),
         vue(),
+        VueMcp(),
     ],
     server: {
         host: 'portfolio.test',

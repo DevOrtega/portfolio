@@ -27,12 +27,20 @@ const apiClient = axios.create({
  * @throws {Error} Re-throws with a user-friendly message
  */
 const handleError = (error) => {
+  console.error('API Error Details:', {
+    message: error.message,
+    status: error.response?.status,
+    data: error.response?.data,
+    url: error.config?.url,
+    baseURL: error.config?.baseURL
+  });
+
   if (error.response) {
     // Server responded with error status
     throw new Error(error.response.data?.message || `Error ${error.response.status}`);
   } else if (error.request) {
     // Request made but no response received
-    throw new Error('Network error: Unable to reach the server');
+    throw new Error('Network error: Unable to reach the server. Please check if the backend is running and accessible.');
   } else {
     // Error setting up the request
     throw new Error(error.message || 'An unexpected error occurred');
@@ -49,6 +57,7 @@ export const fetchBusData = async () => {
     return response.data;
   } catch (error) {
     handleError(error);
+    throw error; // Re-throw for caller handling
   }
 };
 
@@ -62,6 +71,7 @@ export const fetchBusRoutes = async () => {
     return response.data.routes;
   } catch (error) {
     handleError(error);
+    throw error; // Re-throw for caller handling
   }
 };
 
@@ -75,6 +85,7 @@ export const fetchBusStops = async () => {
     return response.data.stops;
   } catch (error) {
     handleError(error);
+    throw error; // Re-throw for caller handling
   }
 };
 
@@ -88,6 +99,7 @@ export const fetchBusCompanies = async () => {
     return response.data.companies;
   } catch (error) {
     handleError(error);
+    throw error; // Re-throw for caller handling
   }
 };
 
