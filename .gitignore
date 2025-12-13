@@ -31,3 +31,7 @@ secrets/
 # Database
 /database/*.sqlite
 /database/*.sqlite-journal
+
+cloudflared.deb
+github_deploy_key
+github_deploy_key.pub
