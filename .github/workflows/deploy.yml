@@ -13,8 +13,17 @@ jobs:
 
     - name: Instalar Cloudflared
       run: |
-        curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
-        sudo dpkg -i cloudflared.deb
+        # Usamos wget que maneja mejor las redirecciones de GitHub
+        wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        
+        # Le damos permisos de ejecución
+        chmod +x cloudflared-linux-amd64
+        
+        # Lo movemos a la carpeta de binarios y lo renombramos
+        sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
+        
+        # Verificamos que funcione
+        cloudflared --version
 
     - name: Configurar SSH y Túnel
       run: |
