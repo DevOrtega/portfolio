@@ -1,0 +1,39 @@
+name: Deploy Portfolio
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        default: 'production'
+      mode:
+        description: 'Deployment mode (deploy/build)'
+        required: true
+        default: 'deploy'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.PORT || 22 }}
+          script: |
+            # 1. Ir a la carpeta del proyecto
+            cd /var/www/tu-proyecto # <--- AJUSTA ESTA RUTA A TU RUTA REAL EN EL VPS
+
+            # 2. Bajar últimos cambios de GitHub
+            echo "⬇️ Pulling changes from Git..."
+            git pull origin main
+
+            # 3. Asegurar permisos de ejecución
+            chmod +x deploy-compose.sh
+
+            # 4. Ejecutar el script con el modo seleccionado (deploy o build)
+            echo "🚀 Executing deploy script mode: ${{ inputs.mode }}..."
+            ./deploy-compose.sh ${{ inputs.mode }}

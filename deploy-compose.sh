@@ -73,6 +73,32 @@ case "$1" in
     fi
     ;;
     
+  deploy)
+    echo "🚀 Starting PRODUCTION deployment..."
+    
+    echo "⬇️ Pulling latest images..."
+    docker compose pull
+    
+    echo "🔨 Rebuilding containers (if needed)..."
+    docker compose up -d --build
+    
+    echo "⏳ Waiting for services..."
+    sleep 5
+    
+    echo "📦 Running migrations (SAFE MODE - No data loss)..."
+    # Cambiamos 'migrate:fresh' por 'migrate' para no borrar datos
+    docker compose exec -T portfolio php artisan migrate --force
+    
+    echo "🔥 Warming up caches..."
+    docker compose exec -T portfolio php artisan config:cache
+    docker compose exec -T portfolio php artisan route:cache
+    docker compose exec -T portfolio php artisan view:cache
+    # Opcional: Si quieres recargar rutas OSRM o similar sin borrar DB
+    # docker compose exec -T portfolio php artisan bus:cache-warmup 
+    
+    echo "✅ Production deployment successful!"
+    docker compose ps
+    ;;
   *)
     echo "Portfolio Deployment Script"
     echo ""
