@@ -22,6 +22,26 @@
         "-y",
         "@modelcontextprotocol/server-github"
       ]
+    },
+    "notebooklm": {
+      "command": "npx",
+      "args": [
+        "notebooklm-mcp@latest"
+      ]
+    },
+    "perplexity": {
+      "command": "npx",
+      "args": [
+        "@perplexity-ai/mcp-server"
+      ]
+    },
+    "cloudflare": {
+      "command": "uvx",
+      "args": [
+        "--from",
+        "cloudflare-mcp-server",
+        "cloudflare-mcp-server"
+      ]
     }
   }
 }
