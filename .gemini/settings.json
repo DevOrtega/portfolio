@@ -36,11 +36,12 @@
       ]
     },
     "cloudflare": {
-      "command": "uvx",
+      "command": "uv",
       "args": [
-        "--from",
-        "cloudflare-mcp-server",
-        "cloudflare-mcp-server"
+        "run",
+        "--directory",
+        "/mnt/c/users/carlo/cloudflare-mcp-server",
+        "main.py"
       ]
     }
   }

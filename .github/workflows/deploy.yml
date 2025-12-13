@@ -1,39 +1,59 @@
-name: Deploy Portfolio
+name: Deploy Portfolio Production
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Environment to deploy to'
-        required: true
-        default: 'production'
-      mode:
-        description: 'Deployment mode (deploy/build)'
-        required: true
-        default: 'deploy'
+  push:
+    branches: [ "main" ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.0.3
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USERNAME }}
-          key: ${{ secrets.SSH_KEY }}
-          port: ${{ secrets.PORT || 22 }}
-          script: |
-            # 1. Ir a la carpeta del proyecto
-            cd /root/portfolio # <--- AJUSTA ESTA RUTA A TU RUTA REAL EN EL VPS
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-            # 2. Bajar últimos cambios de GitHub
-            echo "⬇️ Pulling changes from Git..."
-            git pull origin main
+    - name: Instalar Cloudflared
+      run: |
+        curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
+        sudo dpkg -i cloudflared.deb
 
-            # 3. Asegurar permisos de ejecución
-            chmod +x deploy-compose.sh
+    - name: Configurar SSH y Túnel
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        
+        # Agregamos el host a known_hosts para evitar el prompt de "Yes/No"
+        # Usamos ssh-keyscan aunque al ir por túnel a veces falla, el StrictHostKeyChecking no abajo ayuda
+        
+        # Configuración del ProxyCommand con los tokens de Cloudflare
+        echo "Host deploy-target
+          HostName ${{ secrets.SSH_HOST }}
+          User ${{ secrets.SSH_USER }}
+          StrictHostKeyChecking no
+          ProxyCommand cloudflared access ssh --hostname %h --id ${{ secrets.CF_CLIENT_ID }} --secret ${{ secrets.CF_CLIENT_SECRET }}
+        " >> ~/.ssh/config
 
-            # 4. Ejecutar el script con el modo seleccionado (deploy o build)
-            echo "🚀 Executing deploy script mode: ${{ inputs.mode }}..."
-            ./deploy-compose.sh ${{ inputs.mode }}
+    - name: Desplegar en Servidor
+      run: |
+        # AJUSTA LA RUTA DE ABAJO SI TU PROYECTO ESTÁ EN OTRA CARPETA
+        TARGET_DIR="/root/portfolio"
+        
+        echo "🚀 Conectando al servidor..."
+        ssh deploy-target "
+          set -e
+          
+          # 1. Ir al directorio
+          cd $TARGET_DIR
+          
+          # 2. Descartar cambios locales si los hubiera (para evitar conflictos)
+          git checkout .
+          
+          # 3. Descargar el código nuevo
+          git pull origin main
+          
+          # 4. Asegurar que el script es ejecutable
+          chmod +x deploy-compose.sh
+          
+          # 5. Ejecutar TU script con la opción 'deploy'
+          ./deploy-compose.sh deploy
+        "
