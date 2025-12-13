@@ -25,7 +25,7 @@ jobs:
           port: ${{ secrets.PORT || 22 }}
           script: |
             # 1. Ir a la carpeta del proyecto
-            cd /var/www/tu-proyecto # <--- AJUSTA ESTA RUTA A TU RUTA REAL EN EL VPS
+            cd /root/portfolio # <--- AJUSTA ESTA RUTA A TU RUTA REAL EN EL VPS
 
             # 2. Bajar últimos cambios de GitHub
             echo "⬇️ Pulling changes from Git..."
