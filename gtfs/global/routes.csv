@@ -1,7 +1,7 @@
 route_id,agency_id,route_short_name,route_long_name,route_type,route_color,route_text_color
 global-1,global,1,"Las Palmas - Puerto de Mogán",3,0066CC,FFFFFF
 global-5,global,5,"Las Palmas - Faro de Maspalomas",3,0066CC,FFFFFF
-global-30,global,30,"Santa Catalina - Faro de Maspalomas",3,0066CC,FFFFFF
-global-60,global,60,"Las Palmas - Aeropuerto",3,0066CC,FFFFFF
+global-30,global,30,"Santa Catalina - Faro de Maspalomas (Directo)",3,0066CC,FFFFFF
+global-60,global,60,"Las Palmas - Aeropuerto (Directo)",3,0066CC,FFFFFF
 global-91,global,91,"Las Palmas - Puerto de Mogán (Directo)",3,0066CC,FFFFFF
 global-105,global,105,"Las Palmas - Gáldar",3,0066CC,FFFFFF
