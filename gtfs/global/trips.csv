@@ -1,0 +1,13 @@
+route_id,service_id,trip_id,trip_headsign,direction_id,shape_id
+global-1,DAILY,T-1-Out,"Puerto de Mogán",0,
+global-1,DAILY,T-1-In,"Las Palmas",1,
+global-5,DAILY,T-5-Out,"Faro de Maspalomas",0,
+global-5,DAILY,T-5-In,"Las Palmas",1,
+global-30,DAILY,T-30-Out,"Faro de Maspalomas",0,
+global-30,DAILY,T-30-In,"Santa Catalina",1,
+global-60,DAILY,T-60-Out,Aeropuerto,0,
+global-60,DAILY,T-60-In,"Las Palmas",1,
+global-91,DAILY,T-91-Out,"Puerto de Mogán",0,
+global-91,DAILY,T-91-In,"Las Palmas",1,
+global-105,DAILY,T-105-Out,Gáldar,0,
+global-105,DAILY,T-105-In,"Las Palmas",1,
