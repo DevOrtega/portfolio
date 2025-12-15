@@ -231,7 +231,7 @@ const updateInterval = ref(null);
 const isMobile = () => window.innerWidth < 640;
 const treeVisible = ref(!isMobile());
 const hiddenBusIds = ref(new Set());
-const expandedKeys = ref(['municipales', 'guaguas_global']); // Default, updated on load
+const expandedKeys = ref(['municipales', 'global']); // Default, updated on load
 
 // Initialize bus selection composable (pass mainLines from API)
 const {
@@ -458,7 +458,7 @@ const treeData = computed(() => {
   
   const globalNodes = buildCompanyNodes(
     r => (r.company === 'guaguas_global' || r.company === 'global'), 
-    'guaguas_global'
+    'global'
   );
   
   const nightNodes = buildCompanyNodes(
@@ -474,7 +474,7 @@ const treeData = computed(() => {
       children: municipalesNodes
     },
     {
-      id: 'guaguas_global',
+      id: 'global',
       label: t('guaguas.global'),
       type: 'company',
       children: globalNodes
@@ -705,7 +705,7 @@ const handleNodeClick = async (data, node) => {
     // Find lines for this company from apiRoutes instead of active buses
     const companyRoutes = apiRoutes.value.filter(r => {
         if (companyId === 'night') return r.type === 'night';
-        if (companyId === 'guaguas_global') return r.company === 'guaguas_global' || r.company === 'global';
+        if (companyId === 'global' || companyId === 'guaguas_global') return r.company === 'guaguas_global' || r.company === 'global';
         return r.company === companyId && r.type !== 'night';
     });
 
@@ -866,7 +866,7 @@ const delayedBuses = computed(() => buses.value.filter(bus => bus.delayed));
 
 const municipalesBuses = computed(() => buses.value.filter(bus => bus.company === 'municipales' && bus.type !== 'night'));
 
-const globalBuses = computed(() => buses.value.filter(bus => bus.company === 'guaguas_global'));
+const globalBuses = computed(() => buses.value.filter(bus => bus.company === 'global' || bus.company === 'guaguas_global'));
 
 const nightBuses = computed(() => buses.value.filter(bus => bus.type === 'night'));
 
@@ -906,7 +906,7 @@ onMounted(async () => {
   // Smart expansion: Expand the company with most active buses
   const counts = {
     municipales: municipalesBuses.value.length,
-    guaguas_global: globalBuses.value.length,
+    global: globalBuses.value.length,
     night: nightBuses.value.length
   };
   
