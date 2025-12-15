@@ -24,6 +24,9 @@ case "$1" in
     echo "📦 Running migrations..."
     docker compose exec -T portfolio php artisan migrate:fresh --force
     
+    echo "🔄 Generating Global GTFS files..."
+    docker compose exec -T portfolio php artisan bus:generate-global-gtfs
+    
     echo "🌱 Seeding database (includes GTFS import)..."
     docker compose exec -T portfolio php artisan db:seed --force
     
@@ -42,6 +45,9 @@ case "$1" in
     ;;
 
   seed)
+    echo "🔄 Generating Global GTFS files..."
+    docker compose exec -T portfolio php artisan bus:generate-global-gtfs
+
     echo "🌱 Seeding database (includes GTFS import)..."
     docker compose exec -T portfolio php artisan db:seed --force
     
