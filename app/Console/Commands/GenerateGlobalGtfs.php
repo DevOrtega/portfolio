@@ -164,8 +164,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Puerto de Mogán',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'telde', 'aeropuerto', 'vecindario', 'sanAgustin', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
-                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'sanAgustin', 'vecindario', 'aeropuerto', 'telde', 'estacionSanTelmo']
+                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'cruceMelenara', 'aeropuerto', 'cruce_de_arinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
+                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruce_de_arinaga', 'aeropuerto', 'cruceMelenara', 'hospitalInsular', 'estacionSanTelmo']
             ],
             [
                 'id' => 'global-5',
@@ -174,8 +174,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Faro de Maspalomas',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'telde', 'aeropuerto', 'vecindario', 'sanAgustin', 'playaIngles', 'faroMaspalomas'],
-                'stops_inbound' => ['faroMaspalomas', 'playaIngles', 'sanAgustin', 'vecindario', 'aeropuerto', 'telde', 'estacionSanTelmo']
+                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'cruceMelenara', 'aeropuerto', 'cruce_de_arinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'faroMaspalomas'],
+                'stops_inbound' => ['faroMaspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruce_de_arinaga', 'aeropuerto', 'cruceMelenara', 'hospitalInsular', 'estacionSanTelmo']
             ],
             [
                 'id' => 'global-30',
@@ -194,8 +194,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Aeropuerto',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'autopistaSur', 'aeropuerto'],
-                'stops_inbound' => ['aeropuerto', 'autopistaSur', 'santaCatalina']
+                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'autopistaSur', 'aeropuerto'],
+                'stops_inbound' => ['aeropuerto', 'autopistaSur', 'hospitalInsular', 'santaCatalina']
             ],
             [
                 'id' => 'global-91',
@@ -214,8 +214,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Gáldar',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'tamaraceite', 'arucas', 'guia', 'galdar'],
-                'stops_inbound' => ['galdar', 'guia', 'arucas', 'tamaraceite', 'estacionSanTelmo']
+                'stops_outbound' => ['estacionSanTelmo', 'tamaraceite', 'banaderos', 'arucas', 'guia', 'galdar'],
+                'stops_inbound' => ['galdar', 'guia', 'arucas', 'banaderos', 'tamaraceite', 'estacionSanTelmo']
             ],
         ];
     }
@@ -236,6 +236,7 @@ class GenerateGlobalGtfs extends Command
             'teatro' => ['lat' => 28.1040, 'lng' => -15.4140],
             'sanTelmo' => ['lat' => 28.1080, 'lng' => -15.4170],
             'estacionSanTelmo' => ['lat' => 28.1085, 'lng' => -15.4175],
+            'hospitalInsular' => ['lat' => 28.0905, 'lng' => -15.4185],
             'rehoyas' => ['lat' => 28.1150, 'lng' => -15.4300],
             'cruzDePiedra' => ['lat' => 28.1200, 'lng' => -15.4350],
             'schamann' => ['lat' => 28.1250, 'lng' => -15.4400],
@@ -249,9 +250,12 @@ class GenerateGlobalGtfs extends Command
             'tamaraceite' => ['lat' => 28.1000, 'lng' => -15.4700],
             'telde' => ['lat' => 27.9941, 'lng' => -15.4166],
             'teldeIntercambiador' => ['lat' => 27.9945, 'lng' => -15.4170],
+            'cruceMelenara' => ['lat' => 27.9880, 'lng' => -15.3750],
             'aeropuerto' => ['lat' => 27.9319, 'lng' => -15.3866],
             'vecindario' => ['lat' => 27.8414, 'lng' => -15.4489],
+            'juanGrande' => ['lat' => 27.8000, 'lng' => -15.4800],
             'sanAgustin' => ['lat' => 27.7750, 'lng' => -15.5480],
+            'elVeril' => ['lat' => 27.7650, 'lng' => -15.5600],
             'playaIngles' => ['lat' => 27.7580, 'lng' => -15.5720],
             'maspalomas' => ['lat' => 27.7609, 'lng' => -15.5865],
             'aguimes' => ['lat' => 27.9050, 'lng' => -15.4445],
@@ -283,13 +287,13 @@ class GenerateGlobalGtfs extends Command
             'puertoNieves' => ['lat' => 28.0985, 'lng' => -15.7025],
             'moya' => ['lat' => 28.1095, 'lng' => -15.5870],
             'firgas' => ['lat' => 28.1090, 'lng' => -15.5615],
-            'bananeros' => ['lat' => 28.1355, 'lng' => -15.5275],
+            'banaderos' => ['lat' => 28.1350, 'lng' => -15.5200],
             'cardones' => ['lat' => 28.1280, 'lng' => -15.5180],
             'santaBrigida' => ['lat' => 28.0340, 'lng' => -15.5005],
             'sanMateo' => ['lat' => 28.0135, 'lng' => -15.5320],
             'tejeda' => ['lat' => 27.9940, 'lng' => -15.6140],
             'artenara' => ['lat' => 28.0205, 'lng' => -15.6445],
-            'valsequillo' => ['lat' => 27.9870, 'lng' => -15.4955],
+            'valsequillo' => ['lat' => 27.9870, 'lng' => -15.4955]
         ];
     }
 }

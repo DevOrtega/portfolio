@@ -10,6 +10,7 @@ hoyaDeLaPlata,HoyaDeLaPlata,28.075,-15.42
 teatro,Teatro,28.104,-15.414
 sanTelmo,SanTelmo,28.108,-15.417
 estacionSanTelmo,EstacionSanTelmo,28.1085,-15.4175
+hospitalInsular,HospitalInsular,28.0905,-15.4185
 rehoyas,Rehoyas,28.115,-15.43
 cruzDePiedra,CruzDePiedra,28.12,-15.435
 schamann,Schamann,28.125,-15.44
@@ -23,9 +24,12 @@ sietePalmas,SietePalmas,28.105,-15.455
 tamaraceite,Tamaraceite,28.1,-15.47
 telde,Telde,27.9941,-15.4166
 teldeIntercambiador,TeldeIntercambiador,27.9945,-15.417
+cruceMelenara,CruceMelenara,27.988,-15.375
 aeropuerto,Aeropuerto,27.9319,-15.3866
 vecindario,Vecindario,27.8414,-15.4489
+juanGrande,JuanGrande,27.8,-15.48
 sanAgustin,SanAgustin,27.775,-15.548
+elVeril,ElVeril,27.765,-15.56
 playaIngles,PlayaIngles,27.758,-15.572
 maspalomas,Maspalomas,27.7609,-15.5865
 aguimes,Aguimes,27.905,-15.4445
@@ -57,7 +61,7 @@ agaete,Agaete,28.1015,-15.6985
 puertoNieves,PuertoNieves,28.0985,-15.7025
 moya,Moya,28.1095,-15.587
 firgas,Firgas,28.109,-15.5615
-bananeros,Bananeros,28.1355,-15.5275
+banaderos,Banaderos,28.135,-15.52
 cardones,Cardones,28.128,-15.518
 santaBrigida,SantaBrigida,28.034,-15.5005
 sanMateo,SanMateo,28.0135,-15.532
