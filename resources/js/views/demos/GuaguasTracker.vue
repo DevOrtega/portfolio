@@ -515,6 +515,9 @@ const showRouteAndStops = (routeData) => {
   // Use outbound stops by default for visualization
   const stopsList = routeData.stops_outbound || [];
   visibleStops.value = stopsList.map(code => {
+    // Hide technical waypoints
+    if (code.startsWith('waypoint_')) return null;
+
     const stopInfo = apiStops.value[code];
     if (!stopInfo) return null;
     

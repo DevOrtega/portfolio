@@ -164,8 +164,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Puerto de Mogán',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'cruceMelenara', 'aeropuerto', 'cruce_de_arinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
-                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruce_de_arinaga', 'aeropuerto', 'cruceMelenara', 'hospitalInsular', 'estacionSanTelmo']
+                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'cruceMelenara', 'waypoint_gando_norte', 'aeropuerto', 'cruceArinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
+                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruceArinaga', 'aeropuerto', 'waypoint_gando_norte', 'cruceMelenara', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo']
             ],
             [
                 'id' => 'global-5',
@@ -174,8 +174,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Faro de Maspalomas',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'cruceMelenara', 'aeropuerto', 'cruce_de_arinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'faroMaspalomas'],
-                'stops_inbound' => ['faroMaspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruce_de_arinaga', 'aeropuerto', 'cruceMelenara', 'hospitalInsular', 'estacionSanTelmo']
+                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'cruceMelenara', 'waypoint_gando_norte', 'aeropuerto', 'cruceArinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'faroMaspalomas'],
+                'stops_inbound' => ['faroMaspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruceArinaga', 'aeropuerto', 'waypoint_gando_norte', 'cruceMelenara', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo']
             ],
             [
                 'id' => 'global-30',
@@ -184,8 +184,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Santa Catalina',
                 'destination' => 'Faro de Maspalomas',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'autopistaSur', 'faroMaspalomas'],
-                'stops_inbound' => ['faroMaspalomas', 'autopistaSur', 'santaCatalina']
+                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'autopistaSur', 'elVeril', 'faroMaspalomas'],
+                'stops_inbound' => ['faroMaspalomas', 'elVeril', 'autopistaSur', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'santaCatalina']
             ],
             [
                 'id' => 'global-60',
@@ -194,8 +194,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Aeropuerto',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'autopistaSur', 'aeropuerto'],
-                'stops_inbound' => ['aeropuerto', 'autopistaSur', 'hospitalInsular', 'santaCatalina']
+                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'autopistaSur', 'aeropuerto'],
+                'stops_inbound' => ['aeropuerto', 'autopistaSur', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'santaCatalina']
             ],
             [
                 'id' => 'global-91',
@@ -204,8 +204,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Puerto de Mogán',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'autopistaSur', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
-                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'autopistaSur', 'santaCatalina']
+                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'autopistaSur', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
+                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'autopistaSur', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'santaCatalina']
             ],
             [
                 'id' => 'global-105',
@@ -225,6 +225,9 @@ class GenerateGlobalGtfs extends Command
         // Based on BusDataSeeder::getGlobalStopsData
         // Flattened the structure for GTFS (lat/lng outbound as default)
         return [
+            'waypoint_jinamar' => ['lat' => 28.0450, 'lng' => -15.4150],
+            'waypoint_taliarte' => ['lat' => 28.0000, 'lng' => -15.3900],
+            'waypoint_gando_norte' => ['lat' => 27.9600, 'lng' => -15.3800],
             'puerto' => ['lat' => 28.1480, 'lng' => -15.4285],
             'santaCatalina' => ['lat' => 28.1400, 'lng' => -15.4295],
             'mesaYLopez' => ['lat' => 28.1330, 'lng' => -15.4350],
