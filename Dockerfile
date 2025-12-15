@@ -5,7 +5,7 @@ USER root
 
 # Install Node.js and required PHP extensions
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs libicu-dev zip unzip sqlite3 && \
+    apt-get install -y nodejs libicu-dev zip unzip sqlite3 gdal-bin python3 python3-rasterio && \
     docker-php-ext-install bcmath intl && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\EducationController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\BusController;
 use App\Http\Controllers\Admin\AdminAuthController;
+use App\Http\Controllers\HikingController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -28,6 +29,11 @@ Route::prefix('bus')->group(function () {
     Route::get('/routes', [BusController::class, 'routes']);
     Route::get('/stops', [BusController::class, 'stops']);
     Route::get('/companies', [BusController::class, 'companies']);
+});
+
+// Hiking demo routes
+Route::prefix('hiking')->group(function () {
+    Route::get('/route', [HikingController::class, 'route']);
 });
 
 // Contact form (rate limited)

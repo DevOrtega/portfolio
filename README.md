@@ -64,6 +64,7 @@ A modern, professional portfolio built with cutting-edge PHP and JavaScript tech
 - npm >= 11.x
 - Composer
 - SQLite or MySQL/PostgreSQL
+- Python 3.x with `rasterio` and `gdal-bin` (for Hiking demo)
 
 ### Quick Installation (Recommended)
 
@@ -168,6 +169,7 @@ Full documentation available at [http://localhost:8000/api/documentation](http:/
 | GET | `/api/education` | `?year=2023` (optional) | Academic background, filterable by year |
 | GET | `/api/skills` | `?year=2023` (optional) | Technical skills categorized, filterable by experience year |
 | GET | `/api/bus/data` | - | Bus tracking data (companies, lines, stops, routes) |
+| GET | `/api/hiking/route` | `?start=lat,lon&end=lat,lon` | Hiking route with 3D elevation profile |
 
 ### Response Example
 
@@ -203,6 +205,16 @@ The portfolio includes functional demos of real projects:
   - Smooth movement interpolation between route points
   - **NEW**: Database-backed with hexagonal architecture
   - **NEW**: API endpoint for bus data (`/api/bus/data`)
+
+### Hiking Route Planner
+- **Route**: `/projects/demo/hiking-planner`
+- **Technologies**: Laravel (PHP), Python (GDAL/Rasterio), Leaflet
+- **Features**:
+  - Calculation of hiking routes between two points
+  - Integration with OSRM (Open Source Routing Machine) for trails
+  - **3D Elevation**: Uses local Digital Terrain Models (DTM/MDT) to calculate precise altitude
+  - Elevation profiles (gain/loss stats)
+  - Hybrid PHP+Python architecture for geospatial processing
 
 ### ATM Manager
 - **Route**: `/projects/demo/atm-manager`

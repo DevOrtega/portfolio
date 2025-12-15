@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
  */
 final readonly class OsrmService
 {
-    private const OSRM_URL = 'https://router.project-osrm.org/route/v1/driving';
+    private const OSRM_BASE_URL = 'https://router.project-osrm.org/route/v1';
     private const CACHE_TTL = 86400; // 24 hours in seconds
     private const MAX_WAYPOINTS = 25; // OSRM limit for free tier
     
@@ -22,16 +22,17 @@ final readonly class OsrmService
      * Get real road route between waypoints
      * 
      * @param array $coordinates Array of [lat, lng] coordinates
+     * @param string $profile OSRM profile (driving, foot, bicycle)
      * @return array Route coordinates following real roads
      */
-    public function getRoute(array $coordinates): array
+    public function getRoute(array $coordinates, string $profile = 'driving'): array
     {
         if (count($coordinates) < 2) {
             return $coordinates;
         }
         
-        // Create cache key from coordinates
-        $cacheKey = 'osrm_route_' . md5(json_encode($coordinates));
+        // Create cache key from coordinates and profile
+        $cacheKey = 'osrm_route_' . $profile . '_' . md5(json_encode($coordinates));
         
         // Try to get from cache
         $cached = Cache::get($cacheKey);
@@ -40,7 +41,7 @@ final readonly class OsrmService
         }
 
         // Fetch from API
-        $route = $this->fetchRoute($coordinates);
+        $route = $this->fetchRoute($coordinates, $profile);
         
         // Only cache if we got a real route (more points than input, or at least successful response)
         // If we got fallback (same count as input), do not cache (or cache for short time)
@@ -57,11 +58,90 @@ final readonly class OsrmService
     }
     
     /**
+     * Get routes with custom options (e.g. alternatives)
+     * Returns the raw 'routes' array from OSRM response.
+     */
+    public function getRoutesWithOptions(array $coordinates, string $profile = 'driving', array $options = []): array
+    {
+        if (count($coordinates) < 2) {
+            return [];
+        }
+
+        // Cache key includes options
+        $cacheKey = 'osrm_raw_' . $profile . '_' . md5(json_encode($coordinates) . json_encode($options));
+        
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($coordinates, $profile, $options) {
+            $server = config('services.osrm.server') ?? env('OSRM_SERVER');
+            
+            if (!$server) {
+                 // Default to standard OSRM or localhost if developing with local OSRM
+                 $baseUrl = self::OSRM_BASE_URL . '/' . $profile;
+            } else {
+                 // Ensure we handle trailing slashes and profiles correctly
+                 // If server is "http://osrm:5000/route/v1", append profile
+                 $baseUrl = rtrim($server, '/') . '/' . $profile;
+            }
+
+            try {
+                $waypoints = $this->reduceWaypoints($coordinates, self::MAX_WAYPOINTS);
+                
+                $coordString = collect($waypoints)
+                    ->map(fn($coord) => $coord[1] . ',' . $coord[0])
+                    ->join(';');
+                
+                // Merge default options with user options
+                $queryParams = array_merge([
+                    'overview' => 'full',
+                    'geometries' => 'geojson',
+                ], $options);
+
+                $url = $baseUrl . '/' . $coordString . '?' . http_build_query($queryParams);
+                
+                Log::debug('OSRM raw request', ['url' => $url]);
+                
+                $response = Http::timeout(10)->get($url);
+                
+                if (!$response->successful()) {
+                    return [];
+                }
+                
+                $data = $response->json();
+                
+                if (($data['code'] ?? '') !== 'Ok' || empty($data['routes'])) {
+                    return [];
+                }
+
+                // Transform geometries in all routes from [lng, lat] to [lat, lng]
+                $routes = $data['routes'];
+                foreach ($routes as &$route) {
+                    $route['geometry']['coordinates'] = array_map(
+                        fn($coord) => [$coord[1], $coord[0]],
+                        $route['geometry']['coordinates']
+                    );
+                }
+                
+                return $routes;
+
+            } catch (\Exception $e) {
+                Log::error('OSRM raw error', ['message' => $e->getMessage()]);
+                return [];
+            }
+        });
+    }
+
+    /**
      * Fetch route from OSRM API
      */
-    private function fetchRoute(array $coordinates): array
+    private function fetchRoute(array $coordinates, string $profile): array
     {
-        $baseUrl = config('services.osrm.server') ?? env('OSRM_SERVER', 'https://router.project-osrm.org/route/v1/driving');
+        $server = config('services.osrm.server') ?? env('OSRM_SERVER');
+        
+        if (!$server) {
+             $baseUrl = self::OSRM_BASE_URL . '/' . $profile;
+        } else {
+             // Handle custom server logic if needed, or assume standard structure
+             $baseUrl = rtrim($server, '/') . '/route/v1/' . $profile;
+        }
 
         try {
             // Reduce waypoints if too many (take key points)

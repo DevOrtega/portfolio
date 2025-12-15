@@ -28,7 +28,7 @@ services:
       - MAIL_FROM_ADDRESS=onboarding@resend.dev
       - MAIL_FROM_NAME=Carlos Ortega Portfolio
       # Services
-      - OSRM_SERVER=${OSRM_SERVER:-https://router.project-osrm.org/route/v1/driving}
+      - OSRM_SERVER=http://osrm:5000/route/v1
     volumes:
       - portfolio_storage:/var/www/html/storage
     healthcheck:
@@ -36,7 +36,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
     restart: unless-stopped
     deploy:
       resources:
@@ -46,6 +45,20 @@ services:
         reservations:
           cpus: '0.25'
           memory: 256M
+    networks:
+      - portfolio_network
+    depends_on:
+      - osrm
+
+  osrm:
+    image: osrm/osrm-backend
+    container_name: portfolio-osrm
+    restart: always
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./docker/osrm:/data
+    command: osrm-routed --algorithm mld /data/gran-canaria.osrm
     networks:
       - portfolio_network
 

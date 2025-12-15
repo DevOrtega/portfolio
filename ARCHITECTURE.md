@@ -227,6 +227,50 @@ useBusData.js (Composable)
      │
      ▼
 useBusMap.js + Leaflet (Mapa interactivo)
+## Hiking Domain Architecture (Hybrid PHP + Python)
+
+El dominio de Senderismo implementa una arquitectura híbrida para manejar cálculos geoespaciales complejos (elevación sobre raster):
+
+### Componentes
+
+1.  **HikingController**: Punto de entrada HTTP.
+2.  **OsrmService**: Servicio compartido para obtener rutas planas (2D).
+3.  **ElevationService**: Servicio adaptador que comunica con el script de Python.
+4.  **add_elevation.py**: Script Python que usa `rasterio` y `GDAL` para interrogar el MDT.
+5.  **MDT (Modelos Digitales del Terreno)**: Archivos `.tif` locales con datos de elevación.
+
+### Flujo de Datos Hiking
+
+```
+Frontend (Leaflet)
+     │
+     ▼
+GET /api/hiking/route (start, end)
+     │
+     ▼
+HikingController
+     │
+     ▼
+GetHikingRouteService (Application)
+     │
+     ├─► 1. OsrmService (Obtiene ruta 2D lat/lon)
+     │
+     ├─► 2. ElevationService
+     │          │
+     │          ▼
+     │      Process::run('python3 add_elevation.py')
+     │          │
+     │          ▼
+     │      GDAL/Rasterio (Lee .tif)
+     │          │
+     │          ▼
+     │      Devuelve JSON con Z (lat, lon, ele)
+     │
+     └─► 3. Calcula estadísticas (Desnivel +, Desnivel -)
+     │
+     ▼
+JSON GeoJSON Response (3D)
+```
 
 ## Flujo de Datos
 
