@@ -226,6 +226,18 @@ The portfolio includes functional demos of real projects:
 - University researchers portal
 - Google Assistant chatbot
 
+## Model Context Protocol (MCP)
+
+This project implements the **Model Context Protocol (MCP)** to empower AI agents with real-time capabilities:
+
+- **MCP Server**: Full implementation within Laravel
+- **Custom Tools**:
+  - `osrm_get_route`: Allows AI to query real driving routes and traffic data
+- **Expert Prompts**: specialized system prompts for Testing, Architecture, and SOLID principles
+- **Seamless Integration**: Configuration via `config/mcp.php` and `McpServiceProvider`
+
+This allows AI assistants (like Claude or Gemini) to interact deeply with the project's context and tools.
+
 ## Project Architecture
 
 This project follows **SOLID** principles and is structured using **Hexagonal Architecture** (Ports & Adapters), ensuring:

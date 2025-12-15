@@ -898,5 +898,5 @@ it('returns bus data for line 014', function () {
 
 **Guía de Desarrollo - Portfolio**
 
-Última actualización: Enero 2025  
-Versión: 2.1.0
+Última actualización: Diciembre 2025  
+Versión: 2.2.0

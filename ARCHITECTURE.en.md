@@ -103,19 +103,27 @@ app/
 │           └── BusDataService.php   # Bus data service
 │
 ├── Infrastructure/                  # INFRASTRUCTURE LAYER
-│   └── Persistence/
-│       └── Eloquent/
-│           ├── EloquentExperienceRepository.php
-│           ├── EloquentEducationRepository.php
-│           ├── EloquentSkillRepository.php
-│           ├── EloquentPersonalInfoRepository.php
-│           ├── Models/              
-│           │   └── ProjectModel.php # Eloquent model (final)
-│           └── Repositories/        
-│               ├── EloquentProjectRepository.php
-│               ├── EloquentBusCompanyRepository.php
-│               ├── EloquentBusStopRepository.php
-│               └── EloquentBusLineRepository.php
+│   ├── Persistence/
+│   │   └── Eloquent/
+│   │       ├── EloquentExperienceRepository.php
+│   │       ├── EloquentEducationRepository.php
+│   │       ├── EloquentSkillRepository.php
+│   │       ├── EloquentPersonalInfoRepository.php
+│   │       ├── Models/              
+│   │       │   └── ProjectModel.php # Eloquent model (final)
+│   │       └── Repositories/        
+│   │           ├── EloquentProjectRepository.php
+│   │           ├── EloquentBusCompanyRepository.php
+│   │           ├── EloquentBusStopRepository.php
+│   │           └── EloquentBusLineRepository.php
+│   │
+│   └── Services/                    # INFRASTRUCTURE SERVICES
+│       ├── OsrmService.php          # OSRM integration service
+│       └── GtfsImporter.php         # GTFS data importer
+│
+├── Mcp/                             # MODEL CONTEXT PROTOCOL
+│   ├── Servers/                     # MCP Servers
+│   └── Tools/                       # Tools for AI Agents
 │
 └── Http/                            # PRESENTATION LAYER
     └── Controllers/
@@ -219,6 +227,84 @@ useBusData.js (Composable)
      │
      ▼
 useBusMap.js + Leaflet (Interactive map)
+```
+
+## Hiking Domain Architecture (Hybrid PHP + Python)
+
+The Hiking domain implements a hybrid architecture to handle complex geospatial calculations (elevation over raster):
+
+### Components
+
+1.  **HikingController**: HTTP Entry Point.
+2.  **OsrmService**: Shared service to obtain flat routes (2D).
+3.  **ElevationService**: Adapter service that communicates with the Python script.
+4.  **add_elevation.py**: Python script that uses `rasterio` and `GDAL` to query the DTM.
+5.  **DTM (Digital Terrain Models)**: Local `.tif` files with elevation data.
+
+### Hiking Data Flow
+
+```
+Frontend (Leaflet)
+     │
+     ▼
+GET /api/hiking/route (start, end)
+     │
+     ▼
+HikingController
+     │
+     ▼
+GetHikingRouteService (Application)
+     │
+     ├─► 1. OsrmService (Gets 2D lat/lon route)
+     │
+     ├─► 2. ElevationService
+     │          │
+     │          ▼
+     │      Process::run('python3 add_elevation.py')
+     │          │
+     │          ▼
+     │      GDAL/Rasterio (Reads .tif)
+     │          │
+     │          ▼
+     │      Returns JSON with Z (lat, lon, ele)
+     │
+     └─► 3. Calculates statistics (Gain +, Gain -)
+     │
+     ▼
+JSON GeoJSON Response (3D)
+```
+
+## MCP Architecture (Model Context Protocol)
+
+The MCP integration allows exposing the project context to AI agents.
+
+### Components
+
+1.  **McpServiceProvider**: Registers the server and tools.
+2.  **McpServer**: Handles JSON-RPC communication with MCP clients (Claude, IDEs).
+3.  **Tools**:
+    - `OsrmTool`: Wrapper around `OsrmService` for AI route queries.
+4.  **Prompts**: Context injection system for specialized roles (Testing Expert, Architect).
+
+### MCP Flow
+
+```
+AI Agent (Client)
+     │
+     ▼
+JSON-RPC Request (call_tool: osrm_get_route)
+     │
+     ▼
+McpServer (Laravel)
+     │
+     ▼
+OsrmTool
+     │
+     ▼
+OsrmService (Infrastructure)
+     │
+     ▼
+OSRM API (External)
 ```
 
 ## Data Flow
@@ -594,6 +680,6 @@ components/
 
 <div align="center">
   <p><strong>Architecture Documentation</strong></p>
-  <p>Last updated: January 2025</p>
-  <p>Version: 2.1.0</p>
+  <p>Last updated: December 2025</p>
+  <p>Version: 2.2.0</p>
 </div>

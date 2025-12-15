@@ -272,6 +272,39 @@ GetHikingRouteService (Application)
 JSON GeoJSON Response (3D)
 ```
 
+## Arquitectura MCP (Model Context Protocol)
+
+La integración MCP permite exponer el contexto del proyecto a agentes de IA.
+
+### Componentes
+
+1.  **McpServiceProvider**: Registra el servidor y las herramientas.
+2.  **McpServer**: Maneja la comunicación JSON-RPC con los clientes MCP (Claude, IDEs).
+3.  **Tools**:
+    - `OsrmTool`: Envoltura alrededor de `OsrmService` para consultas de rutas por IA.
+4.  **Prompts**: Sistema de inyección de contexto para roles especializados (Experto en Testing, Arquitecto).
+
+### Flujo MCP
+
+```
+Agente IA (Cliente)
+     │
+     ▼
+JSON-RPC Request (call_tool: osrm_get_route)
+     │
+     ▼
+McpServer (Laravel)
+     │
+     ▼
+OsrmTool
+     │
+     ▼
+OsrmService (Infrastructure)
+     │
+     ▼
+OSRM API (External)
+```
+
 ## Flujo de Datos
 
 ### Portfolio Domain: Request Flow (Usuario → Backend → Base de Datos)
