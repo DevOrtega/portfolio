@@ -115,9 +115,9 @@ export default {
     infoBanner: 'Demo con simulación basada en rutas y horarios reales de',
     infoBannerColors: '(amarillo - urbanas)',
     infoBannerGlobal: '(azul - interurbanas)',
-    infoBannerNight: '(morado - L1, L2, L3, 64, 65)',
+    infoBannerNight: 'y Nocturnas (morado - L1, L2, L3, 64, 65)',
     infoBannerHours: 'Las guaguas solo aparecen dentro de su horario de operación y se mueven por rutas geográficamente precisas de Gran Canaria.',
-    infoBannerNote: 'Nota: Gran Canaria no dispone de feeds GTFS públicos. Los datos están simulados con la máxima fidelidad a la realidad.',
+    infoBannerNote: 'Nota: Se utilizan datos GTFS abiertos oficiales de Guaguas Municipales. Para Global, al no existir feeds públicos, se han generado archivos GTFS propios siguiendo el estándar oficial y basándose en los horarios reales.',
     stops: 'Paradas'
   },
   experience: {

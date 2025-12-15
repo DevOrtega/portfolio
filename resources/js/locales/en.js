@@ -115,9 +115,9 @@ export default {
     infoBanner: 'Demo with simulation based on real routes and schedules from',
     infoBannerColors: '(yellow - urban)',
     infoBannerGlobal: '(blue - interurban)',
-    infoBannerNight: '(purple - L1, L2, L3, 64, 65)',
+    infoBannerNight: 'and Night Lines (purple - L1, L2, L3, 64, 65)',
     infoBannerHours: 'Buses only appear within their operating hours and move along geographically accurate routes of Gran Canaria.',
-    infoBannerNote: 'Note: Gran Canaria does not have public GTFS feeds. Data is simulated with maximum fidelity to reality.',
+    infoBannerNote: 'Note: Official open GTFS data is used for Guaguas Municipales. For Global, as there are no public feeds, custom GTFS files have been generated following the official standard and based on real schedules.',
     stops: 'Bus Stops'
   },
   experience: {
