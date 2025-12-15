@@ -9,6 +9,7 @@ use App\Http\Controllers\Api\PersonalInfoController;
 use App\Http\Controllers\Api\EducationController;
 use App\Http\Controllers\Api\ContactController;
 use App\Http\Controllers\Api\BusController;
+use App\Http\Controllers\Api\BusRouteStatusController;
 use App\Http\Controllers\Admin\AdminAuthController;
 use App\Http\Controllers\HikingController;
 
@@ -29,6 +30,7 @@ Route::prefix('bus')->group(function () {
     Route::get('/routes', [BusController::class, 'routes']);
     Route::get('/stops', [BusController::class, 'stops']);
     Route::get('/companies', [BusController::class, 'companies']);
+    Route::get('/status', [BusRouteStatusController::class, 'index']);
 });
 
 // Hiking demo routes

@@ -4,7 +4,7 @@
         "title": "Portfolio API",
         "description": "API documentation for the Portfolio project",
         "contact": {
-            "email": "carloso2103@gmail.com"
+            "email": "carlos@example.com"
         },
         "version": "1.0.0"
     },
@@ -294,6 +294,108 @@
                 }
             }
         },
+        "/api/bus/status": {
+            "get": {
+                "tags": [
+                    "Bus"
+                ],
+                "summary": "Get OSRM and route status metrics",
+                "description": "Returns statistics about route calculations, OSRM coverage, and system health",
+                "operationId": "getBusRouteStatus",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "timestamp": {
+                                            "type": "string",
+                                            "format": "date-time"
+                                        },
+                                        "summary": {
+                                            "properties": {
+                                                "total_routes": {
+                                                    "type": "integer"
+                                                },
+                                                "routes_with_osrm": {
+                                                    "type": "integer"
+                                                },
+                                                "osrm_coverage": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "success_rate": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "recent_failures": {
+                                                    "type": "integer"
+                                                },
+                                                "recent_successes": {
+                                                    "type": "integer"
+                                                },
+                                                "system_health": {
+                                                    "type": "string",
+                                                    "enum": [
+                                                        "excellent",
+                                                        "good",
+                                                        "warning",
+                                                        "critical"
+                                                    ]
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "route_quality": {
+                                            "properties": {
+                                                "excellent": {
+                                                    "type": "integer"
+                                                },
+                                                "good": {
+                                                    "type": "integer"
+                                                },
+                                                "fair": {
+                                                    "type": "integer"
+                                                },
+                                                "poor": {
+                                                    "type": "integer"
+                                                },
+                                                "unknown": {
+                                                    "type": "integer"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "alerts": {
+                                            "type": "array",
+                                            "items": {
+                                                "properties": {
+                                                    "type": {
+                                                        "type": "string"
+                                                    },
+                                                    "message": {
+                                                        "type": "string"
+                                                    },
+                                                    "threshold": {
+                                                        "type": "number"
+                                                    },
+                                                    "current": {
+                                                        "type": "number"
+                                                    }
+                                                },
+                                                "type": "object"
+                                            }
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/contact": {
             "post": {
                 "tags": [
@@ -515,6 +617,106 @@
                     }
                 }
             }
+        },
+        "/api/hiking/route": {
+            "get": {
+                "tags": [
+                    "Hiking"
+                ],
+                "summary": "Calculate a hiking route with 3D elevation profile",
+                "description": "Calculates the route between two points using OSRM (foot profile) and enriches it with elevation data from local MDT files.",
+                "operationId": "getHikingRoute",
+                "parameters": [
+                    {
+                        "name": "start",
+                        "in": "query",
+                        "description": "Start coordinates (lat,lon)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "27.9706,-15.6128"
+                        }
+                    },
+                    {
+                        "name": "end",
+                        "in": "query",
+                        "description": "End coordinates (lat,lon)",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "28.1235,-15.4363"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "type": {
+                                            "type": "string",
+                                            "example": "Feature"
+                                        },
+                                        "properties": {
+                                            "properties": {
+                                                "distance_km": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "elevation_gain_m": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "elevation_loss_m": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "max_elevation_m": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                },
+                                                "min_elevation_m": {
+                                                    "type": "number",
+                                                    "format": "float"
+                                                }
+                                            },
+                                            "type": "object"
+                                        },
+                                        "geometry": {
+                                            "properties": {
+                                                "type": {
+                                                    "type": "string",
+                                                    "example": "LineString"
+                                                },
+                                                "coordinates": {
+                                                    "description": "Array of [lon, lat, ele] coordinates",
+                                                    "type": "array",
+                                                    "items": {
+                                                        "type": "array",
+                                                        "items": {
+                                                            "type": "number"
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            "type": "object"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid input format"
+                    },
+                    "500": {
+                        "description": "Server error or route calculation failed"
+                    }
+                }
+            }
         }
     },
     "tags": [
@@ -525,6 +727,10 @@
         {
             "name": "Bus",
             "description": "Bus routes and stops data"
+        },
+        {
+            "name": "Hiking",
+            "description": "Hiking route planning and elevation data"
         },
         {
             "name": "Contact",

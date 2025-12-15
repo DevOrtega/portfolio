@@ -7,11 +7,59 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Cache;
 use Carbon\Carbon;
+use OpenApi\Annotations as OA;
 
 class BusRouteStatusController extends Controller
 {
     /**
      * Get OSRM and route status metrics
+     * 
+     * @OA\Get(
+     *     path="/api/bus/status",
+     *     operationId="getBusRouteStatus",
+     *     tags={"Bus"},
+     *     summary="Get OSRM and route status metrics",
+     *     description="Returns statistics about route calculations, OSRM coverage, and system health",
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="timestamp", type="string", format="date-time"),
+     *             @OA\Property(
+     *                 property="summary",
+     *                 type="object",
+     *                 @OA\Property(property="total_routes", type="integer"),
+     *                 @OA\Property(property="routes_with_osrm", type="integer"),
+     *                 @OA\Property(property="osrm_coverage", type="number", format="float"),
+     *                 @OA\Property(property="success_rate", type="number", format="float"),
+     *                 @OA\Property(property="recent_failures", type="integer"),
+     *                 @OA\Property(property="recent_successes", type="integer"),
+     *                 @OA\Property(property="system_health", type="string", enum={"excellent", "good", "warning", "critical"})
+     *             ),
+     *             @OA\Property(
+     *                 property="route_quality",
+     *                 type="object",
+     *                 @OA\Property(property="excellent", type="integer"),
+     *                 @OA\Property(property="good", type="integer"),
+     *                 @OA\Property(property="fair", type="integer"),
+     *                 @OA\Property(property="poor", type="integer"),
+     *                 @OA\Property(property="unknown", type="integer")
+     *             ),
+     *             @OA\Property(
+     *                 property="alerts",
+     *                 type="array",
+     *                 @OA\Items(
+     *                     type="object",
+     *                     @OA\Property(property="type", type="string"),
+     *                     @OA\Property(property="message", type="string"),
+     *                     @OA\Property(property="threshold", type="number"),
+     *                     @OA\Property(property="current", type="number")
+     *                 )
+     *             )
+     *         )
+     *     )
+     * )
      */
     public function index(): JsonResponse
     {
