@@ -24,9 +24,9 @@ final readonly class Education
     ) {
     }
 
-    public function toArray(): array
+    public function toArray(?string $locale = null): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'institution' => $this->institution,
             'degree' => $this->degree,
@@ -38,6 +38,17 @@ final readonly class Education
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,
         ];
+
+        if ($locale === 'en') {
+            $data['degree'] = $this->degreeEn ?? $this->degree;
+            $data['description'] = $this->descriptionEn ?? $this->description;
+        }
+
+        if ($locale) {
+            unset($data['degree_en'], $data['description_en']);
+        }
+
+        return $data;
     }
 
     /**

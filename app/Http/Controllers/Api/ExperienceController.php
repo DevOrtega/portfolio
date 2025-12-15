@@ -46,6 +46,6 @@ final class ExperienceController extends Controller
 
         $experiences = $this->experienceService->getExperiencesByYear($year);
 
-        return response()->json($experiences->map(fn ($exp) => $exp->toArray())->values());
+        return response()->json($experiences->map(fn ($exp) => $exp->toArray(app()->getLocale()))->values());
     }
 }

@@ -36,6 +36,6 @@ final class ProjectController extends Controller
     {
         $projects = $this->projectService->getAllProjects();
 
-        return response()->json($projects->map(fn($project) => $project->toArray()));
+        return response()->json($projects->map(fn($project) => $project->toArray(app()->getLocale())));
     }
 }

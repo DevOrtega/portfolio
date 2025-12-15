@@ -24,9 +24,9 @@ final readonly class PersonalInfo
     ) {
     }
 
-    public function toArray(): array
+    public function toArray(?string $locale = null): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'name' => $this->name,
             'headline' => $this->headline,
@@ -38,5 +38,16 @@ final readonly class PersonalInfo
             'github_url' => $this->githubUrl,
             'cv_path' => $this->cvPath,
         ];
+
+        if ($locale === 'en') {
+            $data['headline'] = $this->headlineEn ?? $this->headline;
+            $data['bio'] = $this->bioEn ?? $this->bio;
+        }
+
+        if ($locale) {
+            unset($data['headline_en'], $data['bio_en']);
+        }
+
+        return $data;
     }
 }

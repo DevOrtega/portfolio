@@ -45,7 +45,9 @@ final class EloquentProjectRepository implements ProjectRepositoryInterface
 
         $model->fill([
             'title' => $project->title,
+            'title_en' => $project->titleEn,
             'description' => $project->description,
+            'description_en' => $project->descriptionEn,
             'url' => $project->url,
             'github_url' => $project->githubUrl,
             'image_path' => $project->imagePath,
@@ -78,7 +80,9 @@ final class EloquentProjectRepository implements ProjectRepositoryInterface
         return new Project(
             id: $model->id,
             title: $model->title,
+            titleEn: $model->title_en,
             description: $model->description,
+            descriptionEn: $model->description_en,
             url: $model->url,
             githubUrl: $model->github_url,
             imagePath: $model->image_path,

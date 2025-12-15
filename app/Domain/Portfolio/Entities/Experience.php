@@ -24,9 +24,9 @@ final readonly class Experience
     ) {
     }
 
-    public function toArray(): array
+    public function toArray(?string $locale = null): array
     {
-        return [
+        $data = [
             'id' => $this->id,
             'company' => $this->company,
             'role' => $this->role,
@@ -38,6 +38,17 @@ final readonly class Experience
             'created_at' => $this->createdAt,
             'updated_at' => $this->updatedAt,
         ];
+
+        if ($locale === 'en') {
+            $data['role'] = $this->roleEn ?? $this->role;
+            $data['description'] = $this->descriptionEn ?? $this->description;
+        }
+
+        if ($locale) {
+            unset($data['role_en'], $data['description_en']);
+        }
+
+        return $data;
     }
 
     /**

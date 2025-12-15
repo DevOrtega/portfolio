@@ -46,6 +46,6 @@ final class EducationController extends Controller
 
         $education = $this->educationService->getEducationByYear($year);
 
-        return response()->json($education->map(fn ($edu) => $edu->toArray())->values());
+        return response()->json($education->map(fn ($edu) => $edu->toArray(app()->getLocale()))->values());
     }
 }

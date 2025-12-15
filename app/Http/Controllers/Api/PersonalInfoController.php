@@ -45,6 +45,6 @@ final class PersonalInfoController extends Controller
             ], 404);
         }
         
-        return response()->json($personalInfo->toArray());
+        return response()->json($personalInfo->toArray(app()->getLocale()));
     }
 }
