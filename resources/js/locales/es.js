@@ -157,6 +157,47 @@ export default {
     showingSkillsFor: 'Mostrando aptitudes usadas en',
     personal: 'Personal'
   },
+  atm: {
+    title: 'Gestor de Cajeros',
+    monitor: 'Monitor en Vivo',
+    active: 'Activos',
+    maintenance: 'Manten.',
+    down: 'Caídos',
+    recentEvents: 'Eventos Recientes',
+    changedTo: 'cambió a',
+    lastPing: 'Último Ping',
+    status: {
+      active: 'activo',
+      inactive: 'inactivo',
+      maintenance: 'mantenimiento'
+    }
+  },
+  hiking: {
+    title: 'Planificador de Senderismo',
+    subtitle: 'Explora senderos en Gran Canaria',
+    origin: 'Origen',
+    originPlaceholder: 'Ej. Roque Nublo',
+    intermediate: 'Punto Intermedio (Opcional)',
+    intermediatePlaceholder: 'Ej. Roque Bentayga',
+    destination: 'Destino',
+    destinationPlaceholder: 'Ej. Pico de las Nieves',
+    routesFound: '{count} encontradas',
+    routesTitle: 'Rutas Sugeridas',
+    noteTitle: 'Nota:',
+    noteText: 'El algoritmo solo ha encontrado una ruta óptima clara entre estos puntos. Pruebe a añadir puntos intermedios (próximamente) para forzar desviaciones.',
+    selectPrompt: 'Selecciona origen y destino para ver rutas',
+    footer: 'Datos de elevación MDT25 Gran Canaria',
+    popup: {
+      start: 'Inicio',
+      intermediate: 'Punto Intermedio',
+      destination: 'Destino'
+    },
+    difficulty: {
+      easy: 'Fácil',
+      moderate: 'Moderada',
+      hard: 'Difícil'
+    }
+  },
   contact: {
     title: 'Contacto',
     subtitle: '¿Tienes un proyecto en mente? ¡Hablemos!',

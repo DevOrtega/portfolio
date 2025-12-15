@@ -157,6 +157,47 @@ export default {
     showingSkillsFor: 'Showing skills used in',
     personal: 'Personal'
   },
+  atm: {
+    title: 'ATM Manager',
+    monitor: 'Live Monitor',
+    active: 'Active',
+    maintenance: 'Maint.',
+    down: 'Down',
+    recentEvents: 'Recent Events',
+    changedTo: 'changed to',
+    lastPing: 'Last Ping',
+    status: {
+      active: 'active',
+      inactive: 'inactive',
+      maintenance: 'maintenance'
+    }
+  },
+  hiking: {
+    title: 'Hiking Planner',
+    subtitle: 'Explore trails in Gran Canaria',
+    origin: 'Origin',
+    originPlaceholder: 'E.g. Roque Nublo',
+    intermediate: 'Intermediate Point (Optional)',
+    intermediatePlaceholder: 'E.g. Roque Bentayga',
+    destination: 'Destination',
+    destinationPlaceholder: 'E.g. Pico de las Nieves',
+    routesFound: '{count} found',
+    routesTitle: 'Suggested Routes',
+    noteTitle: 'Note:',
+    noteText: 'The algorithm only found one clear optimal route between these points. Try adding intermediate points (coming soon) to force deviations.',
+    selectPrompt: 'Select origin and destination to view routes',
+    footer: 'Elevation data MDT25 Gran Canaria',
+    popup: {
+      start: 'Start',
+      intermediate: 'Intermediate Point',
+      destination: 'Destination'
+    },
+    difficulty: {
+      easy: 'Easy',
+      moderate: 'Moderate',
+      hard: 'Hard'
+    }
+  },
   contact: {
     title: 'Contact',
     subtitle: 'Have a project in mind? Let\'s talk!',

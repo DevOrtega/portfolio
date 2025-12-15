@@ -25,10 +25,10 @@
               <h3 class="font-bold text-gray-900 text-lg mb-1">ATM #{{ atm.id }}</h3>
               <div class="flex items-center justify-center gap-2 mb-2">
                 <span :class="getStatusColor(atm.status)" class="w-3 h-3 rounded-full"></span>
-                <span class="text-sm font-medium uppercase">{{ atm.status }}</span>
+                <span class="text-sm font-medium uppercase">{{ $t('atm.status.' + atm.status) }}</span>
               </div>
               <div class="text-xs text-gray-500 border-t pt-2 mt-2">
-                Last Ping: {{ atm.lastPing }}
+                {{ $t('atm.lastPing') }}: {{ atm.lastPing }}
               </div>
             </div>
           </l-popup>
@@ -39,27 +39,27 @@
     <!-- Sidebar / Legend -->
     <div class="w-full md:w-80 bg-gray-900 border-t md:border-t-0 md:border-l border-gray-700 p-4 sm:p-6 flex flex-col z-10 overflow-y-auto max-h-[200px] md:max-h-none">
       <h3 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-        <span class="animate-pulse text-green-500">●</span> Live Monitor
+        <span class="animate-pulse text-green-500">●</span> {{ $t('atm.monitor') }}
       </h3>
       
       <!-- Stats -->
       <div class="grid grid-cols-3 gap-2 mb-6">
-        <StatsCard title="Active" :value="stats.active" color-class="text-green-400" />
-        <StatsCard title="Maint." :value="stats.maintenance" color-class="text-orange-400" />
-        <StatsCard title="Down" :value="stats.inactive" color-class="text-red-400" />
+        <StatsCard :title="$t('atm.active')" :value="stats.active" color-class="text-green-400" />
+        <StatsCard :title="$t('atm.maintenance')" :value="stats.maintenance" color-class="text-orange-400" />
+        <StatsCard :title="$t('atm.down')" :value="stats.inactive" color-class="text-red-400" />
       </div>
 
       <!-- Activity Log -->
       <div class="flex-grow">
-        <h4 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Recent Events</h4>
+        <h4 class="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">{{ $t('atm.recentEvents') }}</h4>
         <div class="space-y-3">
           <transition-group name="list">
             <div v-for="log in logs" :key="log.id" class="bg-gray-800/50 p-3 rounded border border-gray-700 text-sm flex items-start gap-3">
               <span :class="getStatusColor(log.status)" class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"></span>
               <div>
                 <span class="text-gray-300 font-medium">ATM #{{ log.atmId }}</span>
-                <span class="text-gray-500"> changed to </span>
-                <span :class="getStatusTextColor(log.status)" class="font-bold">{{ log.status }}</span>
+                <span class="text-gray-500"> {{ $t('atm.changedTo') }} </span>
+                <span :class="getStatusTextColor(log.status)" class="font-bold">{{ $t('atm.status.' + log.status) }}</span>
                 <div class="text-xs text-gray-600 mt-1">{{ log.time }}</div>
               </div>
             </div>
@@ -73,9 +73,11 @@
 <script setup>
 import "leaflet/dist/leaflet.css";
 import { ref, onMounted, onUnmounted, computed } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { LMap, LTileLayer, LMarker, LPopup, LIcon } from "@vue-leaflet/vue-leaflet";
 import StatsCard from './StatsCard.vue';
 
+const { t } = useI18n();
 const zoom = ref(11);
 const center = ref([28.0000, -15.5500]); // Center of Gran Canaria
 

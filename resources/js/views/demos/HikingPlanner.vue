@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
@@ -7,6 +8,7 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { debounce } from 'lodash';
 
 // State
+const { t } = useI18n();
 const mapContainer = ref(null);
 const map = ref(null);
 const loading = ref(false);
@@ -129,7 +131,7 @@ const updateMarkers = () => {
 
     if (startLocation.value) {
         L.marker([startLocation.value.lat, startLocation.value.lng], { icon: createIcon('#10b981') })
-         .bindPopup('Inicio')
+         .bindPopup(t('hiking.popup.start'))
          .addTo(markersLayer.value);
         bounds.extend([startLocation.value.lat, startLocation.value.lng]);
         hasPoints = true;
@@ -137,7 +139,7 @@ const updateMarkers = () => {
     
     if (intermediateLocation.value) {
         L.marker([intermediateLocation.value.lat, intermediateLocation.value.lng], { icon: createIcon('#f59e0b') })
-         .bindPopup('Punto Intermedio')
+         .bindPopup(t('hiking.popup.intermediate'))
          .addTo(markersLayer.value);
         bounds.extend([intermediateLocation.value.lat, intermediateLocation.value.lng]);
         hasPoints = true;
@@ -145,7 +147,7 @@ const updateMarkers = () => {
     
     if (endLocation.value) {
         L.marker([endLocation.value.lat, endLocation.value.lng], { icon: createIcon('#ef4444') })
-         .bindPopup('Destino')
+         .bindPopup(t('hiking.popup.destination'))
          .addTo(markersLayer.value);
         bounds.extend([endLocation.value.lat, endLocation.value.lng]);
         hasPoints = true;
@@ -190,7 +192,7 @@ const calculateRoutes = async () => {
 
     } catch (e) {
         console.error(e);
-        error.value = 'No se pudo calcular la ruta. Intente puntos más cercanos a caminos conocidos.';
+        error.value = t('common.error');
     } finally {
         loading.value = false;
     }
@@ -231,6 +233,16 @@ const getDifficultyColor = (diff) => {
     }
 };
 
+const getTranslatedDifficulty = (diff) => {
+    const map = {
+        'Fácil': 'easy',
+        'Moderada': 'moderate',
+        'Difícil': 'hard'
+    };
+    const key = map[diff] || 'moderate';
+    return t(`hiking.difficulty.${key}`);
+};
+
 </script>
 
 <template>
@@ -243,9 +255,9 @@ const getDifficultyColor = (diff) => {
             <!-- Header -->
             <div class="p-6 border-b border-gray-700 bg-gray-900">
                 <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
-                    Hiking Planner
+                    {{ $t('hiking.title') }}
                 </h1>
-                <p class="text-gray-400 text-sm mt-1">Explora senderos en Gran Canaria</p>
+                <p class="text-gray-400 text-sm mt-1">{{ $t('hiking.subtitle') }}</p>
             </div>
 
             <!-- Form -->
@@ -253,7 +265,7 @@ const getDifficultyColor = (diff) => {
                 
                 <!-- Origin Input -->
                 <div class="relative">
-                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">Origen</label>
+                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">{{ $t('hiking.origin') }}</label>
                     <div class="flex items-center bg-gray-700 rounded-lg border border-gray-600 focus-within:border-green-500 focus-within:ring-1 focus-within:ring-green-500">
                         <span class="pl-3 text-green-500">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
@@ -263,7 +275,7 @@ const getDifficultyColor = (diff) => {
                             @input="debouncedSearchStart"
                             type="text" 
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
-                            placeholder="Ej. Roque Nublo"
+                            :placeholder="$t('hiking.originPlaceholder')"
                         />
                         <button v-if="startQuery" @click="startQuery=''; startLocation=null; updateMarkers()" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
@@ -279,7 +291,7 @@ const getDifficultyColor = (diff) => {
 
                 <!-- Intermediate Input -->
                 <div class="relative">
-                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">Punto Intermedio (Opcional)</label>
+                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">{{ $t('hiking.intermediate') }}</label>
                     <div class="flex items-center bg-gray-700 rounded-lg border border-gray-600 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500">
                         <span class="pl-3 text-amber-500">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
@@ -289,7 +301,7 @@ const getDifficultyColor = (diff) => {
                             @input="debouncedSearchIntermediate"
                             type="text" 
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
-                            placeholder="Ej. Roque Bentayga"
+                            :placeholder="$t('hiking.intermediatePlaceholder')"
                         />
                         <button v-if="intermediateQuery" @click="intermediateQuery=''; intermediateLocation=null; updateMarkers(); if(startLocation && endLocation) calculateRoutes()" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
@@ -305,7 +317,7 @@ const getDifficultyColor = (diff) => {
 
                 <!-- Destination Input -->
                 <div class="relative">
-                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">Destino</label>
+                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">{{ $t('hiking.destination') }}</label>
                     <div class="flex items-center bg-gray-700 rounded-lg border border-gray-600 focus-within:border-red-500 focus-within:ring-1 focus-within:ring-red-500">
                         <span class="pl-3 text-red-500">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 21v-8a2 2 0 012-2h14a2 2 0 012 2v8M10 9H8a2 2 0 00-2 2v2m8-4h2a2 2 0 012 2v2m-8-2v6m0 0v6m0-6h6m-6 0H4"/></svg>
@@ -315,7 +327,7 @@ const getDifficultyColor = (diff) => {
                             @input="debouncedSearchEnd"
                             type="text" 
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
-                            placeholder="Ej. Pico de las Nieves"
+                            :placeholder="$t('hiking.destinationPlaceholder')"
                         />
                         <button v-if="endQuery" @click="endQuery=''; endLocation=null; updateMarkers()" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
@@ -342,12 +354,12 @@ const getDifficultyColor = (diff) => {
                 <!-- Routes List -->
                 <div v-if="routes.length > 0 && !loading" class="space-y-4 mt-6">
                     <div class="flex justify-between items-center">
-                        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">Rutas Sugeridas</h3>
-                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">{{ routes.length }} encontradas</span>
+                        <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">{{ $t('hiking.routesTitle') }}</h3>
+                        <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">{{ $t('hiking.routesFound', { count: routes.length }) }}</span>
                     </div>
 
                     <div v-if="routes.length === 1" class="bg-blue-900/20 border border-blue-800 p-3 rounded-lg text-xs text-blue-200 mb-2">
-                        <span class="font-bold">Nota:</span> El algoritmo solo ha encontrado una ruta óptima clara entre estos puntos. Pruebe a añadir puntos intermedios (próximamente) para forzar desviaciones.
+                        <span class="font-bold">{{ $t('hiking.noteTitle') }}</span> {{ $t('hiking.noteText') }}
                     </div>
                     
                     <div v-for="(route, index) in routes" :key="index"
@@ -362,7 +374,7 @@ const getDifficultyColor = (diff) => {
                                 'bg-yellow-900 text-yellow-300': route.properties.difficulty === 'Moderada',
                                 'bg-red-900 text-red-300': route.properties.difficulty === 'Difícil',
                              }">
-                            {{ route.properties.difficulty }}
+                            {{ getTranslatedDifficulty(route.properties.difficulty) }}
                         </div>
 
                         <div class="flex items-baseline gap-2 mb-2">
@@ -389,14 +401,14 @@ const getDifficultyColor = (diff) => {
 
                 <!-- Empty State -->
                 <div v-else-if="!loading && !startLocation && !endLocation" class="text-center py-10 text-gray-500 text-sm">
-                    Selecciona origen y destino para ver rutas
+                    {{ $t('hiking.selectPrompt') }}
                 </div>
 
             </div>
             
             <!-- Footer -->
             <div class="p-4 bg-gray-900 border-t border-gray-700 text-xs text-center text-gray-500">
-                Datos de elevación MDT25 Gran Canaria
+                {{ $t('hiking.footer') }}
             </div>
         </div>
 
