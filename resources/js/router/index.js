@@ -32,6 +32,12 @@ const routes = [
         meta: { title: 'Guaguas Tracker Demo' }
     },
     {
+        path: '/projects/demo/hiking-planner',
+        name: 'hiking-planner',
+        component: () => import('@/views/demos/HikingPlanner.vue'),
+        meta: { title: 'Hiking Planner Demo' }
+    },
+    {
         path: '/resume',
         name: 'resume',
         component: () => import('@/views/ResumeView.vue'),

@@ -363,6 +363,15 @@ class DatabaseSeeder extends Seeder
                 'url' => '/projects/demo/guaguas-tracker',
                 'image_path' => '/images/guaguas-preview.png'
             ],
+            [
+                'title' => 'Planificador de Rutas de Senderismo',
+                'title_en' => 'Hiking Route Planner',
+                'description' => 'Demo interactiva que calcula rutas de senderismo en Gran Canaria con perfiles de elevación 3D. Integra OSRM para enrutamiento sobre caminos y senderos, y utiliza modelos digitales del terreno (MDT) para generar gráficos de altitud precisos.',
+                'description_en' => 'Interactive demo that calculates hiking routes in Gran Canaria with 3D elevation profiles. Integrates OSRM for routing on paths and trails, and uses digital terrain models (DTM) to generate precise altitude charts.',
+                'tags' => ['Laravel', 'Python', 'Leaflet', 'OSRM', 'GIS', 'MDT', 'Demo'],
+                'url' => '/projects/demo/hiking-planner',
+                'image_path' => '/images/map-preview.png'
+            ],
         ];
 
         foreach ($projects as $project) {
