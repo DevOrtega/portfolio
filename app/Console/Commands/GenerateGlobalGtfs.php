@@ -164,8 +164,18 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Puerto de Mogán',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'cruceMelenara', 'waypoint_gando_norte', 'aeropuerto', 'cruceArinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
-                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruceArinaga', 'aeropuerto', 'waypoint_gando_norte', 'cruceMelenara', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo']
+                'stops_outbound' => [
+                    'estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'cruceMelenara', 
+                    'aeropuerto', 'carrizal', 'cruceVargas', 'avenidaCanarias', 'doctoral', 'juanGrande', 
+                    'bahiaFeliz', 'sanAgustin', 'playaIngles', 'faroMaspalomas', 'arguineguin', 
+                    'patalavaca', 'anfi', 'puertoRico', 'amadores', 'tauro', 'playaCura', 'taurito', 'puertoMogan'
+                ],
+                'stops_inbound' => [
+                    'puertoMogan', 'taurito', 'playaCura', 'tauro', 'amadores', 'puertoRico', 'anfi', 'patalavaca', 
+                    'arguineguin', 'faroMaspalomas', 'playaIngles', 'sanAgustin', 'bahiaFeliz', 'juanGrande', 
+                    'doctoral', 'avenidaCanarias', 'cruceVargas', 'carrizal', 'aeropuerto', 
+                    'cruceMelenara', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo'
+                ]
             ],
             [
                 'id' => 'global-5',
@@ -174,28 +184,36 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Faro de Maspalomas',
                 'color' => '#0066CC',
-                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'cruceMelenara', 'waypoint_gando_norte', 'aeropuerto', 'cruceArinaga', 'vecindario', 'juanGrande', 'sanAgustin', 'elVeril', 'playaIngles', 'faroMaspalomas'],
-                'stops_inbound' => ['faroMaspalomas', 'playaIngles', 'elVeril', 'sanAgustin', 'juanGrande', 'vecindario', 'cruceArinaga', 'aeropuerto', 'waypoint_gando_norte', 'cruceMelenara', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo']
+                'stops_outbound' => [
+                    'estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'cruceMelenara', 
+                    'aeropuerto', 'carrizal', 'cruceVargas', 'avenidaCanarias', 'doctoral', 'juanGrande', 
+                    'bahiaFeliz', 'sanAgustin', 'playaIngles', 'faroMaspalomas'
+                ],
+                'stops_inbound' => [
+                    'faroMaspalomas', 'playaIngles', 'sanAgustin', 'bahiaFeliz', 'juanGrande', 
+                    'doctoral', 'avenidaCanarias', 'cruceVargas', 'carrizal', 'aeropuerto', 
+                    'cruceMelenara', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo'
+                ]
             ],
             [
                 'id' => 'global-30',
                 'line' => '30',
-                'name' => 'Santa Catalina - Faro de Maspalomas',
+                'name' => 'Santa Catalina - Faro de Maspalomas (Directo)',
                 'origin' => 'Santa Catalina',
                 'destination' => 'Faro de Maspalomas',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'autopistaSur', 'elVeril', 'faroMaspalomas'],
-                'stops_inbound' => ['faroMaspalomas', 'elVeril', 'autopistaSur', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'santaCatalina']
+                'stops_outbound' => ['santaCatalina', 'estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'aeropuerto', 'waypoint_arinaga_hwy', 'bahiaFeliz', 'sanAgustin', 'playaIngles', 'faroMaspalomas'],
+                'stops_inbound' => ['faroMaspalomas', 'playaIngles', 'sanAgustin', 'bahiaFeliz', 'waypoint_arinaga_hwy', 'aeropuerto', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo', 'santaCatalina']
             ],
             [
                 'id' => 'global-60',
                 'line' => '60',
-                'name' => 'Las Palmas - Aeropuerto',
+                'name' => 'Las Palmas - Aeropuerto (Directo)',
                 'origin' => 'Las Palmas',
                 'destination' => 'Aeropuerto',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'autopistaSur', 'aeropuerto'],
-                'stops_inbound' => ['aeropuerto', 'autopistaSur', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'santaCatalina']
+                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'aeropuerto'],
+                'stops_inbound' => ['aeropuerto', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo']
             ],
             [
                 'id' => 'global-91',
@@ -204,8 +222,8 @@ class GenerateGlobalGtfs extends Command
                 'origin' => 'Las Palmas',
                 'destination' => 'Puerto de Mogán',
                 'color' => '#0066CC',
-                'stops_outbound' => ['santaCatalina', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'waypoint_gando_norte', 'autopistaSur', 'maspalomas', 'arguineguin', 'puertoRico', 'puertoMogan'],
-                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'maspalomas', 'autopistaSur', 'waypoint_gando_norte', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'santaCatalina']
+                'stops_outbound' => ['estacionSanTelmo', 'hospitalInsular', 'waypoint_jinamar', 'waypoint_taliarte', 'aeropuerto', 'waypoint_arinaga_hwy', 'arguineguin', 'puertoRico', 'puertoMogan'],
+                'stops_inbound' => ['puertoMogan', 'puertoRico', 'arguineguin', 'waypoint_arinaga_hwy', 'aeropuerto', 'waypoint_taliarte', 'waypoint_jinamar', 'hospitalInsular', 'estacionSanTelmo']
             ],
             [
                 'id' => 'global-105',
@@ -222,75 +240,53 @@ class GenerateGlobalGtfs extends Command
 
     private function getGlobalStops(): array
     {
-        // Based on BusDataSeeder::getGlobalStopsData
-        // Flattened the structure for GTFS (lat/lng outbound as default)
         return [
+            'estacionSanTelmo' => ['lat' => 28.1085, 'lng' => -15.4175],
+            'santaCatalina' => ['lat' => 28.1400, 'lng' => -15.4295],
+            'hospitalInsular' => ['lat' => 28.0905, 'lng' => -15.4185],
             'waypoint_jinamar' => ['lat' => 28.0450, 'lng' => -15.4150],
             'waypoint_taliarte' => ['lat' => 28.0000, 'lng' => -15.3900],
-            'waypoint_gando_norte' => ['lat' => 27.9600, 'lng' => -15.3800],
-            'puerto' => ['lat' => 28.1480, 'lng' => -15.4285],
-            'santaCatalina' => ['lat' => 28.1400, 'lng' => -15.4295],
-            'mesaYLopez' => ['lat' => 28.1330, 'lng' => -15.4350],
-            'leonCastillo35' => ['lat' => 28.1150, 'lng' => -15.4250],
-            'triana' => ['lat' => 28.1060, 'lng' => -15.4160],
-            'sanJose' => ['lat' => 28.0950, 'lng' => -15.4160],
-            'ciudadJusticia' => ['lat' => 28.0850, 'lng' => -15.4180],
-            'hoyaDeLaPlata' => ['lat' => 28.0750, 'lng' => -15.4200],
-            'teatro' => ['lat' => 28.1040, 'lng' => -15.4140],
-            'sanTelmo' => ['lat' => 28.1080, 'lng' => -15.4170],
-            'estacionSanTelmo' => ['lat' => 28.1085, 'lng' => -15.4175],
-            'hospitalInsular' => ['lat' => 28.0905, 'lng' => -15.4185],
-            'rehoyas' => ['lat' => 28.1150, 'lng' => -15.4300],
-            'cruzDePiedra' => ['lat' => 28.1200, 'lng' => -15.4350],
-            'schamann' => ['lat' => 28.1250, 'lng' => -15.4400],
-            'escaleritas' => ['lat' => 28.1200, 'lng' => -15.4450],
-            'laMinilla' => ['lat' => 28.1280, 'lng' => -15.4500],
-            'hospitalNegrin' => ['lat' => 28.1300, 'lng' => -15.4550],
-            'guanarteme' => ['lat' => 28.1350, 'lng' => -15.4450],
-            'donZoilo' => ['lat' => 28.1150, 'lng' => -15.4350],
-            'laFeria' => ['lat' => 28.1100, 'lng' => -15.4450],
-            'sietePalmas' => ['lat' => 28.1050, 'lng' => -15.4550],
-            'tamaraceite' => ['lat' => 28.1000, 'lng' => -15.4700],
-            'telde' => ['lat' => 27.9941, 'lng' => -15.4166],
-            'teldeIntercambiador' => ['lat' => 27.9945, 'lng' => -15.4170],
             'cruceMelenara' => ['lat' => 27.9880, 'lng' => -15.3750],
+            'waypoint_gando_norte' => ['lat' => 27.9600, 'lng' => -15.3800],
             'aeropuerto' => ['lat' => 27.9355, 'lng' => -15.3905],
-            'vecindario' => ['lat' => 27.8414, 'lng' => -15.4489],
+            
+            // Town stops for L1
+            'carrizal' => ['lat' => 27.9030, 'lng' => -15.4290],
+            'cruceVargas' => ['lat' => 27.8880, 'lng' => -15.4350],
+            'avenidaCanarias' => ['lat' => 27.8480, 'lng' => -15.4430], // Vecindario
+            'doctoral' => ['lat' => 27.8310, 'lng' => -15.4650],
+            
+            // Highway stops for Direct Lines
+            'waypoint_arinaga_hwy' => ['lat' => 27.8715, 'lng' => -15.4440],
+            'cruceArinaga' => ['lat' => 27.8715, 'lng' => -15.4440], // Same as waypoint for now
+
             'juanGrande' => ['lat' => 27.8000, 'lng' => -15.4800],
+            'bahiaFeliz' => ['lat' => 27.7800, 'lng' => -15.5350],
             'sanAgustin' => ['lat' => 27.7750, 'lng' => -15.5480],
             'elVeril' => ['lat' => 27.7650, 'lng' => -15.5600],
             'playaIngles' => ['lat' => 27.7580, 'lng' => -15.5720],
-            'maspalomas' => ['lat' => 27.7609, 'lng' => -15.5865],
-            'aguimes' => ['lat' => 27.9050, 'lng' => -15.4445],
-            'ingenio' => ['lat' => 27.9170, 'lng' => -15.4360],
-            'cruce_de_arinaga' => ['lat' => 27.8715, 'lng' => -15.4440],
-            'arinaga' => ['lat' => 27.8590, 'lng' => -15.3950],
-            'carrizal' => ['lat' => 27.9030, 'lng' => -15.4290],
-            'melenara' => ['lat' => 27.9885, 'lng' => -15.3760],
-            'salinetas' => ['lat' => 27.9745, 'lng' => -15.3885],
             'faroMaspalomas' => ['lat' => 27.7350, 'lng' => -15.5915],
-            'autopistaSur' => ['lat' => 27.9200, 'lng' => -15.4280],
-            'puertoMogan' => ['lat' => 27.8155, 'lng' => -15.7635],
+            
+            // South Coast stops (GC-500)
             'arguineguin' => ['lat' => 27.7610, 'lng' => -15.6815],
+            'patalavaca' => ['lat' => 27.7700, 'lng' => -15.6900],
+            'anfi' => ['lat' => 27.7730, 'lng' => -15.6950],
             'puertoRico' => ['lat' => 27.7870, 'lng' => -15.7085],
-            'taurito' => ['lat' => 27.8020, 'lng' => -15.7380],
-            'tableroMaspalomas' => ['lat' => 27.7690, 'lng' => -15.5740],
-            'sanFernando' => ['lat' => 27.7650, 'lng' => -15.5645],
-            'bahiaFeliz' => ['lat' => 27.7940, 'lng' => -15.5120],
-            'playaCura' => ['lat' => 27.7915, 'lng' => -15.7150],
-            'palmitosPark' => ['lat' => 27.8060, 'lng' => -15.5780],
-            'aldeaSanNicolas' => ['lat' => 27.9845, 'lng' => -15.7795],
-            'doctoral' => ['lat' => 27.8310, 'lng' => -15.4650],
-            'playaArinaga' => ['lat' => 27.8520, 'lng' => -15.3865],
-            'castilloRomeral' => ['lat' => 27.8175, 'lng' => -15.4760],
-            'sardina_sur' => ['lat' => 27.8715, 'lng' => -15.4375],
-            'galdar' => ['lat' => 28.1465, 'lng' => -15.6495],
-            'guia' => ['lat' => 28.1395, 'lng' => -15.6335],
-            'agaete' => ['lat' => 28.1015, 'lng' => -15.6985],
-            'puertoNieves' => ['lat' => 28.0985, 'lng' => -15.7025],
-            'moya' => ['lat' => 28.1095, 'lng' => -15.5870],
-            'firgas' => ['lat' => 28.1090, 'lng' => -15.5615],
+            'amadores' => ['lat' => 27.7900, 'lng' => -15.7250],
+            'tauro' => ['lat' => 27.7980, 'lng' => -15.7350],
+            'playaCura' => ['lat' => 27.8000, 'lng' => -15.7450],
+            'taurito' => ['lat' => 27.8050, 'lng' => -15.7550],
+            'puertoMogan' => ['lat' => 27.8155, 'lng' => -15.7635],
+
+            // Other Lines
+            'vecindario' => ['lat' => 27.8414, 'lng' => -15.4489],
+            'autopistaSur' => ['lat' => 27.9200, 'lng' => -15.4280],
+            'maspalomas' => ['lat' => 27.7609, 'lng' => -15.5865],
+            'tamaraceite' => ['lat' => 28.1000, 'lng' => -15.4700],
             'banaderos' => ['lat' => 28.1350, 'lng' => -15.5200],
+            'arucas' => ['lat' => 28.1180, 'lng' => -15.5220],
+            'guia' => ['lat' => 28.1395, 'lng' => -15.6335],
+            'galdar' => ['lat' => 28.1465, 'lng' => -15.6495],
             'cardones' => ['lat' => 28.1280, 'lng' => -15.5180],
             'santaBrigida' => ['lat' => 28.0340, 'lng' => -15.5005],
             'sanMateo' => ['lat' => 28.0135, 'lng' => -15.5320],
