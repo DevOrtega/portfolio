@@ -24,14 +24,25 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         
-        # Crear archivo de configuración SSH con el túnel de Cloudflare
+        # Validar que la key tiene el formato correcto
+        if ! grep -q "BEGIN.*PRIVATE KEY" ~/.ssh/id_ed25519; then
+          echo "❌ ERROR: SSH key no tiene formato válido"
+          echo "Debe empezar con: -----BEGIN OPENSSH PRIVATE KEY----- o -----BEGIN RSA PRIVATE KEY-----"
+          exit 1
+        fi
+        
+        echo "✅ SSH key validada correctamente"
+        
+        # Configuración SSH simple
         echo "Host deploy-target
           HostName localhost
           Port 22
           User ${{ secrets.SSH_USER }}
-          StrictHostKeyChecking no
           IdentityFile ~/.ssh/id_ed25519
+          StrictHostKeyChecking no
           UserKnownHostsFile=/dev/null
+          PasswordAuthentication no
+          PubkeyAuthentication yes
         " >> ~/.ssh/config
 
     - name: Iniciar Cloudflared Tunnel y Desplegar
@@ -46,7 +57,14 @@ jobs:
         
         sleep 5
         
-        echo "🚀 Conectando al servidor..."
+        echo "🚀 Testeando conexión SSH..."
+        if ! ssh -v deploy-target "echo ✅ SSH Connection Successful"; then
+          echo "❌ Fallo de conexión SSH"
+          kill $TUNNEL_PID 2>/dev/null || true
+          exit 1
+        fi
+        
+        echo "🚀 Conectando al servidor para deploy..."
         ssh deploy-target "
           set -e
           
