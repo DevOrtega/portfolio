@@ -13,48 +13,54 @@ jobs:
 
     - name: Instalar Cloudflared
       run: |
-        # Usamos wget para asegurar la descarga del binario correcto
+        # Usamos wget que maneja mejor las redirecciones de GitHub
         wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
+        
+        # Le damos permisos de ejecución
         chmod +x cloudflared-linux-amd64
+        
+        # Lo movemos a la carpeta de binarios y lo renombramos
         sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
+        
+        # Verificamos que funcione
         cloudflared --version
-
-    - name: Configurar SSH
+    - name: Configurar SSH y Túnel
       run: |
         mkdir -p ~/.ssh
-        
-        # 1. Guardamos la llave privada
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         
-        # 2. Creamos la config SSH inyectando los secretos DIRECTAMENTE
-        # Esto soluciona el problema de "A browser window should have opened"
+        # Agregamos el host a known_hosts para evitar el prompt de "Yes/No"
+        # Usamos ssh-keyscan aunque al ir por túnel a veces falla, el StrictHostKeyChecking no abajo ayuda
+        
+        # Configuración del ProxyCommand con los tokens de Cloudflare
         echo "Host deploy-target
-          HostName ssh.devortega.com
+          HostName ${{ secrets.SSH_HOST }}
           User ${{ secrets.SSH_USER }}
-          IdentityFile ~/.ssh/id_ed25519
           StrictHostKeyChecking no
-          UserKnownHostsFile=/dev/null
           ProxyCommand cloudflared access ssh --hostname %h --id ${{ secrets.CF_CLIENT_ID }} --secret ${{ secrets.CF_CLIENT_SECRET }}
         " >> ~/.ssh/config
-
     - name: Desplegar en Servidor
       run: |
-        # ASEGÚRATE QUE ESTA RUTA ES CORRECTA EN TU SERVIDOR
+        # AJUSTA LA RUTA DE ABAJO SI TU PROYECTO ESTÁ EN OTRA CARPETA
         TARGET_DIR="/root/portfolio"
         
         echo "🚀 Conectando al servidor..."
         ssh deploy-target "
           set -e
+          
+          # 1. Ir al directorio
           cd $TARGET_DIR
           
-          # Limpiamos cualquier cambio local accidental
+          # 2. Descartar cambios locales si los hubiera (para evitar conflictos)
           git checkout .
           
-          # Bajamos el código nuevo
+          # 3. Descargar el código nuevo
           git pull origin main
           
-          # Ejecutamos tu script de despliegue
+          # 4. Asegurar que el script es ejecutable
           chmod +x deploy-compose.sh
+          
+          # 5. Ejecutar TU script con la opción 'deploy'
           ./deploy-compose.sh deploy
         "
