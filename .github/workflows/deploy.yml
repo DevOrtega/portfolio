@@ -19,57 +19,34 @@ jobs:
         cloudflared --version
 
     - name: Configurar SSH
+      env:
+        CF_SERVICE_TOKEN_ID: ${{ secrets.CF_SERVICE_TOKEN_ID }}
+        CF_SERVICE_TOKEN_SECRET: ${{ secrets.CF_SERVICE_TOKEN_SECRET }}
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         
-        # Debug: mostrar la fingerprint para verificar
-        ssh-keygen -l -f ~/.ssh/id_ed25519
-        
         echo "Host deploy-target
-          HostName localhost
+          HostName ssh.devortega.com
           Port 22
           User ${{ secrets.SSH_USER }}
           IdentityFile ~/.ssh/id_ed25519
           StrictHostKeyChecking no
           UserKnownHostsFile=/dev/null
-          PasswordAuthentication no
-          PubkeyAuthentication yes
+          ProxyCommand cloudflared access ssh --service-token-id $CF_SERVICE_TOKEN_ID --service-token-secret $CF_SERVICE_TOKEN_SECRET --hostname %h
         " >> ~/.ssh/config
 
-    - name: Iniciar Cloudflared Tunnel y Desplegar
-      env:
-        CLOUDFLARE_TUNNEL_TOKEN: ${{ secrets.CLOUDFLARE_TUNNEL_TOKEN }}
+    - name: Desplegar en Servidor
       run: |
         TARGET_DIR="/root/portfolio"
-        
-        echo "🚀 Iniciando túnel de Cloudflare..."
-        cloudflared tunnel run --token $CLOUDFLARE_TUNNEL_TOKEN &
-        TUNNEL_PID=$!
-        
-        sleep 5
         
         echo "🚀 Conectando al servidor..."
         ssh deploy-target "
           set -e
-          
-          # 1. Ir al directorio
           cd $TARGET_DIR
-          
-          # 2. Descartar cambios locales si los hubiera
           git checkout .
-          
-          # 3. Descargar el código nuevo
           git pull origin main
-          
-          # 4. Asegurar que el script es ejecutable
           chmod +x deploy-compose.sh
-          
-          # 5. Ejecutar el script de deploy
           ./deploy-compose.sh deploy
         "
-        
-        DEPLOY_STATUS=$?
-        kill $TUNNEL_PID 2>/dev/null || true
-        exit $DEPLOY_STATUS
