@@ -13,54 +13,50 @@ jobs:
 
     - name: Instalar Cloudflared
       run: |
-        # Usamos wget que maneja mejor las redirecciones de GitHub
+        # Usamos wget para asegurar la descarga del binario correcto
         wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-        
-        # Le damos permisos de ejecución
         chmod +x cloudflared-linux-amd64
-        
-        # Lo movemos a la carpeta de binarios y lo renombramos
         sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
-        
-        # Verificamos que funcione
         cloudflared --version
-    - name: Configurar SSH y Túnel
+
+    - name: Configurar SSH
       run: |
         mkdir -p ~/.ssh
+        
+        # 1. Guardamos la llave privada
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         
-        # Agregamos el host a known_hosts para evitar el prompt de "Yes/No"
-        # Usamos ssh-keyscan aunque al ir por túnel a veces falla, el StrictHostKeyChecking no abajo ayuda
-        
-        # Configuración del ProxyCommand con los tokens de Cloudflare
+        # 2. Creamos la config SSH inyectando los secretos DIRECTAMENTE
+        # Esto usa tu configuración de Cloudflare que ya sabemos que funciona
         echo "Host deploy-target
-          HostName ${{ secrets.SSH_HOST }}
+          HostName ssh.devortega.com
           User ${{ secrets.SSH_USER }}
+          IdentityFile ~/.ssh/id_ed25519
           StrictHostKeyChecking no
+          UserKnownHostsFile=/dev/null
           ProxyCommand cloudflared access ssh --hostname %h --id ${{ secrets.CF_CLIENT_ID }} --secret ${{ secrets.CF_CLIENT_SECRET }}
         " >> ~/.ssh/config
+
     - name: Desplegar en Servidor
       run: |
-        # AJUSTA LA RUTA DE ABAJO SI TU PROYECTO ESTÁ EN OTRA CARPETA
+        # ASEGÚRATE QUE ESTA RUTA ES CORRECTA EN TU SERVIDOR
         TARGET_DIR="/root/portfolio"
         
         echo "🚀 Conectando al servidor..."
         ssh deploy-target "
           set -e
-          
-          # 1. Ir al directorio
           cd $TARGET_DIR
           
-          # 2. Descartar cambios locales si los hubiera (para evitar conflictos)
-          git checkout .
+          echo '🔄 Sincronizando código...'
+          # SOLUCIÓN AL ERROR DE RAMAS DIVERGENTES:
+          # 1. Traemos la información del repositorio remoto
+          git fetch origin main
           
-          # 3. Descargar el código nuevo
-          git pull origin main
+          # 2. Forzamos al servidor a ser idéntico a GitHub (borra cambios locales si los hubiera)
+          git reset --hard origin/main
           
-          # 4. Asegurar que el script es ejecutable
+          echo '🐳 Ejecutando script de despliegue...'
           chmod +x deploy-compose.sh
-          
-          # 5. Ejecutar TU script con la opción 'deploy'
           ./deploy-compose.sh deploy
         "
