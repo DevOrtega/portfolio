@@ -82,6 +82,10 @@ case "$1" in
   deploy)
     echo "🚀 Starting PRODUCTION deployment..."
     
+    # 1. GENERATE OSRM DATA (CRITICAL FOR HIKING DEMO)
+    echo "Generating OSRM data (gran-canaria.osrm)..."
+    ./init-osrm.sh # Assuming init-osrm.sh is in the root and executable
+    
     echo "⬇️ Pulling latest images..."
     docker compose pull
     
@@ -91,16 +95,20 @@ case "$1" in
     echo "⏳ Waiting for services..."
     sleep 5
     
-    echo "📦 Running migrations (SAFE MODE - No data loss)..."
-    # Cambiamos 'migrate:fresh' por 'migrate' para no borrar datos
+    echo "📦 Running migrations..."
     docker compose exec -T portfolio php artisan migrate --force
+    
+    # 2. SEED DATABASE (CRITICAL FOR HIKING PLANNER TO SHOW UP)
+    echo "🌱 Seeding database (includes demo data)..."
+    docker compose exec -T portfolio php artisan db:seed --force
+    
+    echo "🔥 Warming up Bus Cache..."
+    docker compose exec -T portfolio php artisan bus:cache-warmup
     
     echo "🔥 Warming up caches..."
     docker compose exec -T portfolio php artisan config:cache
     docker compose exec -T portfolio php artisan route:cache
     docker compose exec -T portfolio php artisan view:cache
-    # Opcional: Si quieres recargar rutas OSRM o similar sin borrar DB
-    # docker compose exec -T portfolio php artisan bus:cache-warmup 
     
     echo "✅ Production deployment successful!"
     docker compose ps
