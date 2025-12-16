@@ -112,8 +112,8 @@ class HikingController extends Controller
             return response()->json($result);
 
         } catch (\Exception $e) {
-            Log::error('Hiking route error', ['message' => $e->getMessage()]);
-            return response()->json(['error' => 'Failed to calculate route'], 500);
+            Log::error('Hiking route error', ['message' => $e->getMessage(), 'trace' => $e->getTraceAsString()]);
+            return response()->json(['error' => 'Failed to calculate route', 'details' => $e->getMessage()], 500);
         }
     }
 }
