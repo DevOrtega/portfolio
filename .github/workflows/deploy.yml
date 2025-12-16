@@ -56,7 +56,10 @@ jobs:
           # 2. Forzamos al servidor a ser idéntico a GitHub (borra cambios locales si los hubiera)
           git reset --hard origin/main
           
-          echo '🐳 Ejecutando script de despliegue...'
+          # Ensure both deploy scripts are executable
           chmod +x deploy-compose.sh
+          chmod +x init-osrm.sh
+          
+          echo '🐳 Ejecutando script de despliegue...'
           ./deploy-compose.sh deploy
         "
