@@ -11,7 +11,9 @@ describe('ProjectService', function () {
             new Project(
                 id: 1,
                 title: 'Test Project 1',
+                titleEn: null,
                 description: 'Description 1',
+                descriptionEn: null,
                 url: 'https://example.com',
                 githubUrl: 'https://github.com/test/project1',
                 imagePath: '/images/project1.png',
@@ -20,7 +22,9 @@ describe('ProjectService', function () {
             new Project(
                 id: 2,
                 title: 'Test Project 2',
+                titleEn: null,
                 description: 'Description 2',
+                descriptionEn: null,
                 url: null,
                 githubUrl: 'https://github.com/test/project2',
                 imagePath: null,
@@ -49,7 +53,9 @@ describe('ProjectService', function () {
         $mockProject = new Project(
             id: 1,
             title: 'Test Project',
+            titleEn: null,
             description: 'Test Description',
+            descriptionEn: null,
             url: 'https://example.com',
             githubUrl: 'https://github.com/test/project',
             imagePath: '/images/project.png',
