@@ -20,8 +20,8 @@ jobs:
 
     - name: Configurar SSH
       env:
-        CF_SERVICE_TOKEN_ID: ${{ secrets.CF_SERVICE_TOKEN_ID }}
-        CF_SERVICE_TOKEN_SECRET: ${{ secrets.CF_SERVICE_TOKEN_SECRET }}
+        CF_CLIENT_ID: ${{ secrets.CF_CLIENT_ID }}
+        CF_CLIENT_SECRET: ${{ secrets.CF_CLIENT_SECRET }}
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
@@ -34,7 +34,7 @@ jobs:
           IdentityFile ~/.ssh/id_ed25519
           StrictHostKeyChecking no
           UserKnownHostsFile=/dev/null
-          ProxyCommand cloudflared access ssh --service-token-id $CF_SERVICE_TOKEN_ID --service-token-secret $CF_SERVICE_TOKEN_SECRET --hostname %h
+          ProxyCommand cloudflared access ssh --service-token-id $CF_CLIENT_ID --service-token-secret $CF_CLIENT_SECRET --hostname %h
         " >> ~/.ssh/config
 
     - name: Desplegar en Servidor
