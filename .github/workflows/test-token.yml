@@ -1,0 +1,30 @@
+name: TEST TOKEN SOLO
+on: push
+jobs:
+  check-token:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verificar Token con CURL
+        run: |
+          echo "Probando acceso a ssh.devortega.com..."
+          
+          # Hacemos una petición web simulando ser el robot
+          CODIGO=$(curl -s -o /dev/null -w "%{http_code}" \
+            -H "CF-Access-Client-Id: ${{ secrets.CF_CLIENT_ID }}" \
+            -H "CF-Access-Client-Secret: ${{ secrets.CF_CLIENT_SECRET }}" \
+            https://ssh.devortega.com)
+          
+          echo "El servidor respondió con código: $CODIGO"
+          
+          if [ "$CODIGO" == "200" ]; then
+            echo "✅ EL TOKEN FUNCIONA. El problema es cloudflared/SSH."
+          elif [ "$CODIGO" == "403" ]; then
+             echo "🚫 PROHIBIDO (403). Cloudflare reconoce el token pero NO le da permiso en la Política."
+             exit 1
+          elif [ "$CODIGO" == "302" ]; then
+             echo "u001F↪ REDIRECCIÓN (302). Cloudflare NO reconoce el token y te manda al login."
+             exit 1
+          else
+             echo "⚠️ Error extraño: $CODIGO"
+             exit 1
+          fi
