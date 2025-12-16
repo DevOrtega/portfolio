@@ -38,7 +38,7 @@ jobs:
         TARGET_DIR="/root/portfolio"
         
         echo "🚀 Iniciando túnel de Cloudflare..."
-        cloudflared tunnel --token $CLOUDFLARE_TUNNEL_TOKEN &
+        cloudflared tunnel run --token $CLOUDFLARE_TUNNEL_TOKEN &
         TUNNEL_PID=$!
         
         sleep 3
@@ -62,7 +62,3 @@ jobs:
           # 5. Ejecutar el script de deploy
           ./deploy-compose.sh deploy
         "
-        
-        DEPLOY_STATUS=$?
-        kill $TUNNEL_PID 2>/dev/null || true
-        exit $DEPLOY_STATUS
