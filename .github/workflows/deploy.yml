@@ -24,11 +24,14 @@ jobs:
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         
+        # Crear archivo de configuración SSH con el túnel de Cloudflare
         echo "Host deploy-target
-          HostName ${{ secrets.SSH_HOST }}
+          HostName localhost
+          Port 22
           User ${{ secrets.SSH_USER }}
           StrictHostKeyChecking no
           IdentityFile ~/.ssh/id_ed25519
+          UserKnownHostsFile=/dev/null
         " >> ~/.ssh/config
 
     - name: Iniciar Cloudflared Tunnel y Desplegar
@@ -41,7 +44,7 @@ jobs:
         cloudflared tunnel run --token $CLOUDFLARE_TUNNEL_TOKEN &
         TUNNEL_PID=$!
         
-        sleep 3
+        sleep 5
         
         echo "🚀 Conectando al servidor..."
         ssh deploy-target "
@@ -62,3 +65,7 @@ jobs:
           # 5. Ejecutar el script de deploy
           ./deploy-compose.sh deploy
         "
+        
+        DEPLOY_STATUS=$?
+        kill $TUNNEL_PID 2>/dev/null || true
+        exit $DEPLOY_STATUS
