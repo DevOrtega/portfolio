@@ -57,15 +57,26 @@ test('hiking route endpoint returns 3d coordinates', function () {
 
     $response->assertStatus(200);
     $response->assertJsonStructure([
-        'type',
-        'properties' => [
-            'distance_km',
-            'elevation_gain_m',
-            'elevation_loss_m'
-        ],
-        'geometry' => [
-            'type',
-            'coordinates'
+        'type', // "FeatureCollection"
+        'features' => [
+            '*' => [ // Each item in the features array
+                'type', // "Feature"
+                'id',
+                'properties' => [
+                    'distance_km',
+                    'elevation_gain_m',
+                    'elevation_loss_m',
+                    'max_elevation_m',
+                    'min_elevation_m',
+                    'difficulty',
+                    'route_index',
+                    'osrm_time_min'
+                ],
+                'geometry' => [
+                    'type', // "LineString"
+                    'coordinates' // array of [lon, lat, ele]
+                ]
+            ]
         ]
     ]);
     
