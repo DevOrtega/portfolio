@@ -81,7 +81,7 @@ test('hiking route endpoint returns 3d coordinates', function () {
     ]);
     
     // Check that we have Z coordinates (3 elements per point)
-    $coords = $response->json('geometry.coordinates');
+    $coords = $response->json('features.0.geometry.coordinates');
     expect($coords[0])->toHaveCount(3);
     // Check that elevation is not 0 for the mountain point (approx)
     // Roque Nublo should be > 1000m
