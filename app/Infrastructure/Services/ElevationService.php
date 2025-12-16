@@ -32,6 +32,12 @@ final readonly class ElevationService
         $inputCoords = array_map(fn($c) => [$c[1], $c[0]], $coordinates);
         
         $jsonInput = json_encode($inputCoords);
+
+        Log::info('Elevation script input', [
+            'script' => $this->scriptPath,
+            'tif_path' => $this->tifPath,
+            'json_input' => $jsonInput
+        ]);
         
         // Execute python script
         // Note: Ensure 'python3' is in path
@@ -39,17 +45,28 @@ final readonly class ElevationService
 
         if ($result->failed()) {
             Log::error('Elevation script failed', [
-                'error' => $result->errorOutput(),
-                'output' => $result->output()
+                'error_output' => $result->errorOutput(),
+                'output' => $result->output(),
+                'exit_code' => $result->exitCode()
             ]);
-            // Return 0 elevation as fallback
+            // Return original coordinates with 0 elevation as fallback
             return array_map(fn($c) => [$c[0], $c[1], 0], $coordinates);
         }
 
         try {
             $output = json_decode($result->output(), true);
+
+            Log::info('Elevation script raw output', ['raw_output' => $result->output()]);
+            Log::info('Elevation script decoded output', ['decoded_output' => $output]);
+
             if (!is_array($output)) {
-                throw new \Exception("Invalid JSON output");
+                Log::warning('Elevation script returned non-array output', ['output_type' => gettype($output)]);
+                throw new \Exception("Invalid JSON output: expected array");
+            }
+            if (empty($output)) {
+                Log::warning('Elevation script returned empty array for elevation data.');
+                // Fallback: return original coordinates with 0 elevation
+                return array_map(fn($c) => [$c[0], $c[1], 0], $coordinates);
             }
             
             // Convert back to [lat, lng, ele]
@@ -57,7 +74,7 @@ final readonly class ElevationService
             return array_map(fn($c) => [$c[1], $c[0], $c[2]], $output);
             
         } catch (\Exception $e) {
-            Log::error('Elevation script JSON parse error', ['message' => $e->getMessage()]);
+            Log::error('Elevation script JSON parse or processing error', ['message' => $e->getMessage()]);
             return array_map(fn($c) => [$c[0], $c[1], 0], $coordinates);
         }
     }
