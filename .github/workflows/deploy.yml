@@ -13,38 +13,30 @@ jobs:
 
     - name: Instalar Cloudflared
       run: |
-        # Usamos wget que maneja mejor las redirecciones de GitHub
         wget -q https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64
-        
-        # Le damos permisos de ejecución
         chmod +x cloudflared-linux-amd64
-        
-        # Lo movemos a la carpeta de binarios y lo renombramos
         sudo mv cloudflared-linux-amd64 /usr/local/bin/cloudflared
-        
-        # Verificamos que funcione
         cloudflared --version
 
     - name: Configurar SSH y Túnel
+      env:
+        CF_SERVICE_TOKEN_ID: ${{ secrets.CF_SERVICE_TOKEN_ID }}
+        CF_SERVICE_TOKEN_SECRET: ${{ secrets.CF_SERVICE_TOKEN_SECRET }}
       run: |
         mkdir -p ~/.ssh
         echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         
-        # Agregamos el host a known_hosts para evitar el prompt de "Yes/No"
-        # Usamos ssh-keyscan aunque al ir por túnel a veces falla, el StrictHostKeyChecking no abajo ayuda
-        
-        # Configuración del ProxyCommand con los tokens de Cloudflare
         echo "Host deploy-target
           HostName ${{ secrets.SSH_HOST }}
           User ${{ secrets.SSH_USER }}
           StrictHostKeyChecking no
-          ProxyCommand cloudflared access ssh --hostname %h --id ${{ secrets.CF_CLIENT_ID }} --secret ${{ secrets.CF_CLIENT_SECRET }}
+          IdentityFile ~/.ssh/id_ed25519
+          ProxyCommand cloudflared access ssh --service-token-id $CF_SERVICE_TOKEN_ID --service-token-secret $CF_SERVICE_TOKEN_SECRET --hostname %h
         " >> ~/.ssh/config
 
     - name: Desplegar en Servidor
       run: |
-        # AJUSTA LA RUTA DE ABAJO SI TU PROYECTO ESTÁ EN OTRA CARPETA
         TARGET_DIR="/root/portfolio"
         
         echo "🚀 Conectando al servidor..."
@@ -54,7 +46,7 @@ jobs:
           # 1. Ir al directorio
           cd $TARGET_DIR
           
-          # 2. Descartar cambios locales si los hubiera (para evitar conflictos)
+          # 2. Descartar cambios locales si los hubiera
           git checkout .
           
           # 3. Descargar el código nuevo
@@ -63,6 +55,6 @@ jobs:
           # 4. Asegurar que el script es ejecutable
           chmod +x deploy-compose.sh
           
-          # 5. Ejecutar TU script con la opción 'deploy'
+          # 5. Ejecutar el script de deploy
           ./deploy-compose.sh deploy
         "
