@@ -49,7 +49,7 @@ RUN php artisan l5-swagger:generate
 RUN npm run build
 
 # Run tests (Laravel + Vitest)
-RUN ./vendor/bin/pest --configuration phpunit.xml
+RUN ./vendor/bin/pest --configuration phpunit.xml || (cat storage/logs/laravel.log && exit 1)
 RUN npm run test
 
 # Remove dev dependencies after tests pass and optimize
