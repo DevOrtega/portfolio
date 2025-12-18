@@ -25,8 +25,17 @@ class GetRoutePoisService
         }
 
         // 1. Simplify geometry to avoid Overpass limits/timeouts
-        // We target ~100-200 points for the query.
-        $simplifiedRoute = $this->simplifyRoute($routeCoordinates, 0.0005); // approx 50m tolerance
+        // Start with 0.001 (approx 100m)
+        $epsilon = 0.001;
+        $simplifiedRoute = $this->simplifyRoute($routeCoordinates, $epsilon);
+        
+        // If still too many points, simplify more aggressively
+        // We want to keep the query string manageable. 
+        // 5 repetitions of the string in the query * 150 points * 20 chars = ~15KB.
+        while (count($simplifiedRoute) > 150 && $epsilon < 0.01) {
+            $epsilon *= 2;
+            $simplifiedRoute = $this->simplifyRoute($routeCoordinates, $epsilon);
+        }
 
         // Generate cache key based on simplified route + radius
         $cacheKey = 'hiking_pois_' . md5(json_encode($simplifiedRoute) . $radius);
