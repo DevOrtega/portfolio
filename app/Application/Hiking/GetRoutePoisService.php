@@ -96,13 +96,24 @@ QL;
             $type = $this->determineType($tags);
             
             // Priority: name tag > specific OSM tag value > generic category
-            $name = $tags['name'] ?? null;
+            $name = $tags['name'] ?? $tags['alt_name'] ?? $tags['loc_name'] ?? null;
+            
             if (!$name) {
-                $specificTag = $tags['amenity'] ?? $tags['tourism'] ?? $tags['natural'] ?? $tags['shop'] ?? null;
-                if ($specificTag) {
-                    $name = ucfirst(str_replace('_', ' ', $specificTag));
-                } else {
-                    $name = ucfirst(str_replace('_', ' ', $type));
+                // For peaks, try to add elevation
+                if ($type === 'peak' && isset($tags['ele'])) {
+                    $name = "Cima ({$tags['ele']}m)";
+                } 
+                // For viewpoints
+                else if ($type === 'viewpoint') {
+                    $name = $tags['description'] ?? $tags['note'] ?? "Mirador";
+                }
+                else {
+                    $specificTag = $tags['amenity'] ?? $tags['tourism'] ?? $tags['natural'] ?? $tags['shop'] ?? null;
+                    if ($specificTag && $specificTag !== 'yes') {
+                        $name = ucfirst(str_replace('_', ' ', $specificTag));
+                    } else {
+                        $name = ucfirst(str_replace('_', ' ', $type));
+                    }
                 }
             }
 

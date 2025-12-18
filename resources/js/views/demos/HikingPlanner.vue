@@ -26,6 +26,7 @@ const endLocation = ref(null);
 const waypoints = ref([]); // Array of { id: number, query: string, location: null|object, results: [] }
 const nextWaypointId = ref(1);
 let searchTimeout = null;
+let poiAbortController = null;
 
 const routes = ref([]); // Array of GeoJSON features
 const selectedRouteIndex = ref(0);
@@ -392,15 +393,27 @@ const calculateRoutes = async () => {
 };
 
 const fetchPois = async (coordinates) => {
+    // Cancel previous request
+    if (poiAbortController) {
+        poiAbortController.abort();
+    }
+    poiAbortController = new AbortController();
+
     try {
         const response = await axios.post('/api/hiking/pois', {
             route: coordinates,
             radius: 500
+        }, {
+            signal: poiAbortController.signal
         });
         pois.value = response.data;
         renderPois();
     } catch (e) {
-        console.error("Error fetching POIs", e);
+        if (axios.isCancel(e)) {
+            console.log('POI fetch aborted');
+        } else {
+            console.error("Error fetching POIs", e);
+        }
     }
 };
 
