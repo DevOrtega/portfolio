@@ -5,6 +5,7 @@ namespace App\Infrastructure\Services;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
+use App\Domain\Hiking\RouteProviderInterface;
 
 /**
  * Service for getting real road routes from OSRM (Open Source Routing Machine)
@@ -12,7 +13,7 @@ use Illuminate\Support\Facades\Log;
  * Provides caching layer for OSRM API calls to avoid rate limiting.
  * Routes are cached for 24 hours.
  */
-final readonly class OsrmService
+final readonly class OsrmService implements RouteProviderInterface
 {
     private const OSRM_BASE_URL = 'https://router.project-osrm.org/route/v1';
     private const CACHE_TTL = 86400; // 24 hours in seconds

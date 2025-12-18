@@ -42,6 +42,24 @@ class HikingController extends Controller
      *         required=true,
      *         @OA\Schema(type="string", example="28.1235,-15.4363")
      *     ),
+     *     @OA\Parameter(
+     *         name="waypoints[]",
+     *         in="query",
+     *         description="List of intermediate coordinates (lat,lon)",
+     *         required=false,
+     *         @OA\Schema(
+     *             type="array",
+     *             @OA\Items(type="string", example="28.05,-15.55")
+     *         )
+     *     ),
+     *     @OA\Parameter(
+     *         name="intermediate",
+     *         in="query",
+     *         description="Legacy intermediate point (lat,lon). Deprecated, use waypoints[] instead.",
+     *         deprecated=true,
+     *         required=false,
+     *         @OA\Schema(type="string")
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
@@ -88,18 +106,32 @@ class HikingController extends Controller
         $request->validate([
             'start' => 'required|string', // "lat,lon"
             'end' => 'required|string',   // "lat,lon"
-            'intermediate' => 'nullable|string', // "lat,lon"
+            'intermediate' => 'nullable|string', // "lat,lon" (Legacy)
+            'waypoints' => 'nullable|array', // ["lat,lon", "lat,lon"]
+            'waypoints.*' => 'string',
         ]);
 
         try {
             $start = array_map('floatval', explode(',', $request->input('start')));
             $end = array_map('floatval', explode(',', $request->input('end')));
             
-            $waypoints = null;
+            $waypoints = [];
+            
+            // Handle legacy single intermediate point
             if ($request->filled('intermediate')) {
                 $intermediate = array_map('floatval', explode(',', $request->input('intermediate')));
                 if (count($intermediate) === 2) {
-                    $waypoints = [$intermediate];
+                    $waypoints[] = $intermediate;
+                }
+            }
+
+            // Handle new multiple waypoints
+            if ($request->filled('waypoints')) {
+                foreach ($request->input('waypoints') as $wpString) {
+                    $wpCoords = array_map('floatval', explode(',', $wpString));
+                    if (count($wpCoords) === 2) {
+                        $waypoints[] = $wpCoords;
+                    }
                 }
             }
             
@@ -107,7 +139,7 @@ class HikingController extends Controller
                 return response()->json(['error' => 'Invalid coordinates format. Use lat,lon'], 400);
             }
 
-            $result = $this->getHikingRouteService->execute($start, $end, $waypoints);
+            $result = $this->getHikingRouteService->execute($start, $end, empty($waypoints) ? null : $waypoints);
 
             return response()->json($result);
 

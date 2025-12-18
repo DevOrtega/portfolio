@@ -1,9 +1,10 @@
 <script setup>
-import { ref, onMounted, onUnmounted, watch } from 'vue';
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue';
 import { useI18n } from 'vue-i18n';
 import L from 'leaflet';
 import axios from 'axios';
 import 'leaflet/dist/leaflet.css';
+import 'leaflet-polylinedecorator';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { debounce } from 'lodash';
 
@@ -16,29 +17,47 @@ const error = ref(null);
 const sidebarOpen = ref(true);
 
 const startQuery = ref('');
-const intermediateQuery = ref('');
 const endQuery = ref('');
 const startResults = ref([]);
-const intermediateResults = ref([]);
 const endResults = ref([]);
 const startLocation = ref(null); // { lat, lng, display_name }
-const intermediateLocation = ref(null);
 const endLocation = ref(null);
+
+const waypoints = ref([]); // Array of { id: number, query: string, location: null|object, results: [] }
+const nextWaypointId = ref(1);
+let searchTimeout = null;
 
 const routes = ref([]); // Array of GeoJSON features
 const selectedRouteIndex = ref(0);
 
+// Computed
+const googleMapsUrl = computed(() => {
+    if (!startLocation.value || !endLocation.value) return '#';
+    
+    const origin = `${startLocation.value.lat},${startLocation.value.lng}`;
+    const destination = `${endLocation.value.lat},${endLocation.value.lng}`;
+    
+    const validWps = waypoints.value
+        .filter(wp => wp.location)
+        .map(wp => `${wp.location.lat},${wp.location.lng}`);
+    
+    const waypointsParam = validWps.length > 0 ? `&waypoints=${validWps.join('|')}` : '';
+    
+    return `https://www.google.com/maps/dir/?api=1&origin=${origin}&destination=${destination}${waypointsParam}&travelmode=walking`;
+});
+
 // Markers and Layers
 const markersLayer = ref(null);
 const routesLayer = ref(null);
+const decoratorsLayer = ref(null);
 
 // Icons
-const createIcon = (color) => {
+const createIcon = (color, label = '') => {
     return L.divIcon({
         className: 'custom-div-icon',
-        html: `<div style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.5);"></div>`,
-        iconSize: [16, 16],
-        iconAnchor: [8, 8]
+        html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">${label}</div>`,
+        iconSize: [24, 24],
+        iconAnchor: [12, 12]
     });
 };
 
@@ -57,9 +76,12 @@ onMounted(() => {
 
     markersLayer.value = L.layerGroup().addTo(map.value);
     routesLayer.value = L.layerGroup().addTo(map.value);
+    decoratorsLayer.value = L.layerGroup().addTo(map.value);
 
     // Allow clicking on map to set points if inputs are focused
     map.value.on('click', onMapClick);
+    
+    // Initialize with one empty waypoint if desired, or none. Let's start with 0.
 });
 
 onUnmounted(() => {
@@ -83,7 +105,7 @@ const onMapClick = async (e) => {
 
 // --- Geocoding ---
 
-const searchPlace = async (query, type) => {
+const searchPlace = async (query, type, index = null) => {
     if (!query || query.length < 3) return;
     
     try {
@@ -93,18 +115,39 @@ const searchPlace = async (query, type) => {
         
         const res = await axios.get(url);
         if (type === 'start') startResults.value = res.data;
-        else if (type === 'intermediate') intermediateResults.value = res.data;
-        else endResults.value = res.data;
+        else if (type === 'end') endResults.value = res.data;
+        else if (type === 'waypoint' && index !== null && waypoints.value[index]) {
+            waypoints.value[index].results = res.data;
+        }
     } catch (e) {
         console.error("Geocoding error", e);
     }
 };
 
-const debouncedSearchStart = debounce(() => searchPlace(startQuery.value, 'start'), 500);
-const debouncedSearchIntermediate = debounce(() => searchPlace(intermediateQuery.value, 'intermediate'), 500);
-const debouncedSearchEnd = debounce(() => searchPlace(endQuery.value, 'end'), 500);
+const handleInput = (query, type, index = null) => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => searchPlace(query, type, index), 500);
+};
 
-const selectLocation = (place, type) => {
+const addWaypoint = () => {
+    if (waypoints.value.length >= 10) return;
+    waypoints.value.push({
+        id: nextWaypointId.value++,
+        query: '',
+        location: null,
+        results: []
+    });
+};
+
+const removeWaypoint = (index) => {
+    waypoints.value.splice(index, 1);
+    updateMarkers();
+    if (startLocation.value && endLocation.value) {
+        calculateRoutes();
+    }
+};
+
+const selectLocation = (place, type, index = null) => {
     const loc = {
         lat: parseFloat(place.lat),
         lng: parseFloat(place.lon),
@@ -115,14 +158,14 @@ const selectLocation = (place, type) => {
         startLocation.value = loc;
         startQuery.value = loc.display_name;
         startResults.value = [];
-    } else if (type === 'intermediate') {
-        intermediateLocation.value = loc;
-        intermediateQuery.value = loc.display_name;
-        intermediateResults.value = [];
-    } else {
+    } else if (type === 'end') {
         endLocation.value = loc;
         endQuery.value = loc.display_name;
         endResults.value = [];
+    } else if (type === 'waypoint' && index !== null) {
+        waypoints.value[index].location = loc;
+        waypoints.value[index].query = loc.display_name;
+        waypoints.value[index].results = [];
     }
 
     updateMarkers();
@@ -138,23 +181,25 @@ const updateMarkers = () => {
     let hasPoints = false;
 
     if (startLocation.value) {
-        L.marker([startLocation.value.lat, startLocation.value.lng], { icon: createIcon('#10b981') })
+        L.marker([startLocation.value.lat, startLocation.value.lng], { icon: createIcon('#10b981', 'S') })
          .bindPopup(t('hiking.popup.start'))
          .addTo(markersLayer.value);
         bounds.extend([startLocation.value.lat, startLocation.value.lng]);
         hasPoints = true;
     }
     
-    if (intermediateLocation.value) {
-        L.marker([intermediateLocation.value.lat, intermediateLocation.value.lng], { icon: createIcon('#f59e0b') })
-         .bindPopup(t('hiking.popup.intermediate'))
-         .addTo(markersLayer.value);
-        bounds.extend([intermediateLocation.value.lat, intermediateLocation.value.lng]);
-        hasPoints = true;
-    }
+    waypoints.value.forEach((wp, i) => {
+        if (wp.location) {
+             L.marker([wp.location.lat, wp.location.lng], { icon: createIcon('#f59e0b', i + 1) })
+             .bindPopup(`${t('hiking.popup.intermediate')} ${i+1}`)
+             .addTo(markersLayer.value);
+            bounds.extend([wp.location.lat, wp.location.lng]);
+            hasPoints = true;
+        }
+    });
     
     if (endLocation.value) {
-        L.marker([endLocation.value.lat, endLocation.value.lng], { icon: createIcon('#ef4444') })
+        L.marker([endLocation.value.lat, endLocation.value.lng], { icon: createIcon('#ef4444', 'D') })
          .bindPopup(t('hiking.popup.destination'))
          .addTo(markersLayer.value);
         bounds.extend([endLocation.value.lat, endLocation.value.lng]);
@@ -182,11 +227,17 @@ const calculateRoutes = async () => {
             end: `${endLocation.value.lat},${endLocation.value.lng}`
         };
 
-        if (intermediateLocation.value) {
-            params.intermediate = `${intermediateLocation.value.lat},${intermediateLocation.value.lng}`;
+        // Collect valid waypoints
+        const validWaypoints = waypoints.value
+            .filter(wp => wp.location)
+            .map(wp => `${wp.location.lat},${wp.location.lng}`);
+
+        if (validWaypoints.length > 0) {
+            params.waypoints = validWaypoints;
         }
 
         const response = await axios.get('/api/hiking/route', { params });
+
 
         const geoJson = response.data; // FeatureCollection
         if (geoJson.type === 'FeatureCollection') {
@@ -208,6 +259,7 @@ const calculateRoutes = async () => {
 
 const renderRoutes = () => {
     routesLayer.value.clearLayers();
+    decoratorsLayer.value.clearLayers();
 
     // Render all routes (non-selected as gray)
     routes.value.forEach((feature, index) => {
@@ -215,14 +267,36 @@ const renderRoutes = () => {
         const color = isSelected ? getDifficultyColor(feature.properties.difficulty) : '#4b5563';
         const opacity = isSelected ? 1 : 0.4;
         const weight = isSelected ? 5 : 3;
-        const zIndex = isSelected ? 1000 : 1;
-
+        
         const layer = L.geoJSON(feature, {
             style: { color, weight, opacity }
         }).addTo(routesLayer.value);
 
         if (isSelected) {
             map.value.fitBounds(layer.getBounds(), { padding: [50, 50] });
+            
+            // Add directional arrows
+            // Coordinates in GeoJSON are [lon, lat, ele], Leaflet needs [lat, lon]
+            const coords = feature.geometry.coordinates.map(c => [c[1], c[0]]);
+            
+            const decorator = L.polylineDecorator(coords, {
+                patterns: [
+                    {
+                        offset: 25,
+                        repeat: 80, 
+                        symbol: L.Symbol.arrowHead({
+                            pixelSize: 12,
+                            polygon: false,
+                            pathOptions: { 
+                                stroke: true, 
+                                color: '#ffffff',
+                                opacity: 1,
+                                weight: 2
+                            }
+                        })
+                    }
+                ]
+            }).addTo(decoratorsLayer.value);
         }
     });
 };
@@ -251,13 +325,52 @@ const getTranslatedDifficulty = (diff) => {
     return t(`hiking.difficulty.${key}`);
 };
 
+const formatDistance = (meters) => {
+    if (meters < 1000) return `${Math.round(meters)} m`;
+    return `${(meters / 1000).toFixed(1)} km`;
+};
+
+const getInstructionText = (step) => {
+    const m = step.maneuver;
+    const name = step.name || t('hiking.unnamed_road', 'Path'); 
+    
+    let textKey = '';
+    
+    if (m.type === 'turn') {
+        const mod = m.modifier ? m.modifier.replace(' ', '_') : 'straight';
+        textKey = `hiking.directions.turn.${mod}`;
+    } else if (m.type === 'new name') {
+        textKey = 'hiking.directions.new_name';
+    } else if (m.type === 'depart') {
+        textKey = 'hiking.directions.depart';
+    } else if (m.type === 'arrive') {
+        textKey = 'hiking.directions.arrive';
+    } else if (m.type === 'roundabout') {
+        textKey = 'hiking.directions.roundabout';
+    } else {
+        return m.type; // Fallback
+    }
+
+    let text = t(textKey);
+
+    if (m.type === 'roundabout') {
+        text += ' ' + t('hiking.directions.roundabout_exit', { exit: m.exit || 1 });
+    }
+
+    if (name && name !== 'Path' && name !== 'Camino') {
+        text += ' ' + t('hiking.directions.on_road', { name: name });
+    }
+
+    return text;
+};
+
 </script>
 
 <template>
-    <div class="flex h-dvh bg-gray-900 text-white overflow-hidden relative">
+    <div class="fixed inset-0 top-16 bg-gray-900 text-white overflow-hidden flex z-40">
         
         <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 h-full w-full sm:w-96 bg-gray-800 border-r border-gray-700 flex flex-col shadow-2xl z-30 transition-transform duration-300 transform"
+        <div class="absolute inset-y-0 left-0 h-full w-full sm:w-96 bg-gray-800 border-r border-gray-700 flex flex-col shadow-2xl z-30 transition-transform duration-300 transform"
              :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             
             <!-- Header -->
@@ -286,7 +399,7 @@ const getTranslatedDifficulty = (diff) => {
                         </span>
                         <input 
                             v-model="startQuery"
-                            @input="debouncedSearchStart"
+                            @input="handleInput(startQuery, 'start')"
                             type="text" 
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
                             :placeholder="$t('hiking.originPlaceholder')"
@@ -303,30 +416,41 @@ const getTranslatedDifficulty = (diff) => {
                     </ul>
                 </div>
 
-                <!-- Intermediate Input -->
-                <div class="relative">
-                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block">{{ $t('hiking.intermediate') }}</label>
+                <!-- Dynamic Waypoints -->
+                <div v-for="(wp, index) in waypoints" :key="wp.id" class="relative">
+                    <label class="text-xs text-gray-400 uppercase font-bold tracking-wider mb-1 block flex justify-between">
+                        <span>{{ $t('hiking.intermediate') }} {{ index + 1 }}</span>
+                        <button @click="removeWaypoint(index)" class="text-red-400 hover:text-red-300 text-xs lowercase hover:underline">{{ $t('common.delete') }}</button>
+                    </label>
                     <div class="flex items-center bg-gray-700 rounded-lg border border-gray-600 focus-within:border-amber-500 focus-within:ring-1 focus-within:ring-amber-500">
                         <span class="pl-3 text-amber-500">
                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
                         </span>
                         <input 
-                            v-model="intermediateQuery"
-                            @input="debouncedSearchIntermediate"
+                            v-model="wp.query"
+                            @input="handleInput(wp.query, 'waypoint', index)"
                             type="text" 
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
                             :placeholder="$t('hiking.intermediatePlaceholder')"
                         />
-                        <button v-if="intermediateQuery" @click="intermediateQuery=''; intermediateLocation=null; updateMarkers(); if(startLocation && endLocation) calculateRoutes()" class="pr-3 text-gray-500 hover:text-white">✕</button>
+                        <button v-if="wp.query" @click="wp.query=''; wp.location=null; updateMarkers(); if(startLocation && endLocation) calculateRoutes()" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
                     <!-- Results Dropdown -->
-                    <ul v-if="intermediateResults.length > 0" class="absolute w-full bg-gray-700 mt-1 rounded-lg shadow-xl border border-gray-600 z-50 max-h-48 overflow-y-auto">
-                        <li v-for="place in intermediateResults" :key="place.place_id" 
-                            @click="selectLocation(place, 'intermediate')"
+                    <ul v-if="wp.results.length > 0" class="absolute w-full bg-gray-700 mt-1 rounded-lg shadow-xl border border-gray-600 z-50 max-h-48 overflow-y-auto">
+                        <li v-for="place in wp.results" :key="place.place_id" 
+                            @click="selectLocation(place, 'waypoint', index)"
                             class="px-4 py-2 hover:bg-gray-600 cursor-pointer text-sm border-b border-gray-600/50 last:border-0">
                             {{ place.display_name }}
                         </li>
                     </ul>
+                </div>
+
+                <!-- Add Waypoint Button -->
+                <div v-if="waypoints.length < 10" class="flex justify-center">
+                    <button @click="addWaypoint" class="text-xs flex items-center gap-1 text-gray-400 hover:text-white transition-colors border border-dashed border-gray-600 rounded px-3 py-1 hover:border-gray-400">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/></svg>
+                        {{ $t('common.add') }} {{ $t('hiking.intermediate') }}
+                    </button>
                 </div>
 
                 <!-- Destination Input -->
@@ -338,7 +462,7 @@ const getTranslatedDifficulty = (diff) => {
                         </span>
                         <input 
                             v-model="endQuery"
-                            @input="debouncedSearchEnd"
+                            @input="handleInput(endQuery, 'end')"
                             type="text" 
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
                             :placeholder="$t('hiking.destinationPlaceholder')"
@@ -409,6 +533,45 @@ const getTranslatedDifficulty = (diff) => {
                                 <svg class="w-4 h-4 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 <span>~{{ route.properties.osrm_time_min }} min</span>
                             </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Route Instructions (Selected Route) -->
+                <div v-if="routes.length > 0 && !loading" class="mt-4 bg-gray-800 border border-gray-700 rounded-xl overflow-hidden shadow-lg">
+                    <div class="p-4 border-b border-gray-700 bg-gray-750 flex justify-between items-center">
+                        <h3 class="font-bold text-white flex items-center gap-2">
+                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.806-.98l-6-3.344M15 7v13M9 7l0 0m6 0l0 0"/></svg>
+                            {{ $t('hiking.instructions', 'Indicaciones') }}
+                        </h3>
+                        <a :href="googleMapsUrl" target="_blank" class="text-[10px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded flex items-center gap-1 transition-colors border border-white/20">
+                            <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                            Google Maps
+                        </a>
+                    </div>
+                    <div class="max-h-64 overflow-y-auto p-0">
+                        <div v-for="(leg, legIndex) in routes[selectedRouteIndex].properties.legs" :key="legIndex" class="border-b border-gray-700/50 last:border-0">
+                            <!-- Leg Header if multiple legs -->
+                            <div v-if="routes[selectedRouteIndex].properties.legs.length > 1" class="bg-gray-700/30 px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider">
+                                {{ $t('hiking.leg', 'Tramo') }} {{ legIndex + 1 }}
+                            </div>
+                            
+                            <!-- Steps -->
+                            <ul class="divide-y divide-gray-700/30">
+                                <li v-for="(step, stepIndex) in leg.steps" :key="stepIndex" class="px-4 py-3 flex gap-3 hover:bg-gray-700/30 transition-colors text-sm">
+                                    <div class="mt-0.5 min-w-[20px]">
+                                        <!-- Simple Icons based on maneuver -->
+                                        <svg v-if="step.maneuver.type === 'arrive'" class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                        <svg v-else-if="step.maneuver.modifier && step.maneuver.modifier.includes('left')" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                                        <svg v-else-if="step.maneuver.modifier && step.maneuver.modifier.includes('right')" class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                                        <svg v-else class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                                    </div>
+                                    <div class="flex-1">
+                                        <p class="text-gray-200">{{ getInstructionText(step) }}</p>
+                                        <p class="text-xs text-gray-500 mt-0.5">{{ formatDistance(step.distance) }}</p>
+                                    </div>
+                                </li>
+                            </ul>
                         </div>
                     </div>
                 </div>

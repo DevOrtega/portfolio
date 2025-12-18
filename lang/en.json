@@ -300,5 +300,19 @@
     "Copyright": "Copyright",
     "All rights reserved": "All rights reserved",
     "Built with": "Built with",
-    "Version": "Version"
+    "Version": "Version",
+    "hiking.directions.turn.left": "Turn left",
+    "hiking.directions.turn.right": "Turn right",
+    "hiking.directions.turn.slight_left": "Turn slightly left",
+    "hiking.directions.turn.slight_right": "Turn slightly right",
+    "hiking.directions.turn.sharp_left": "Turn sharp left",
+    "hiking.directions.turn.sharp_right": "Turn sharp right",
+    "hiking.directions.turn.straight": "Go straight",
+    "hiking.directions.turn.uturn": "Make a U-turn",
+    "hiking.directions.new_name": "Continue",
+    "hiking.directions.depart": "Depart",
+    "hiking.directions.arrive": "Arrive",
+    "hiking.directions.roundabout": "At the roundabout",
+    "hiking.directions.roundabout_exit": "take the :exit exit",
+    "hiking.directions.on_road": "onto :name"
 }

@@ -2,14 +2,14 @@
 
 namespace App\Application\Hiking;
 
-use App\Infrastructure\Services\ElevationService;
-use App\Infrastructure\Services\OsrmService;
+use App\Domain\Hiking\ElevationProviderInterface;
+use App\Domain\Hiking\RouteProviderInterface;
 
 final readonly class GetHikingRouteService
 {
     public function __construct(
-        private OsrmService $osrmService,
-        private ElevationService $elevationService
+        private RouteProviderInterface $routeProvider,
+        private ElevationProviderInterface $elevationProvider
     ) {}
 
     /**
@@ -35,8 +35,11 @@ final readonly class GetHikingRouteService
         $coordinates[] = $end;
 
         // 1. Get Routes from OSRM with alternatives
-        // We request 3 alternatives explicitly. OSRM might still return fewer if paths overlap too much.
-        $rawRoutes = $this->osrmService->getRoutesWithOptions($coordinates, 'foot', ['alternatives' => 3]);
+        // We request 3 alternatives explicitly and enable steps for instructions.
+        $rawRoutes = $this->routeProvider->getRoutesWithOptions($coordinates, 'foot', [
+            'alternatives' => 3,
+            'steps' => 'true'
+        ]);
         
         $features = [];
 
@@ -44,7 +47,7 @@ final readonly class GetHikingRouteService
             $route2D = $routeData['geometry']['coordinates'];
             
             // 2. Add Elevation to each route
-            $route3D = $this->elevationService->addElevation($route2D);
+            $route3D = $this->elevationProvider->addElevation($route2D);
             
             // 3. Calculate statistics
             $stats = $this->calculateStats($route3D);
@@ -54,6 +57,9 @@ final readonly class GetHikingRouteService
             $stats['route_index'] = $index;
             // OSRM provides 'duration' in seconds and 'distance' in meters
             $stats['osrm_time_min'] = round(($routeData['duration'] ?? 0) / 60);
+            
+            // Include legs/steps for instructions
+            $stats['legs'] = $routeData['legs'] ?? [];
 
             $features[] = [
                 'type' => 'Feature',

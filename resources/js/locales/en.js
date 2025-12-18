@@ -196,6 +196,27 @@ export default {
       easy: 'Easy',
       moderate: 'Moderate',
       hard: 'Hard'
+    },
+    instructions: 'Directions',
+    leg: 'Leg',
+    unnamed_road: 'Path',
+    directions: {
+      turn: {
+        left: 'Turn left',
+        right: 'Turn right',
+        sharp_left: 'Sharp left turn',
+        sharp_right: 'Sharp right turn',
+        slight_left: 'Slight left turn',
+        slight_right: 'Slight right turn',
+        straight: 'Go straight',
+        uturn: 'U-turn'
+      },
+      new_name: 'Continue on',
+      depart: 'Depart',
+      arrive: 'Arrive',
+      roundabout: 'At the roundabout',
+      roundabout_exit: 'take exit {exit}',
+      on_road: 'on {name}'
     }
   },
   contact: {

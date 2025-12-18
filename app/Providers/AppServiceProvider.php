@@ -12,7 +12,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(
+            \App\Domain\Hiking\RouteProviderInterface::class,
+            \App\Infrastructure\Services\OsrmService::class
+        );
+        
+        $this->app->bind(
+            \App\Domain\Hiking\ElevationProviderInterface::class,
+            \App\Infrastructure\Services\ElevationService::class
+        );
     }
 
     /**

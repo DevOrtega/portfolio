@@ -4,8 +4,9 @@ namespace App\Infrastructure\Services;
 
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Log;
+use App\Domain\Hiking\ElevationProviderInterface;
 
-final readonly class ElevationService
+final readonly class ElevationService implements ElevationProviderInterface
 {
     private string $scriptPath;
     private string $tifPath;

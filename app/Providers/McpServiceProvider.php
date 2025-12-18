@@ -13,30 +13,85 @@ class McpServiceProvider extends ServiceProvider
         // ==========================================
         // 1. TOOL: OSRM SERVICE (Ejecución Real)
         // ==========================================
-        Mcp::tool('osrm_get_route', function (string $start, string $end) {
+        Mcp::tool('osrm_get_route', function (string $start, string $end, ?array $waypoints = null) {
             // 1. Convertimos el input "lat,lon" a array [lat, lon]
             $startCoord = array_map('floatval', explode(',', $start));
             $endCoord   = array_map('floatval', explode(',', $end));
 
-            // 2. Validamos formato básico
-            if (count($startCoord) !== 2 || count($endCoord) !== 2) {
-                return ['error' => 'Formato inválido. Usa "lat,lon" (ej: 28.14,-15.43)'];
+            $coordinates = [$startCoord];
+
+            // 2. Procesar waypoints intermedios si existen
+            if ($waypoints) {
+                foreach ($waypoints as $wp) {
+                    $coordinates[] = array_map('floatval', explode(',', $wp));
+                }
             }
 
-            // 3. Instanciamos tu servicio (Laravel lo resuelve del contenedor)
+            $coordinates[] = $endCoord;
+
+            // 3. Validamos formato básico
+            foreach ($coordinates as $coord) {
+                if (count($coord) !== 2) {
+                    return ['error' => 'Formato inválido en coordenadas. Usa "lat,lon" (ej: 28.14,-15.43)'];
+                }
+            }
+
+            // 4. Instanciamos tu servicio (Laravel lo resuelve del contenedor)
             /** @var OsrmService $service */
             $service = app(OsrmService::class);
 
-            // 4. Llamamos a tu método existente
-            // Tu servicio espera un array de arrays: [[lat,lng], [lat,lng]]
-            return $service->getRoute([$startCoord, $endCoord]);
+            // 5. Llamamos a tu método existente
+            return $service->getRoute($coordinates);
         })
-            ->description('Obtiene la ruta real de conducción entre dos puntos usando el servicio interno de OSRM.')
+            ->description('Obtiene la ruta real de conducción entre varios puntos usando el servicio interno de OSRM.')
             ->inputSchema([
                 'type' => 'object',
                 'properties' => [
                     'start' => ['type' => 'string', 'description' => 'Coordenadas inicio "lat,lon"'],
                     'end'   => ['type' => 'string', 'description' => 'Coordenadas fin "lat,lon"'],
+                    'waypoints' => [
+                        'type' => 'array', 
+                        'description' => 'Lista opcional de coordenadas intermedias "lat,lon"',
+                        'items' => ['type' => 'string']
+                    ],
+                ],
+                'required' => ['start', 'end'],
+            ]);
+
+        // ==========================================
+        // 1.1 TOOL: HIKING ROUTE SERVICE (Senderismo con Elevación)
+        // ==========================================
+        Mcp::tool('hiking_get_route', function (string $start, string $end, ?array $waypoints = null) {
+            $startCoord = array_map('floatval', explode(',', $start));
+            $endCoord   = array_map('floatval', explode(',', $end));
+            
+            $intermediate = [];
+            if ($waypoints) {
+                foreach ($waypoints as $wp) {
+                    $intermediate[] = array_map('floatval', explode(',', $wp));
+                }
+            }
+
+            if (count($startCoord) !== 2 || count($endCoord) !== 2) {
+                return ['error' => 'Formato inválido. Usa "lat,lon"'];
+            }
+
+            /** @var \App\Application\Hiking\GetHikingRouteService $service */
+            $service = app(\App\Application\Hiking\GetHikingRouteService::class);
+
+            return $service->execute($startCoord, $endCoord, empty($intermediate) ? null : $intermediate);
+        })
+            ->description('Calcula una ruta de senderismo detallada con perfil de elevación y dificultad.')
+            ->inputSchema([
+                'type' => 'object',
+                'properties' => [
+                    'start' => ['type' => 'string', 'description' => 'Coordenadas inicio "lat,lon"'],
+                    'end'   => ['type' => 'string', 'description' => 'Coordenadas fin "lat,lon"'],
+                    'waypoints' => [
+                        'type' => 'array', 
+                        'description' => 'Lista opcional de coordenadas intermedias "lat,lon"',
+                        'items' => ['type' => 'string']
+                    ],
                 ],
                 'required' => ['start', 'end'],
             ]);

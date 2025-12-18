@@ -196,6 +196,27 @@ export default {
       easy: 'Fácil',
       moderate: 'Moderada',
       hard: 'Difícil'
+    },
+    instructions: 'Indicaciones',
+    leg: 'Tramo',
+    unnamed_road: 'Camino',
+    directions: {
+      turn: {
+        left: 'Gira a la izquierda',
+        right: 'Gira a la derecha',
+        sharp_left: 'Gira bruscamente a la izquierda',
+        sharp_right: 'Gira bruscamente a la derecha',
+        slight_left: 'Gira ligeramente a la izquierda',
+        slight_right: 'Gira ligeramente a la derecha',
+        straight: 'Continúa recto',
+        uturn: 'Da la vuelta'
+      },
+      new_name: 'Continúa por',
+      depart: 'Salida',
+      arrive: 'Llegada',
+      roundabout: 'En la rotonda',
+      roundabout_exit: 'toma la salida {exit}',
+      on_road: 'en {name}'
     }
   },
   contact: {
