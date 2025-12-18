@@ -13,6 +13,7 @@ const mapContainer = ref(null);
 const map = ref(null);
 const loading = ref(false);
 const error = ref(null);
+const sidebarOpen = ref(true);
 
 const startQuery = ref('');
 const intermediateQuery = ref('');
@@ -63,6 +64,13 @@ onMounted(() => {
 
 onUnmounted(() => {
     if (map.value) map.value.remove();
+});
+
+watch(sidebarOpen, () => {
+    // Wait for transition to finish
+    setTimeout(() => {
+        if (map.value) map.value.invalidateSize();
+    }, 305);
 });
 
 // --- Map Interaction ---
@@ -246,18 +254,24 @@ const getTranslatedDifficulty = (diff) => {
 </script>
 
 <template>
-    <div class="flex h-screen bg-gray-900 text-white overflow-hidden relative">
+    <div class="flex h-dvh bg-gray-900 text-white overflow-hidden relative">
         
         <!-- Sidebar -->
-        <div class="w-full md:w-96 bg-gray-800 border-r border-gray-700 flex flex-col shadow-2xl z-20 absolute md:relative h-full transition-transform duration-300 transform"
-             :class="{'translate-x-0': true}"> <!-- Add mobile toggle logic if needed -->
+        <div class="fixed inset-y-0 left-0 h-full w-full sm:w-96 bg-gray-800 border-r border-gray-700 flex flex-col shadow-2xl z-30 transition-transform duration-300 transform"
+             :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'">
             
             <!-- Header -->
-            <div class="p-6 border-b border-gray-700 bg-gray-900">
-                <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
-                    {{ $t('hiking.title') }}
-                </h1>
-                <p class="text-gray-400 text-sm mt-1">{{ $t('hiking.subtitle') }}</p>
+            <div class="p-6 border-b border-gray-700 bg-gray-900 flex justify-between items-center">
+                <div>
+                    <h1 class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-green-400 to-blue-500">
+                        {{ $t('hiking.title') }}
+                    </h1>
+                    <p class="text-gray-400 text-sm mt-1">{{ $t('hiking.subtitle') }}</p>
+                </div>
+                <!-- Close Button (All devices) -->
+                <button @click="sidebarOpen = false" class="text-gray-400 hover:text-white p-1 rounded hover:bg-gray-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                </button>
             </div>
 
             <!-- Form -->
@@ -412,9 +426,17 @@ const getTranslatedDifficulty = (diff) => {
             </div>
         </div>
 
-        <!-- Map -->
-        <div class="flex-1 relative z-10">
+        <!-- Map Container -->
+        <div class="flex-1 relative z-10 w-full h-full transition-all duration-300"
+             :class="sidebarOpen ? 'md:ml-96' : 'ml-0'">
             <div ref="mapContainer" class="w-full h-full"></div>
+
+            <!-- Toggle Button (Visible when sidebar is closed) -->
+            <button @click="sidebarOpen = true" 
+                    class="absolute bottom-6 right-6 z-[2000] bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 transform"
+                    :class="sidebarOpen ? 'translate-y-24 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
+            </button>
         </div>
 
     </div>
