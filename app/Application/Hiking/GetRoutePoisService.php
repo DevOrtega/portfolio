@@ -104,8 +104,15 @@ QL;
 
             $type = $this->determineType($tags);
             
-            // Priority: name tag > specific OSM tag value > generic category
-            $name = $tags['name'] ?? $tags['alt_name'] ?? $tags['loc_name'] ?? null;
+            // Comprehensive name priority list
+            $name = $tags['name'] 
+                 ?? $tags['alt_name'] 
+                 ?? $tags['loc_name'] 
+                 ?? $tags['short_name']
+                 ?? $tags['old_name'] 
+                 ?? $tags['int_name']
+                 ?? $tags['official_name']
+                 ?? null;
             
             if (!$name) {
                 // For peaks, try to add elevation
