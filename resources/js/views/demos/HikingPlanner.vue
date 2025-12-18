@@ -32,6 +32,7 @@ const routes = ref([]); // Array of GeoJSON features
 const selectedRouteIndex = ref(0);
 const pois = ref([]);
 const showPois = ref(true);
+const poisLoading = ref(false);
 
 // Computed
 const googleMapsUrl = computed(() => {
@@ -399,6 +400,8 @@ const fetchPois = async (coordinates) => {
     }
     poiAbortController = new AbortController();
 
+    poisLoading.value = true;
+
     try {
         const response = await axios.post('/api/hiking/pois', {
             route: coordinates,
@@ -413,6 +416,14 @@ const fetchPois = async (coordinates) => {
             console.log('POI fetch aborted');
         } else {
             console.error("Error fetching POIs", e);
+        }
+    } finally {
+        // Only turn off loading if this wasn't aborted (or if we track IDs)
+        // If aborted, the new request will set it to true anyway.
+        // But if we finish here, we should set false.
+        // Wait, if aborted, `finally` runs.
+        if (!poiAbortController.signal.aborted) {
+            poisLoading.value = false;
         }
     }
 };
@@ -677,11 +688,20 @@ const getInstructionText = (step) => {
                 </div>
 
                 <!-- POIs Toggle -->
-                <div v-if="routes.length > 0 && !loading" class="flex items-center gap-2 mb-2 px-1">
-                    <input type="checkbox" id="showPois" v-model="showPois" class="rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500">
-                    <label for="showPois" class="text-sm text-gray-300 select-none cursor-pointer">
-                        {{ $t('hiking.showPois', 'Show Points of Interest (0.5km)') }}
-                    </label>
+                <div v-if="routes.length > 0 && !loading" class="flex items-center gap-2 mb-2 px-1 justify-between">
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="showPois" v-model="showPois" class="rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500">
+                        <label for="showPois" class="text-sm text-gray-300 select-none cursor-pointer">
+                            {{ $t('hiking.showPois', 'Show Points of Interest (0.5km)') }}
+                        </label>
+                    </div>
+                    <div v-if="poisLoading" class="flex items-center gap-1 text-xs text-blue-400">
+                        <svg class="animate-spin h-3 w-3 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        <span>Loading...</span>
+                    </div>
                 </div>
 
                 <!-- Routes List -->
