@@ -395,7 +395,7 @@ const fetchPois = async (coordinates) => {
     try {
         const response = await axios.post('/api/hiking/pois', {
             route: coordinates,
-            radius: 1000
+            radius: 500
         });
         pois.value = response.data;
         renderPois();
@@ -409,13 +409,17 @@ const renderPois = () => {
     if (!showPois.value) return;
 
     pois.value.forEach(poi => {
+        const categoryLabel = t('hiking.legend.' + poi.category);
+        const hasProperName = poi.name.toLowerCase() !== poi.category.toLowerCase() && 
+                             poi.name.toLowerCase() !== categoryLabel.toLowerCase();
+
         L.marker([poi.lat, poi.lon], { icon: createPoiIcon(poi.category) })
          .bindPopup(`
-            <div class="text-center">
-                <b class="block mb-1">${poi.name}</b>
-                <span class="text-xs uppercase text-gray-500 block mb-2">${t('hiking.legend.' + poi.category)}</span>
+            <div class="text-center min-w-[120px]">
+                <b class="block text-sm mb-0.5">${poi.name}</b>
+                ${hasProperName ? `<span class="text-[10px] uppercase text-gray-500 block mb-2">${categoryLabel}</span>` : '<div class="mb-2"></div>'}
                 <button onclick="window.addPoiToRoute(${poi.id})" 
-                        class="bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700 transition-colors">
+                        class="w-full bg-blue-600 text-white text-[10px] py-1 px-2 rounded hover:bg-blue-700 transition-colors font-bold uppercase tracking-tight">
                     ${t('hiking.addToRoute')}
                 </button>
             </div>
@@ -663,7 +667,7 @@ const getInstructionText = (step) => {
                 <div v-if="routes.length > 0 && !loading" class="flex items-center gap-2 mb-2 px-1">
                     <input type="checkbox" id="showPois" v-model="showPois" class="rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500">
                     <label for="showPois" class="text-sm text-gray-300 select-none cursor-pointer">
-                        {{ $t('hiking.showPois', 'Show Points of Interest (1km)') }}
+                        {{ $t('hiking.showPois', 'Show Points of Interest (0.5km)') }}
                     </label>
                 </div>
 

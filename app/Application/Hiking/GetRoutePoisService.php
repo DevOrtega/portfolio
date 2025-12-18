@@ -94,7 +94,17 @@ QL;
             if (!$lat || !$lon) continue;
 
             $type = $this->determineType($tags);
-            $name = $tags['name'] ?? ucfirst(str_replace('_', ' ', $type));
+            
+            // Priority: name tag > specific OSM tag value > generic category
+            $name = $tags['name'] ?? null;
+            if (!$name) {
+                $specificTag = $tags['amenity'] ?? $tags['tourism'] ?? $tags['natural'] ?? $tags['shop'] ?? null;
+                if ($specificTag) {
+                    $name = ucfirst(str_replace('_', ' ', $specificTag));
+                } else {
+                    $name = ucfirst(str_replace('_', ' ', $type));
+                }
+            }
 
             $pois[] = [
                 'id' => $element['id'],

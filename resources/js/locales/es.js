@@ -218,7 +218,7 @@ export default {
       roundabout_exit: 'toma la salida {exit}',
       on_road: 'en {name}'
     },
-    showPois: 'Mostrar Puntos de Interés (1km)',
+    showPois: 'Mostrar Puntos de Interés (0.5km)',
     addToRoute: 'Añadir a ruta',
     legend: {
         title: 'Leyenda',
