@@ -21,6 +21,9 @@ case "$1" in
     echo "⏳ Waiting for services to initialize..."
     sleep 5
     
+    echo "🧹 Clearing old cache..."
+    docker compose exec -T portfolio php artisan optimize:clear
+    
     echo "📦 Running migrations..."
     docker compose exec -T portfolio php artisan migrate:fresh --force
     
@@ -32,6 +35,11 @@ case "$1" in
     
     echo "🔥 Warming up Bus Cache..."
     docker compose exec -T portfolio php artisan bus:cache-warmup
+
+    echo "⚡ Caching configuration..."
+    docker compose exec -T portfolio php artisan config:cache
+    docker compose exec -T portfolio php artisan route:cache
+    docker compose exec -T portfolio php artisan view:cache
     
     echo "✅ Deployment complete. Checking status..."
     docker compose ps
@@ -105,6 +113,9 @@ case "$1" in
     echo "🔥 Warming up Bus Cache..."
     docker compose exec -T portfolio php artisan bus:cache-warmup
     
+    echo "🧹 Clearing old cache..."
+    docker compose exec -T portfolio php artisan optimize:clear
+
     echo "🔥 Warming up caches..."
     docker compose exec -T portfolio php artisan config:cache
     docker compose exec -T portfolio php artisan route:cache
