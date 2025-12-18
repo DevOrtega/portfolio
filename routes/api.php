@@ -36,6 +36,7 @@ Route::prefix('bus')->group(function () {
 // Hiking demo routes
 Route::prefix('hiking')->group(function () {
     Route::get('/route', [HikingController::class, 'route']);
+    Route::post('/pois', [HikingController::class, 'pois']);
 });
 
 // Contact form (rate limited)

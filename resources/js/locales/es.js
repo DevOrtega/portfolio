@@ -217,6 +217,20 @@ export default {
       roundabout: 'En la rotonda',
       roundabout_exit: 'toma la salida {exit}',
       on_road: 'en {name}'
+    },
+    showPois: 'Mostrar Puntos de Interés (1km)',
+    addToRoute: 'Añadir a ruta',
+    legend: {
+        title: 'Leyenda',
+        food: 'Comida',
+        water: 'Agua',
+        viewpoint: 'Mirador',
+        shelter: 'Refugio',
+        parking: 'Parking',
+        peak: 'Cima',
+        start: 'Inicio',
+        end: 'Destino',
+        waypoint: 'Punto Intermedio'
     }
   },
   contact: {

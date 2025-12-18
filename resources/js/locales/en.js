@@ -217,6 +217,20 @@ export default {
       roundabout: 'At the roundabout',
       roundabout_exit: 'take exit {exit}',
       on_road: 'on {name}'
+    },
+    showPois: 'Show Points of Interest (1km)',
+    addToRoute: 'Add to route',
+    legend: {
+        title: 'Legend',
+        food: 'Food',
+        water: 'Water',
+        viewpoint: 'Viewpoint',
+        shelter: 'Shelter',
+        parking: 'Parking',
+        peak: 'Peak',
+        start: 'Start',
+        end: 'Destination',
+        waypoint: 'Waypoint'
     }
   },
   contact: {

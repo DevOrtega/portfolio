@@ -16,8 +16,85 @@ use Illuminate\Support\Facades\Log;
 class HikingController extends Controller
 {
     public function __construct(
-        private readonly GetHikingRouteService $getHikingRouteService
+        private readonly GetHikingRouteService $getHikingRouteService,
+        private readonly \App\Application\Hiking\GetRoutePoisService $getRoutePoisService
     ) {}
+
+    /**
+     * Get POIs along a route
+     *
+     * @OA\Post(
+     *     path="/api/hiking/pois",
+     *     tags={"Hiking"},
+     *     summary="Find POIs near a route",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(
+     *                 property="route",
+     *                 type="array",
+     *                 @OA\Items(type="array", @OA\Items(type="number"))
+     *             ),
+     *             @OA\Property(property="radius", type="integer", example=1000)
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="List of POIs"
+     *     )
+     * )
+     */
+    public function pois(Request $request): JsonResponse
+    {
+        $request->validate([
+            'route' => 'required|array',
+            'route.*' => 'array|min:2',
+            'radius' => 'nullable|integer|min:100|max:5000'
+        ]);
+
+        try {
+            // route is [[lat, lon], ...] or [[lon, lat], ...]?
+            // Our Service expects [lat, lon].
+            // OSRM returns [lon, lat]. Frontend usually sends what it has.
+            // Let's assume frontend sends what OSRM gave: [lon, lat].
+            // We need to swap them if they come as [lon, lat].
+            // How to detect? 
+            // Lat is usually [-90, 90], Lon [-180, 180]. 
+            // In Gran Canaria: Lat ~28, Lon ~-15.
+            // If p[0] is -15, it's Lon. If p[0] is 28, it's Lat.
+            
+            $route = $request->input('route');
+            $radius = $request->input('radius', 1000);
+
+            // Simple heuristic to ensure [lat, lon] order
+            if (!empty($route) && isset($route[0][0])) {
+                // If first coord is negative (Gran Canaria Lon is negative), 
+                // and second is positive (Lat is positive), SWAP.
+                // Or generally, if abs(val1) < abs(val2) in GC context? No.
+                // Lat ~ 28, Lon ~ -15.
+                // If first element > 0 (28) -> Lat.
+                // If first element < 0 (-15) -> Lon.
+                
+                // If we receive [lon, lat] ([-15, 28]), we swap to [28, -15].
+                // If we receive [lat, lon] ([28, -15]), we keep it.
+                
+                $first = $route[0];
+                if ($first[0] < 0 && $first[1] > 0) {
+                     // Swap all
+                     $route = array_map(fn($p) => [$p[1], $p[0]], $route);
+                }
+            }
+
+            $pois = $this->getRoutePoisService->execute($route, $radius);
+
+            return response()->json($pois);
+
+        } catch (\Exception $e) {
+            Log::error('Hiking POIs error', ['message' => $e->getMessage()]);
+            return response()->json(['error' => 'Failed to fetch POIs'], 500);
+        }
+    }
 
     /**
      * Get a hiking route with elevation profile

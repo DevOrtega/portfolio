@@ -29,6 +29,8 @@ let searchTimeout = null;
 
 const routes = ref([]); // Array of GeoJSON features
 const selectedRouteIndex = ref(0);
+const pois = ref([]);
+const showPois = ref(true);
 
 // Computed
 const googleMapsUrl = computed(() => {
@@ -50,6 +52,7 @@ const googleMapsUrl = computed(() => {
 const markersLayer = ref(null);
 const routesLayer = ref(null);
 const decoratorsLayer = ref(null);
+const poisLayer = ref(null);
 
 // Icons
 const createIcon = (color, label = '') => {
@@ -58,6 +61,27 @@ const createIcon = (color, label = '') => {
         html: `<div style="background-color: ${color}; width: 24px; height: 24px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 8px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 10px;">${label}</div>`,
         iconSize: [24, 24],
         iconAnchor: [12, 12]
+    });
+};
+
+const createPoiIcon = (type) => {
+    let color = '#6b7280';
+    let label = '•';
+    
+    switch(type) {
+        case 'food': color = '#ef4444'; label = 'R'; break; // Red
+        case 'water': color = '#06b6d4'; label = 'W'; break; // Cyan
+        case 'viewpoint': color = '#8b5cf6'; label = 'V'; break; // Violet
+        case 'shelter': color = '#d97706'; label = 'S'; break; // Amber
+        case 'parking': color = '#374151'; label = 'P'; break; // Dark Gray
+        case 'peak': color = '#10b981'; label = '^'; break; // Green
+    }
+    
+    return L.divIcon({
+        className: 'poi-div-icon',
+        html: `<div style="background-color: ${color}; width: 20px; height: 20px; border-radius: 50%; border: 1.5px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 9px;">${label}</div>`,
+        iconSize: [20, 20],
+        iconAnchor: [10, 10]
     });
 };
 
@@ -77,6 +101,7 @@ onMounted(() => {
     markersLayer.value = L.layerGroup().addTo(map.value);
     routesLayer.value = L.layerGroup().addTo(map.value);
     decoratorsLayer.value = L.layerGroup().addTo(map.value);
+    poisLayer.value = L.layerGroup().addTo(map.value);
 
     // Allow clicking on map to set points if inputs are focused
     map.value.on('click', onMapClick);
@@ -95,7 +120,109 @@ watch(sidebarOpen, () => {
     }, 305);
 });
 
+watch(showPois, () => {
+    renderPois();
+});
+
 // --- Map Interaction ---
+
+// Expose function for popup buttons
+window.addPoiToRoute = (poiId) => {
+    const poi = pois.value.find(p => p.id === poiId);
+    if (!poi) return;
+    
+    addLocationToRoute(poi);
+};
+
+onUnmounted(() => {
+    if (map.value) map.value.remove();
+    delete window.addPoiToRoute;
+});
+
+const addLocationToRoute = (location) => {
+    // Determine best index to insert
+    // We have Start -> WP[0] -> WP[1] ... -> End
+    // We want to minimize distance increase.
+    
+    // Points list including start/end
+    const points = [];
+    if (startLocation.value) points.push({ coords: startLocation.value, type: 'start' });
+    waypoints.value.forEach((wp, i) => {
+        if (wp.location) points.push({ coords: wp.location, type: 'wp', index: i });
+    });
+    if (endLocation.value) points.push({ coords: endLocation.value, type: 'end' });
+    
+    if (points.length < 2) {
+        // Just add as waypoint
+        addWaypointWithLocation(location);
+        return;
+    }
+    
+    let bestIndex = 0; // Insert before waypoints[0]
+    let minAddedDist = Infinity;
+    
+    // Iterate segments
+    for (let i = 0; i < points.length - 1; i++) {
+        const p1 = points[i].coords;
+        const p2 = points[i+1].coords;
+        
+        const d12 = getDist(p1, p2);
+        const d1P = getDist(p1, location);
+        const dP2 = getDist(location, p2);
+        
+        const added = d1P + dP2 - d12;
+        
+        if (added < minAddedDist) {
+            minAddedDist = added;
+            // logic to map segment index to waypoint index
+            // If i=0 (Start->WP0), insert at index 0.
+            // If i=1 (WP0->WP1), insert at index 1.
+            // If last segment (WPn->End), insert at index n (push).
+            // Basically index represents the waypoint index to splice at.
+            bestIndex = i; 
+        }
+    }
+    
+    // Insert
+    if (waypoints.value.length >= 10) return; // Limit
+    
+    waypoints.value.splice(bestIndex, 0, {
+        id: nextWaypointId.value++,
+        query: location.name || location.display_name,
+        location: {
+            lat: location.lat,
+            lng: location.lon || location.lng,
+            display_name: location.name || location.display_name
+        },
+        results: []
+    });
+    
+    updateMarkers();
+    calculateRoutes();
+};
+
+const addWaypointWithLocation = (loc) => {
+    waypoints.value.push({
+        id: nextWaypointId.value++,
+        query: loc.name,
+        location: { lat: loc.lat, lng: loc.lon, display_name: loc.name },
+        results: []
+    });
+    updateMarkers();
+    calculateRoutes();
+};
+
+const getDist = (p1, p2) => {
+    const R = 6371; 
+    const dLat = (p2.lat - p1.lat) * Math.PI / 180;
+    const dLon = ((p2.lng || p2.lon) - (p1.lng || p1.lon)) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(p1.lat * Math.PI / 180) * Math.cos(p2.lat * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c; 
+};
 
 const onMapClick = async (e) => {
     // If user clicks map, we can fill empty inputs intelligently
@@ -182,7 +309,7 @@ const updateMarkers = () => {
 
     if (startLocation.value) {
         L.marker([startLocation.value.lat, startLocation.value.lng], { icon: createIcon('#10b981', 'S') })
-         .bindPopup(t('hiking.popup.start'))
+         .bindPopup(`<b>${t('hiking.popup.start')}</b><br/>${startLocation.value.display_name}`)
          .addTo(markersLayer.value);
         bounds.extend([startLocation.value.lat, startLocation.value.lng]);
         hasPoints = true;
@@ -191,7 +318,7 @@ const updateMarkers = () => {
     waypoints.value.forEach((wp, i) => {
         if (wp.location) {
              L.marker([wp.location.lat, wp.location.lng], { icon: createIcon('#f59e0b', i + 1) })
-             .bindPopup(`${t('hiking.popup.intermediate')} ${i+1}`)
+             .bindPopup(`<b>${t('hiking.popup.intermediate')} ${i+1}</b><br/>${wp.location.display_name}`)
              .addTo(markersLayer.value);
             bounds.extend([wp.location.lat, wp.location.lng]);
             hasPoints = true;
@@ -200,7 +327,7 @@ const updateMarkers = () => {
     
     if (endLocation.value) {
         L.marker([endLocation.value.lat, endLocation.value.lng], { icon: createIcon('#ef4444', 'D') })
-         .bindPopup(t('hiking.popup.destination'))
+         .bindPopup(`<b>${t('hiking.popup.destination')}</b><br/>${endLocation.value.display_name}`)
          .addTo(markersLayer.value);
         bounds.extend([endLocation.value.lat, endLocation.value.lng]);
         hasPoints = true;
@@ -218,8 +345,10 @@ const calculateRoutes = async () => {
     loading.value = true;
     error.value = null;
     routes.value = [];
+    pois.value = []; // Clear POIs
     selectedRouteIndex.value = 0;
     routesLayer.value.clearLayers();
+    poisLayer.value.clearLayers();
 
     try {
         const params = {
@@ -249,12 +378,50 @@ const calculateRoutes = async () => {
 
         renderRoutes();
 
+        // Fetch POIs for the first route found
+        if (routes.value.length > 0) {
+            fetchPois(routes.value[0].geometry.coordinates);
+        }
+
     } catch (e) {
         console.error(e);
         error.value = t('common.error');
     } finally {
         loading.value = false;
     }
+};
+
+const fetchPois = async (coordinates) => {
+    try {
+        const response = await axios.post('/api/hiking/pois', {
+            route: coordinates,
+            radius: 1000
+        });
+        pois.value = response.data;
+        renderPois();
+    } catch (e) {
+        console.error("Error fetching POIs", e);
+    }
+};
+
+const renderPois = () => {
+    poisLayer.value.clearLayers();
+    if (!showPois.value) return;
+
+    pois.value.forEach(poi => {
+        L.marker([poi.lat, poi.lon], { icon: createPoiIcon(poi.category) })
+         .bindPopup(`
+            <div class="text-center">
+                <b class="block mb-1">${poi.name}</b>
+                <span class="text-xs uppercase text-gray-500 block mb-2">${t('hiking.legend.' + poi.category)}</span>
+                <button onclick="window.addPoiToRoute(${poi.id})" 
+                        class="bg-blue-600 text-white text-xs px-2 py-1 rounded hover:bg-blue-700 transition-colors">
+                    ${t('hiking.addToRoute')}
+                </button>
+            </div>
+         `)
+         .addTo(poisLayer.value);
+    });
 };
 
 const renderRoutes = () => {
@@ -304,7 +471,10 @@ const renderRoutes = () => {
 const selectRoute = (index) => {
     selectedRouteIndex.value = index;
     renderRoutes();
+    // Re-fetch POIs for the new selected route geometry
+    fetchPois(routes.value[index].geometry.coordinates);
 };
+
 
 const getDifficultyColor = (diff) => {
     switch (diff) {
@@ -489,8 +659,16 @@ const getInstructionText = (step) => {
                     <LoadingSpinner />
                 </div>
 
+                <!-- POIs Toggle -->
+                <div v-if="routes.length > 0 && !loading" class="flex items-center gap-2 mb-2 px-1">
+                    <input type="checkbox" id="showPois" v-model="showPois" class="rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500">
+                    <label for="showPois" class="text-sm text-gray-300 select-none cursor-pointer">
+                        {{ $t('hiking.showPois', 'Show Points of Interest (1km)') }}
+                    </label>
+                </div>
+
                 <!-- Routes List -->
-                <div v-if="routes.length > 0 && !loading" class="space-y-4 mt-6">
+                <div v-if="routes.length > 0 && !loading" class="space-y-4 mt-2">
                     <div class="flex justify-between items-center">
                         <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider">{{ $t('hiking.routesTitle') }}</h3>
                         <span class="text-xs bg-gray-700 px-2 py-1 rounded text-gray-300">{{ $t('hiking.routesFound', { count: routes.length }) }}</span>
@@ -590,13 +768,33 @@ const getInstructionText = (step) => {
         </div>
 
         <!-- Map Container -->
-        <div class="flex-1 relative z-10 w-full h-full transition-all duration-300"
+        <div class="flex-1 relative z-10 w-full h-full transition-all duration-300 flex flex-col"
              :class="sidebarOpen ? 'md:ml-96' : 'ml-0'">
-            <div ref="mapContainer" class="w-full h-full"></div>
+            <div ref="mapContainer" class="w-full flex-1"></div>
+
+            <!-- Legend -->
+            <div class="h-auto min-h-[3rem] bg-gray-900 border-t border-gray-700 flex items-center px-4 gap-6 overflow-x-auto text-xs text-gray-300 whitespace-nowrap z-[1000] shadow-md">
+                <span class="font-bold text-gray-500 uppercase tracking-wider sticky left-0 bg-gray-900 pr-2">{{ $t('hiking.legend.title') }}</span>
+                
+                <!-- Route Points -->
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#10b981] border border-white flex items-center justify-center text-[8px] font-bold text-white">S</div> {{ $t('hiking.legend.start') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#f59e0b] border border-white flex items-center justify-center text-[8px] font-bold text-white">1</div> {{ $t('hiking.legend.waypoint') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#ef4444] border border-white flex items-center justify-center text-[8px] font-bold text-white">D</div> {{ $t('hiking.legend.end') }}</div>
+                
+                <div class="w-px h-4 bg-gray-700 mx-2"></div>
+
+                <!-- POIs -->
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#ef4444] border border-white flex items-center justify-center text-[8px] font-bold text-white">R</div> {{ $t('hiking.legend.food') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#06b6d4] border border-white flex items-center justify-center text-[8px] font-bold text-white">W</div> {{ $t('hiking.legend.water') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#8b5cf6] border border-white flex items-center justify-center text-[8px] font-bold text-white">V</div> {{ $t('hiking.legend.viewpoint') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#d97706] border border-white flex items-center justify-center text-[8px] font-bold text-white">S</div> {{ $t('hiking.legend.shelter') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#374151] border border-white flex items-center justify-center text-[8px] font-bold text-white">P</div> {{ $t('hiking.legend.parking') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#10b981] border border-white flex items-center justify-center text-[8px] font-bold text-white">^</div> {{ $t('hiking.legend.peak') }}</div>
+            </div>
 
             <!-- Toggle Button (Visible when sidebar is closed) -->
             <button @click="sidebarOpen = true" 
-                    class="absolute bottom-6 right-6 z-[2000] bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 transform"
+                    class="absolute bottom-16 right-6 z-[2000] bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg flex items-center justify-center transition-all duration-300 transform"
                     :class="sidebarOpen ? 'translate-y-24 opacity-0 pointer-events-none' : 'translate-y-0 opacity-100'">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"/></svg>
             </button>
