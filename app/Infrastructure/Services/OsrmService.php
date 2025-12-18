@@ -72,61 +72,34 @@ final readonly class OsrmService implements RouteProviderInterface
         $cacheKey = 'osrm_raw_' . $profile . '_' . md5(json_encode($coordinates) . json_encode($options));
         
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($coordinates, $profile, $options) {
-            $server = config('services.osrm.server') ?? env('OSRM_SERVER');
+            $waypoints = $this->reduceWaypoints($coordinates, self::MAX_WAYPOINTS);
             
-            if (!$server) {
-                 // Default to standard OSRM or localhost if developing with local OSRM
-                 $baseUrl = self::OSRM_BASE_URL . '/' . $profile;
-            } else {
-                 // Ensure we handle trailing slashes and profiles correctly
-                 // If server is "http://osrm:5000/route/v1", append profile
-                 $baseUrl = rtrim($server, '/') . '/' . $profile;
-            }
+            $coordString = collect($waypoints)
+                ->map(fn($coord) => $coord[1] . ',' . $coord[0])
+                ->join(';');
+            
+            // Merge default options with user options
+            $queryParams = array_merge([
+                'overview' => 'full',
+                'geometries' => 'geojson',
+            ], $options);
 
-            try {
-                $waypoints = $this->reduceWaypoints($coordinates, self::MAX_WAYPOINTS);
-                
-                $coordString = collect($waypoints)
-                    ->map(fn($coord) => $coord[1] . ',' . $coord[0])
-                    ->join(';');
-                
-                // Merge default options with user options
-                $queryParams = array_merge([
-                    'overview' => 'full',
-                    'geometries' => 'geojson',
-                ], $options);
-
-                $url = $baseUrl . '/' . $coordString . '?' . http_build_query($queryParams);
-                
-                Log::debug('OSRM raw request', ['url' => $url]);
-                
-                $response = Http::timeout(10)->get($url);
-                
-                if (!$response->successful()) {
-                    return [];
-                }
-                
-                $data = $response->json();
-                
-                if (($data['code'] ?? '') !== 'Ok' || empty($data['routes'])) {
-                    return [];
-                }
-
-                // Transform geometries in all routes from [lng, lat] to [lat, lng]
-                $routes = $data['routes'];
-                foreach ($routes as &$route) {
-                    $route['geometry']['coordinates'] = array_map(
-                        fn($coord) => [$coord[1], $coord[0]],
-                        $route['geometry']['coordinates']
-                    );
-                }
-                
-                return $routes;
-
-            } catch (\Exception $e) {
-                Log::error('OSRM raw error', ['message' => $e->getMessage()]);
+            $data = $this->executeOsrmRequest($profile, $coordString, $queryParams);
+            
+            if (!$data || empty($data['routes'])) {
                 return [];
             }
+
+            // Transform geometries in all routes from [lng, lat] to [lat, lng]
+            $routes = $data['routes'];
+            foreach ($routes as &$route) {
+                $route['geometry']['coordinates'] = array_map(
+                    fn($coord) => [$coord[1], $coord[0]],
+                    $route['geometry']['coordinates']
+                );
+            }
+            
+            return $routes;
         });
     }
 
@@ -134,6 +107,32 @@ final readonly class OsrmService implements RouteProviderInterface
      * Fetch route from OSRM API
      */
     private function fetchRoute(array $coordinates, string $profile): array
+    {
+        $waypoints = $this->reduceWaypoints($coordinates, self::MAX_WAYPOINTS);
+        $coordString = collect($waypoints)
+            ->map(fn($coord) => $coord[1] . ',' . $coord[0])
+            ->join(';');
+            
+        $data = $this->executeOsrmRequest($profile, $coordString, ['overview' => 'full', 'geometries' => 'geojson']);
+
+        if (!$data || empty($data['routes'][0]['geometry']['coordinates'])) {
+            Log::error('OSRM all servers failed or returned no route', ['coordinates_count' => count($coordinates)]);
+            return $coordinates;
+        }
+        
+        // Success!
+        $routeCoords = array_map(
+            fn($coord) => [$coord[1], $coord[0]],
+            $data['routes'][0]['geometry']['coordinates']
+        );
+        
+        return count($routeCoords) > 1 ? $routeCoords : $coordinates;
+    }
+
+    /**
+     * Execute OSRM request with fallback to public API
+     */
+    private function executeOsrmRequest(string $profile, string $coordString, array $queryParams): ?array
     {
         $configuredServer = config('services.osrm.server') ?? env('OSRM_SERVER');
         
@@ -157,15 +156,9 @@ final readonly class OsrmService implements RouteProviderInterface
             $urlsToTry[] = $publicUrl;
         }
 
-        // Reduce waypoints once
-        $waypoints = $this->reduceWaypoints($coordinates, self::MAX_WAYPOINTS);
-        $coordString = collect($waypoints)
-            ->map(fn($coord) => $coord[1] . ',' . $coord[0])
-            ->join(';');
-
         foreach ($urlsToTry as $baseUrl) {
             try {
-                $url = $baseUrl . '/' . $coordString . '?overview=full&geometries=geojson';
+                $url = $baseUrl . '/' . $coordString . '?' . http_build_query($queryParams);
                 
                 Log::debug('OSRM request attempt', ['url' => $url]);
                 
@@ -181,21 +174,15 @@ final readonly class OsrmService implements RouteProviderInterface
                 
                 $data = $response->json();
                 
-                if (($data['code'] ?? '') !== 'Ok' || empty($data['routes'][0]['geometry']['coordinates'])) {
-                    Log::warning('OSRM returned no route', [
+                if (($data['code'] ?? '') !== 'Ok') {
+                    Log::warning('OSRM returned no route code', [
                         'code' => $data['code'] ?? 'none',
                         'url' => $url
                     ]);
                     continue; // Try next server
                 }
                 
-                // Success!
-                $routeCoords = array_map(
-                    fn($coord) => [$coord[1], $coord[0]],
-                    $data['routes'][0]['geometry']['coordinates']
-                );
-                
-                return count($routeCoords) > 1 ? $routeCoords : $coordinates;
+                return $data;
                 
             } catch (\Exception $e) {
                 Log::warning('OSRM connection error', [
@@ -206,8 +193,7 @@ final readonly class OsrmService implements RouteProviderInterface
             }
         }
         
-        Log::error('OSRM all servers failed', ['coordinates_count' => count($coordinates)]);
-        return $coordinates;
+        return null;
     }
     
     /**
