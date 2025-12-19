@@ -43,7 +43,11 @@ jobs:
         # ASEGÚRATE QUE ESTA RUTA ES CORRECTA EN TU SERVIDOR
         TARGET_DIR="/root/portfolio"
         
-        echo "📊 Comprobando espacio en disco en el servidor..."
+        echo "🧹 Limpiando espacio en disco en el servidor (Docker Prune)..."
+        # Forzamos la limpieza de imágenes, contenedores y caché de construcción no utilizados
+        ssh deploy-target "docker system prune -af && docker builder prune -af || true"
+        
+        echo "📊 Comprobando espacio tras limpieza..."
         ssh deploy-target "df -h /"
 
         echo "📦 Preparando y transmitiendo paquete (Direct Pipe)..."
