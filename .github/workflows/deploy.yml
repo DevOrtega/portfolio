@@ -42,8 +42,15 @@ jobs:
       run: |
         mkdir -p docker/osrm
         echo "🌍 Descargando datos de mapa (PBF) desde Geofabrik..."
-        # Usamos el extracto de las Islas Canarias de Geofabrik, que es el estándar de fiabilidad
-        curl -L -o docker/osrm/gran-canaria.osm.pbf "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
+        curl -L -f -o docker/osrm/gran-canaria.osm.pbf "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
+        
+        # VERIFICACIÓN CRÍTICA: Si el archivo es pequeño, el despliegue debe fallar aquí
+        FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
+        echo "Tamaño del mapa: $FILE_SIZE bytes"
+        if [ "$FILE_SIZE" -lt 10000000 ]; then
+          echo "❌ ERROR: El mapa descargado es demasiado pequeño. Abortando."
+          exit 1
+        fi
         ls -lh docker/osrm/
 
     - name: Desplegar en Servidor
@@ -52,11 +59,9 @@ jobs:
         TARGET_DIR="/root/portfolio"
         
         echo "🔧 Reparando DNS en el servidor..."
-        # Intentamos forzar un nameserver válido para que el servidor pueda descargar imágenes de Docker
         ssh deploy-target "echo 'nameserver 1.1.1.1' > /etc/resolv.conf || true"
 
         echo "🧹 Limpiando espacio en disco en el servidor (Docker Prune)..."
-        # Forzamos la limpieza de imágenes, contenedores y caché de construcción no utilizados
         ssh deploy-target "docker system prune -af && docker builder prune -af || true"
         
         echo "📊 Comprobando espacio tras limpieza..."
@@ -64,7 +69,7 @@ jobs:
 
         echo "📦 Preparando y transmitiendo paquete (Direct Pipe)..."
         # Empaquetamos y enviamos directamente por SSH
-        # Incluimos docker/ (con el mapa .osm) pero excluimos los archivos .osrm procesados (pesados)
+        # IMPORTANTE: Aseguramos que incluimos la carpeta docker/ con el mapa
         tar -cz \
           --exclude='.git' \
           --exclude='.github' \
