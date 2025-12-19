@@ -218,7 +218,7 @@ export default {
       roundabout_exit: 'toma la salida {exit}',
       on_road: 'en {name}'
     },
-    showPois: 'Mostrar Puntos de Interés (0.5km)',
+    showPois: 'Mostrar Puntos de Interés (1km)',
     loadingPois: 'Cargando puntos...',
     addToRoute: 'Añadir a ruta',
     googleMaps: 'Ver en Google Maps',

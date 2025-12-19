@@ -417,7 +417,7 @@ const fetchPois = async (coordinates) => {
     try {
         const response = await axios.post('/api/hiking/pois', {
             route: coordinates,
-            radius: 500
+            radius: 1000
         }, {
             signal: poiAbortController.signal
         });
@@ -665,7 +665,7 @@ const getTranslatedDifficulty = (diff) => {
                     <div class="flex items-center gap-2">
                         <input type="checkbox" id="showPois" v-model="showPois" class="rounded bg-gray-700 border-gray-600 text-blue-500 focus:ring-blue-500">
                         <label for="showPois" class="text-sm text-gray-300 select-none cursor-pointer">
-                            {{ $t('hiking.showPois', 'Show Points of Interest (0.5km)') }}
+                            {{ $t('hiking.showPois', 'Show Points of Interest (1km)') }}
                         </label>
                     </div>
                     <div v-if="poisLoading" class="flex items-center gap-1 text-xs text-blue-400">
