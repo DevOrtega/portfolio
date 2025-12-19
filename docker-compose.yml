@@ -29,6 +29,7 @@ services:
       - MAIL_FROM_NAME=Carlos Ortega Portfolio
       # Services
       - OSRM_SERVER=http://osrm:5000/route/v1
+      - OSRM_CAR_SERVER=http://osrm-car:5000/route/v1
     volumes:
       - portfolio_storage:/var/www/html/storage
     healthcheck:
@@ -49,6 +50,7 @@ services:
       - portfolio_network
     depends_on:
       - osrm
+      - osrm-car
 
   osrm:
     image: osrm/osrm-backend
@@ -59,6 +61,18 @@ services:
     volumes:
       - ./docker/osrm:/data
     command: osrm-routed --algorithm mld /data/gran-canaria.osrm
+    networks:
+      - portfolio_network
+
+  osrm-car:
+    image: osrm/osrm-backend
+    container_name: portfolio-osrm-car
+    restart: always
+    ports:
+      - "5001:5000"
+    volumes:
+      - ./docker/osrm:/data
+    command: osrm-routed --algorithm mld /data/gran-canaria-car.osrm
     networks:
       - portfolio_network
 

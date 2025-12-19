@@ -44,16 +44,44 @@ echo "🚀 Map ready for processing ($FILE_SIZE bytes)."
 
 # 2. Extract (using standard foot profile)
 echo "Running osrm-extract (foot profile)..."
-# Note: Input file is now .osm (XML), OSRM handles it
 docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/foot.lua /data/$MAP_FILE
 
 # 3. Partition (MLD)
-echo "Running osrm-partition..."
+echo "Running osrm-partition (foot)..."
 docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-partition /data/$OSRM_FILE
 
 # 4. Customize (MLD)
-echo "Running osrm-customize..."
+echo "Running osrm-customize (foot)..."
 docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-customize /data/$OSRM_FILE
+
+# 5. Extract (using car profile) for Bus Demo
+OSRM_CAR_FILE="gran-canaria-car.osrm"
+echo "Running osrm-extract (car profile)..."
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/$MAP_FILE
+
+echo "Renaming car profile output to avoid conflict..."
+# osrm-extract creates output based on input filename. We need to rename the generated files
+# before the next extract overwrote them? No, osrm-extract output name matches input name sans extension?
+# Actually osrm-extract creates <input>.osrm.*
+# If we run it again on same input, it overwrites.
+# So we must rename the FOOT files first, or rename the input for CAR?
+# Renaming input is safer.
+
+cp "$DATA_DIR/$MAP_FILE" "$DATA_DIR/gran-canaria-car.osm.pbf"
+
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/gran-canaria-car.osm.pbf
+
+# 6. Partition (MLD) Car
+echo "Running osrm-partition (car)..."
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-partition /data/$OSRM_CAR_FILE
+
+# 7. Customize (MLD) Car
+echo "Running osrm-customize (car)..."
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-customize /data/$OSRM_CAR_FILE
+
+echo "=== OSRM Setup Complete ==="
+# Cleanup temp file
+rm "$DATA_DIR/gran-canaria-car.osm.pbf"
 
 echo "=== OSRM Setup Complete ==="
 echo "Updating docker-compose.yml to use the new file name..."

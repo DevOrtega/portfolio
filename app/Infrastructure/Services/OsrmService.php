@@ -134,7 +134,13 @@ final readonly class OsrmService implements RouteProviderInterface
      */
     private function executeOsrmRequest(string $profile, string $coordString, array $queryParams): ?array
     {
-        $configuredServer = config('services.osrm.server') ?? env('OSRM_SERVER');
+        $configuredServer = null;
+        
+        if ($profile === 'foot') {
+            $configuredServer = config('services.osrm.server') ?? env('OSRM_SERVER');
+        } elseif ($profile === 'driving') {
+            $configuredServer = env('OSRM_CAR_SERVER');
+        }
         
         $urlsToTry = [];
         
