@@ -43,10 +43,13 @@ jobs:
         # ASEGÚRATE QUE ESTA RUTA ES CORRECTA EN TU SERVIDOR
         TARGET_DIR="/root/portfolio"
         
-        echo "📦 Preparando paquete de despliegue..."
-        # Excluimos directorios pesados, datos estáticos y archivos generados
-        # Dejamos que el servidor gestione sus propios datos en mdt/, gtfs/ y docker/osrm/
-        tar -czf /tmp/deployment.tar.gz \
+        echo "📊 Comprobando espacio en disco en el servidor..."
+        ssh deploy-target "df -h /"
+
+        echo "📦 Preparando y transmitiendo paquete (Direct Pipe)..."
+        # Empaquetamos y enviamos directamente por SSH sin crear archivo intermedio en el servidor
+        # Excluimos directorios pesados y archivos innecesarios
+        tar -cz \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.env' \
@@ -60,26 +63,19 @@ jobs:
           --exclude='*.deb' \
           --exclude='*.sqlite' \
           --exclude='*.log' \
-          .
-
-        echo "🚀 Transfiriendo paquete al servidor..."
-        scp /tmp/deployment.tar.gz deploy-target:~/deployment.tar.gz
-
-        echo "🏗️ Extrayendo y ejecutando despliegue remoto..."
-        ssh deploy-target "
-          set -e
-          mkdir -p $TARGET_DIR
-          
-          # Extraer el nuevo código sobre el directorio destino
-          tar -xzf ~/deployment.tar.gz -C $TARGET_DIR
-          rm ~/deployment.tar.gz
-          
-          cd $TARGET_DIR
-          
-          # Asegurar permisos
-          chmod +x deploy-compose.sh
-          chmod +x init-osrm.sh
-          
-          echo '🐳 Ejecutando script de despliegue...'
-          ./deploy-compose.sh deploy
-        "
+          . | ssh deploy-target "
+            set -e
+            mkdir -p $TARGET_DIR
+            
+            echo '🏗️ Extrayendo código en tiempo real...'
+            tar -xzf - -C $TARGET_DIR
+            
+            cd $TARGET_DIR
+            
+            # Asegurar permisos
+            chmod +x deploy-compose.sh
+            chmod +x init-osrm.sh
+            
+            echo '🐳 Ejecutando script de despliegue...'
+            ./deploy-compose.sh deploy
+          "
