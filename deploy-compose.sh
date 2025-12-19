@@ -100,8 +100,8 @@ case "$1" in
     echo "🔨 Rebuilding containers (if needed)..."
     docker compose up -d --build
     
-    echo "⏳ Waiting for services..."
-    sleep 5
+    echo "⏳ Waiting for services (15s)..."
+    sleep 15
     
     echo "📦 Running migrations..."
     docker compose exec -T portfolio php artisan migrate --force
