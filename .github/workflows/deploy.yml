@@ -41,14 +41,16 @@ jobs:
     - name: Descargar Mapa (Gran Canaria)
       run: |
         mkdir -p docker/osrm
-        echo "🌍 Descargando datos de mapa (PBF) desde Geofabrik..."
-        curl -L -f -o docker/osrm/gran-canaria.osm.pbf "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
+        echo "🌍 Descargando datos de mapa (PBF) desde OSM France (Espejo estable)..."
+        # Usamos OSM France con un User-Agent real para evitar bloqueos
+        curl -L -f -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
+          -o docker/osrm/gran-canaria.osm.pbf "https://download.openstreetmap.fr/extracts/europe/spain/canary_islands-latest.osm.pbf"
         
         # VERIFICACIÓN CRÍTICA: Si el archivo es pequeño, el despliegue debe fallar aquí
         FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
         echo "Tamaño del mapa: $FILE_SIZE bytes"
         if [ "$FILE_SIZE" -lt 10000000 ]; then
-          echo "❌ ERROR: El mapa descargado es demasiado pequeño. Abortando."
+          echo "❌ ERROR: El mapa descargado es demasiado pequeño. El servidor origen podría estar caído o bloqueando la petición."
           exit 1
         fi
         ls -lh docker/osrm/
