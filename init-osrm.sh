@@ -46,50 +46,38 @@ echo "🚀 Map ready for processing ($FILE_SIZE bytes)."
 echo "Cleaning up old OSRM data..."
 rm -f "$DATA_DIR"/*.osrm*
 
-# 2. Extract (using standard foot profile)
-echo "Running osrm-extract (foot profile)..."
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/foot.lua /data/$MAP_FILE
+# 2. FOOT Profile Generation (Hiking)
+echo "--- Generating FOOT profile ---"
+cp "$DATA_DIR/$MAP_FILE" "$DATA_DIR/temp_foot.osm.pbf"
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/foot.lua /data/temp_foot.osm.pbf
 
-# 3. Partition (MLD)
-echo "Running osrm-partition (foot)..."
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-partition /data/$OSRM_FILE
+echo "Finalizing FOOT profile files..."
+for f in "$DATA_DIR"/temp_foot.osrm*; do
+    mv "$f" "${f//temp_foot/gran-canaria-foot}"
+done
 
-# 4. Customize (MLD)
-echo "Running osrm-customize (foot)..."
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-customize /data/$OSRM_FILE
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-partition /data/gran-canaria-foot.osrm
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-customize /data/gran-canaria-foot.osrm
 
-# 5. Extract (using car profile) for Bus Demo
-OSRM_CAR_FILE="gran-canaria-car.osrm"
-echo "Running osrm-extract (car profile)..."
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/$MAP_FILE
+rm -f "$DATA_DIR/temp_foot.osm.pbf"
 
-echo "Renaming car profile output to avoid conflict..."
-# osrm-extract creates output based on input filename. We need to rename the generated files
-# before the next extract overwrote them? No, osrm-extract output name matches input name sans extension?
-# Actually osrm-extract creates <input>.osrm.*
-# If we run it again on same input, it overwrites.
-# So we must rename the FOOT files first, or rename the input for CAR?
-# Renaming input is safer.
+# 3. CAR Profile Generation (Bus)
+echo "--- Generating CAR profile ---"
+# We use a different filename to avoid any overlap during processing
+cp "$DATA_DIR/$MAP_FILE" "$DATA_DIR/temp_car.osm.pbf"
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/temp_car.osm.pbf
 
-cp "$DATA_DIR/$MAP_FILE" "$DATA_DIR/gran-canaria-car.osm.pbf"
+# Rename files from temp_car.osrm.* to gran-canaria-car.osrm.*
+echo "Finalizing CAR profile files..."
+for f in "$DATA_DIR"/temp_car.osrm*; do
+    mv "$f" "${f//temp_car/gran-canaria-car}"
+done
 
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/car.lua /data/gran-canaria-car.osm.pbf
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-partition /data/gran-canaria-car.osrm
+docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-customize /data/gran-canaria-car.osrm
 
-# 6. Partition (MLD) Car
-echo "Running osrm-partition (car)..."
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-partition /data/$OSRM_CAR_FILE
-
-# 7. Customize (MLD) Car
-echo "Running osrm-customize (car)..."
-docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-customize /data/$OSRM_CAR_FILE
+# Cleanup
+rm -f "$DATA_DIR/temp_car.osm.pbf"
 
 echo "=== OSRM Setup Complete ==="
-# Cleanup temp file
-rm "$DATA_DIR/gran-canaria-car.osm.pbf"
-
-echo "=== OSRM Setup Complete ==="
-echo "Updating docker-compose.yml to use the new file name..."
-# We need to ensure docker-compose uses gran-canaria.osrm
-sed -i 's|canary-islands-latest.osrm|gran-canaria.osrm|g' docker-compose.yml
-
 echo "You can now run 'docker compose up -d osrm'"
