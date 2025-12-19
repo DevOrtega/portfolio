@@ -45,7 +45,9 @@ jobs:
         
         echo "📦 Preparando paquete de despliegue..."
         # Empaquetamos el código excluyendo archivos pesados o específicos del entorno
+        # IMPORTANTE: Excluimos el propio archivo .tar.gz para evitar errores de lectura
         tar -czf deployment.tar.gz \
+          --exclude='deployment.tar.gz' \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.env' \
