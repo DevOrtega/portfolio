@@ -43,27 +43,27 @@ jobs:
         mkdir -p docker/osrm
         echo "🌍 Descargando datos de mapa (PBF)..."
         
-        # Intentar desde OSM France (Espejo muy estable para CI)
-        # Nota: Usamos guión bajo en islas_canarias que es el estándar de este espejo
-        URL1="https://download.openstreetmap.fr/extracts/europe/spain/islas_canarias-latest.osm.pbf"
-        
-        # Fallback a Geofabrik con cabeceras de navegación real
-        URL2="https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
-        
+        # URL VERIFICADA en OSM France para Islas Canarias
+        URL="https://download.openstreetmap.fr/extracts/europe/spain/islas_canarias-latest.osm.pbf"
         UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
-        REF="https://download.geofabrik.de/europe/spain.html"
         
-        if curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL1"; then
-          echo "✅ Descargado desde OSM France"
+        echo "Intentando descarga desde: $URL"
+        if curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL"; then
+          echo "✅ Mapa descargado correctamente"
         else
-          echo "⚠️ Falló OSM France, intentando Geofabrik con bypass..."
-          curl -L -f -A "$UA" -e "$REF" -o docker/osrm/gran-canaria.osm.pbf "$URL2"
-          echo "✅ Descargado desde Geofabrik"
+          echo "❌ ERROR: No se pudo descargar el mapa. Verificando fuente alternativa..."
+          # Fallback a Geofabrik si el francés falla
+          curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
         fi
         
+        # VERIFICACIÓN DE TAMAÑO (Canarias PBF debe pesar > 20MB)
         FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
-        echo "Tamaño final: $FILE_SIZE bytes"
-        if [ "$FILE_SIZE" -lt 10000000 ]; then exit 1; fi
+        echo "Tamaño del archivo: $FILE_SIZE bytes"
+        
+        if [ "$FILE_SIZE" -lt 15000000 ]; then
+          echo "❌ ERROR: El archivo es demasiado pequeño ($FILE_SIZE bytes). Descarga fallida."
+          exit 1
+        fi
 
     - name: Desplegar en Servidor
       run: |
