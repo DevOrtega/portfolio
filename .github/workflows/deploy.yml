@@ -43,20 +43,25 @@ jobs:
         # ASEGÚRATE QUE ESTA RUTA ES CORRECTA EN TU SERVIDOR
         TARGET_DIR="/root/portfolio"
         
-        echo "🚀 Conectando al servidor..."
+        echo "📂 Sincronizando archivos con rsync (Push Deployment)..."
+        # Usamos rsync para enviar el código directamente y evitar problemas de DNS/Git en el servidor
+        # Excluimos archivos de entorno, almacenamiento y directorios generados que se construyen en Docker
+        rsync -avz --delete \
+          --exclude '.git/' \
+          --exclude '.github/' \
+          --exclude '.env' \
+          --exclude 'storage/' \
+          --exclude 'vendor/' \
+          --exclude 'node_modules/' \
+          --exclude 'public/build/' \
+          ./ deploy-target:$TARGET_DIR/
+
+        echo "🚀 Ejecutando script remoto..."
         ssh deploy-target "
           set -e
           cd $TARGET_DIR
           
-          echo '🔄 Sincronizando código...'
-          # SOLUCIÓN AL ERROR DE RAMAS DIVERGENTES:
-          # 1. Traemos la información del repositorio remoto
-          git fetch origin main
-          
-          # 2. Forzamos al servidor a ser idéntico a GitHub (borra cambios locales si los hubiera)
-          git reset --hard origin/main
-          
-          # Ensure both deploy scripts are executable
+          # Ensure scripts are executable
           chmod +x deploy-compose.sh
           chmod +x init-osrm.sh
           
