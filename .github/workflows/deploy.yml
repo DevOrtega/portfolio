@@ -43,20 +43,19 @@ jobs:
         mkdir -p docker/osrm
         echo "🌍 Descargando datos de mapa (PBF)..."
         
-        # URL VERIFICADA en OSM France para Islas Canarias
-        URL="https://download.openstreetmap.fr/extracts/europe/spain/islas_canarias-latest.osm.pbf"
+        # URL VERIFICADA en OSM France (Espejo estable)
+        URL="https://download.openstreetmap.fr/extracts/europe/spain/canarias-latest.osm.pbf"
         UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         
         echo "Intentando descarga desde: $URL"
         if curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL"; then
           echo "✅ Mapa descargado correctamente"
         else
-          echo "❌ ERROR: No se pudo descargar el mapa. Verificando fuente alternativa..."
-          # Fallback a Geofabrik si el francés falla
-          curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
+          echo "❌ ERROR: No se pudo descargar el mapa desde la fuente principal."
+          exit 1
         fi
         
-        # VERIFICACIÓN DE TAMAÑO (Canarias PBF debe pesar > 20MB)
+        # VERIFICACIÓN DE TAMAÑO (Canarias PBF debe pesar aprox 40MB)
         FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
         echo "Tamaño del archivo: $FILE_SIZE bytes"
         
