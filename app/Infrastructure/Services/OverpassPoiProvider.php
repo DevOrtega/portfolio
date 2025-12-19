@@ -15,8 +15,8 @@ class OverpassPoiProvider implements PoiProviderInterface
 
     public function getPoisNearRoute(RouteGeometry $route, int $radius): array
     {
-        // Cache key based on simplified route string + radius
-        $cacheKey = 'hiking_pois_' . md5($route->toString() . $radius);
+        // Force refresh cache by changing version prefix
+        $cacheKey = 'hiking_pois_v4_' . md5($route->toString() . $radius);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($route, $radius) {
             return $this->fetchFromOverpass($route, $radius);
@@ -27,21 +27,14 @@ class OverpassPoiProvider implements PoiProviderInterface
     {
         $coordsString = $route->toString();
 
-        // Build Optimized Query by grouping tags
-        // This reduces coordinates string repetitions significantly
+        // Optimized Query using NWR (Node, Way, Relation)
+        // Grouping tags to reduce complexity and repetitions
         $query = <<<QL
-[out:json][timeout:25];
+[out:json][timeout:30];
 (
-  // Amenities (Food, Health, Parking, Water)
-  node["amenity"~"restaurant|cafe|bar|pub|fast_food|pharmacy|hospital|clinic|doctors|parking|drinking_water"](around:{$radius},{$coordsString});
-  way["amenity"~"restaurant|cafe|bar|pub|fast_food|parking"](around:{$radius},{$coordsString});
-  
-  // Tourism & Culture (Museums, Viewpoints, Picnic, Camping, Accommodation, Shelters)
-  node["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
-  way["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
-
-  // Natural (Peaks)
-  node["natural"="peak"](around:{$radius},{$coordsString});
+  nwr["amenity"~"restaurant|cafe|bar|pub|fast_food|pharmacy|hospital|clinic|doctors|parking|drinking_water"](around:{$radius},{$coordsString});
+  nwr["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
+  nwr["natural"="peak"](around:{$radius},{$coordsString});
 );
 out center;
 QL;

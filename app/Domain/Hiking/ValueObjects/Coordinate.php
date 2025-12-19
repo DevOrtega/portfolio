@@ -46,11 +46,11 @@ final class Coordinate
     }
 
     /**
-     * Format as "lat,lon" string
+     * Format as "lat,lon" string using dot as decimal separator
      */
     public function toString(): string
     {
-        return "{$this->latitude},{$this->longitude}";
+        return sprintf("%.6F,%.6F", $this->latitude, $this->longitude);
     }
 
     /**
