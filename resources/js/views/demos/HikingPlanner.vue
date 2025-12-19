@@ -199,7 +199,8 @@ const addLocationToRoute = (location) => {
         results: []
     });
     
-    updateMarkers();
+    // Hide markers temporarily during recalculation to prevent floating artifacts
+    markersLayer.value.clearLayers();
     calculateRoutes();
 };
 
@@ -210,7 +211,8 @@ const addWaypointWithLocation = (loc) => {
         location: { lat: loc.lat, lng: loc.lon, display_name: loc.name },
         results: []
     });
-    updateMarkers();
+    // Hide markers temporarily
+    markersLayer.value.clearLayers();
     calculateRoutes();
 };
 
@@ -270,9 +272,12 @@ const addWaypoint = () => {
 
 const removeWaypoint = (index) => {
     waypoints.value.splice(index, 1);
-    updateMarkers();
+    // Hide markers temporarily to avoid floating artifacts while recalculating
+    markersLayer.value.clearLayers();
     if (startLocation.value && endLocation.value) {
         calculateRoutes();
+    } else {
+        updateMarkers(); // If not calculating, just update
     }
 };
 
@@ -379,6 +384,7 @@ const calculateRoutes = async () => {
         }
 
         renderRoutes();
+        updateMarkers(); // Ensure markers are on top and visible
 
         // Fetch POIs for the first route found
         if (routes.value.length > 0) {

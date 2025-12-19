@@ -4,6 +4,8 @@ namespace App\Application\Hiking;
 
 use App\Domain\Hiking\ElevationProviderInterface;
 use App\Domain\Hiking\RouteProviderInterface;
+use App\Domain\Hiking\ValueObjects\Coordinate;
+use App\Domain\Hiking\ValueObjects\RouteGeometry;
 
 final readonly class GetHikingRouteService
 {
@@ -23,19 +25,15 @@ final readonly class GetHikingRouteService
      */
     public function execute(array $start, array $end, ?array $waypoints = null): array
     {
-        // Build coordinates array: Start -> Waypoints -> End
         $coordinates = [$start];
-        
         if ($waypoints) {
             foreach ($waypoints as $wp) {
                 $coordinates[] = $wp;
             }
         }
-        
         $coordinates[] = $end;
 
-        // 1. Get Routes from OSRM with alternatives
-        // We request 3 alternatives explicitly and enable steps for instructions.
+        // 1. Get Routes from OSRM
         $rawRoutes = $this->routeProvider->getRoutesWithOptions($coordinates, 'foot', [
             'alternatives' => 3,
             'steps' => 'true'
@@ -46,19 +44,21 @@ final readonly class GetHikingRouteService
         foreach ($rawRoutes as $index => $routeData) {
             $route2D = $routeData['geometry']['coordinates'];
             
-            // 2. Add Elevation to each route
+            // 2. Add Elevation
             $route3D = $this->elevationProvider->addElevation($route2D);
             
-            // 3. Calculate statistics
+            // 3. Calculate statistics using Domain Logic
+            // Transform route3D to Coordinate array for VO
+            $coords = array_map(fn($c) => Coordinate::fromLatLon($c[0], $c[1]), $route3D);
+            $geometry = new RouteGeometry($coords);
+            
+            // For elevation, we still need the raw values or a 3D Coordinate VO.
+            // Let's keep the simple stats calculation here for now but improved with helpers.
             $stats = $this->calculateStats($route3D);
             
-            // 4. Determine Difficulty
             $stats['difficulty'] = $this->calculateDifficulty($stats['distance_km'], $stats['elevation_gain_m']);
             $stats['route_index'] = $index;
-            // OSRM provides 'duration' in seconds and 'distance' in meters
             $stats['osrm_time_min'] = round(($routeData['duration'] ?? 0) / 60);
-            
-            // Include legs/steps for instructions
             $stats['legs'] = $routeData['legs'] ?? [];
 
             $features[] = [
@@ -80,7 +80,6 @@ final readonly class GetHikingRouteService
 
     private function calculateDifficulty(float $distanceKm, float $gainM): string
     {
-        // Simple heuristic (can be improved with MIDE method)
         if ($gainM > 800 || $distanceKm > 15) {
             return 'Difícil';
         }
@@ -102,8 +101,8 @@ final readonly class GetHikingRouteService
             $p1 = $route3D[$i];
             $p2 = $route3D[$i+1];
             
-            // Distance (Haversine or simple approximation for short segments)
-            $dist = $this->distance($p1[0], $p1[1], $p2[0], $p2[1]);
+            // Distance calculation
+            $dist = $this->haversineDistance($p1[0], $p1[1], $p2[0], $p2[1]);
             $totalDistance += $dist;
             
             $eleDiff = $p2[2] - $p1[2];
@@ -126,19 +125,15 @@ final readonly class GetHikingRouteService
         ];
     }
 
-    private function distance($lat1, $lon1, $lat2, $lon2): float
+    private function haversineDistance($lat1, $lon1, $lat2, $lon2): float
     {
-        $earthRadius = 6371000; // meters
-
+        $earthRadius = 6371000;
         $dLat = deg2rad($lat2 - $lat1);
         $dLon = deg2rad($lon2 - $lon1);
-
         $a = sin($dLat / 2) * sin($dLat / 2) +
              cos(deg2rad($lat1)) * cos(deg2rad($lat2)) *
              sin($dLon / 2) * sin($dLon / 2);
-             
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
-
         return $earthRadius * $c;
     }
 }
