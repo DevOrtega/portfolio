@@ -44,10 +44,8 @@ jobs:
         TARGET_DIR="/root/portfolio"
         
         echo "📦 Preparando paquete de despliegue..."
-        # Empaquetamos el código excluyendo archivos pesados o específicos del entorno
-        # IMPORTANTE: Excluimos el propio archivo .tar.gz para evitar errores de lectura
-        tar -czf deployment.tar.gz \
-          --exclude='deployment.tar.gz' \
+        # Creamos el paquete en /tmp para evitar que tar se vea a sí mismo o cambios en el directorio actual
+        tar -czf /tmp/deployment.tar.gz \
           --exclude='.git' \
           --exclude='.github' \
           --exclude='.env' \
@@ -58,8 +56,7 @@ jobs:
           .
 
         echo "🚀 Transfiriendo paquete al servidor..."
-        # Usamos scp para subir el archivo (más universal que rsync)
-        scp deployment.tar.gz deploy-target:/tmp/deployment.tar.gz
+        scp /tmp/deployment.tar.gz deploy-target:/tmp/deployment.tar.gz
 
         echo "🏗️ Extrayendo y ejecutando despliegue remoto..."
         ssh deploy-target "
