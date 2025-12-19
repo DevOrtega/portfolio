@@ -24,7 +24,7 @@ class AppServiceProvider extends ServiceProvider
         
         $this->app->bind(
             \App\Domain\Hiking\PoiProviderInterface::class,
-            \App\Infrastructure\Services\OverpassPoiProvider::class
+            \App\Infrastructure\Services\DatabasePoiProvider::class
         );
     }
 
