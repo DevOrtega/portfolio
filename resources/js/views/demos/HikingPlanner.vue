@@ -706,7 +706,7 @@ const getInstructionText = (step) => {
                             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                             <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                         </svg>
-                        <span>Loading...</span>
+                        <span>{{ $t('hiking.loadingPois') }}</span>
                     </div>
                 </div>
 
@@ -767,7 +767,7 @@ const getInstructionText = (step) => {
                         </h3>
                         <a :href="googleMapsUrl" target="_blank" class="text-[10px] bg-white/10 hover:bg-white/20 text-white px-2 py-1 rounded flex items-center gap-1 transition-colors border border-white/20">
                             <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                            Google Maps
+                            {{ $t('hiking.googleMaps') }}
                         </a>
                     </div>
                     <div class="max-h-64 overflow-y-auto p-0">
@@ -830,6 +830,7 @@ const getInstructionText = (step) => {
                 <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#ef4444] border border-white flex items-center justify-center text-[8px] font-bold text-white">R</div> {{ $t('hiking.legend.food') }}</div>
                 <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#06b6d4] border border-white flex items-center justify-center text-[8px] font-bold text-white">W</div> {{ $t('hiking.legend.water') }}</div>
                 <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#8b5cf6] border border-white flex items-center justify-center text-[8px] font-bold text-white">V</div> {{ $t('hiking.legend.viewpoint') }}</div>
+                <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#ec4899] border border-white flex items-center justify-center text-[8px] font-bold text-white">P</div> {{ $t('hiking.legend.picnic') }}</div>
                 <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#d97706] border border-white flex items-center justify-center text-[8px] font-bold text-white">S</div> {{ $t('hiking.legend.shelter') }}</div>
                 <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#374151] border border-white flex items-center justify-center text-[8px] font-bold text-white">P</div> {{ $t('hiking.legend.parking') }}</div>
                 <div class="flex items-center gap-1.5"><div class="w-4 h-4 rounded-full bg-[#10b981] border border-white flex items-center justify-center text-[8px] font-bold text-white">^</div> {{ $t('hiking.legend.peak') }}</div>

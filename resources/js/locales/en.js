@@ -219,15 +219,18 @@ export default {
       on_road: 'on {name}'
     },
     showPois: 'Show Points of Interest (0.5km)',
+    loadingPois: 'Loading points...',
     addToRoute: 'Add to route',
+    googleMaps: 'View on Google Maps',
     legend: {
         title: 'Legend',
-        food: 'Food',
-        water: 'Water',
+        food: 'Dining',
+        water: 'Water Point',
         viewpoint: 'Viewpoint',
-        shelter: 'Shelter',
+        picnic: 'Picnic Area',
+        shelter: 'Shelter / Hostel',
         parking: 'Parking',
-        peak: 'Peak',
+        peak: 'Peak / Summit',
         start: 'Start',
         end: 'Destination',
         waypoint: 'Waypoint'

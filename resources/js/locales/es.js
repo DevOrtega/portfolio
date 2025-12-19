@@ -219,18 +219,21 @@ export default {
       on_road: 'en {name}'
     },
     showPois: 'Mostrar Puntos de Interés (0.5km)',
+    loadingPois: 'Cargando puntos...',
     addToRoute: 'Añadir a ruta',
+    googleMaps: 'Ver en Google Maps',
     legend: {
         title: 'Leyenda',
-        food: 'Comida',
-        water: 'Agua',
+        food: 'Restauración',
+        water: 'Punto de Agua',
         viewpoint: 'Mirador',
-        shelter: 'Refugio',
-        parking: 'Parking',
-        peak: 'Cima',
+        picnic: 'Área de Picnic',
+        shelter: 'Refugio / Albergue',
+        parking: 'Aparcamiento',
+        peak: 'Cima / Pico',
         start: 'Inicio',
         end: 'Destino',
-        waypoint: 'Punto Intermedio'
+        waypoint: 'Punto de paso'
     }
   },
   contact: {
