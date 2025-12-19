@@ -32,6 +32,9 @@ case "$1" in
     
     echo "🌱 Seeding database (includes GTFS import)..."
     docker compose exec -T portfolio php artisan db:seed --force
+
+    echo "🏔️ Importing Hiking POIs..."
+    docker compose exec -T portfolio php artisan hiking:import-pois
     
     echo "🔥 Warming up Bus Cache..."
     docker compose exec -T portfolio php artisan bus:cache-warmup
@@ -58,6 +61,9 @@ case "$1" in
 
     echo "🌱 Seeding database (includes GTFS import)..."
     docker compose exec -T portfolio php artisan db:seed --force
+
+    echo "🏔️ Importing Hiking POIs..."
+    docker compose exec -T portfolio php artisan hiking:import-pois
     
     echo "🔥 Warming up Bus Cache..."
     docker compose exec -T portfolio php artisan bus:cache-warmup
@@ -109,6 +115,9 @@ case "$1" in
     # 2. SEED DATABASE (CRITICAL FOR HIKING PLANNER TO SHOW UP)
     echo "🌱 Seeding database (includes demo data)..."
     docker compose exec -T portfolio php artisan db:seed --force
+
+    echo "🏔️ Importing Hiking POIs..."
+    docker compose exec -T portfolio php artisan hiking:import-pois
     
     echo "🔥 Warming up Bus Cache..."
     docker compose exec -T portfolio php artisan bus:cache-warmup
