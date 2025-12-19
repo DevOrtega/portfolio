@@ -19,13 +19,16 @@ if ! command -v docker &> /dev/null; then
 fi
 
 # 1. Download Map Data
-echo "Downloading map data from Overpass API (Gran Canaria area)..."
-rm -f "$DATA_DIR/$MAP_FILE"
-rm -f "$DATA_DIR/canary-islands-latest.osm.pbf" # Clean up old attempts
+if [ -f "$DATA_DIR/$MAP_FILE" ]; then
+    echo "Map file $MAP_FILE already exists, skipping download."
+else
+    echo "Downloading map data from Overpass API (Gran Canaria area)..."
+    rm -f "$DATA_DIR/canary-islands-latest.osm.pbf" # Clean up old attempts
+    curl -L -f -o "$DATA_DIR/$MAP_FILE" "$MAP_URL"
+    echo "Map downloaded successfully."
+fi
 
-curl -L -f -o "$DATA_DIR/$MAP_FILE" "$MAP_URL"
-
-# Verify file size (should be > 5MB for GC)
+# Verify file size
 FILE_SIZE=$(stat -c%s "$DATA_DIR/$MAP_FILE")
 if [ "$FILE_SIZE" -lt 100000 ]; then
     echo "Error: File is too small ($FILE_SIZE bytes). Likely an error."
