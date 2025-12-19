@@ -201,6 +201,18 @@ El portfolio incluye demos funcionales de proyectos reales:
   - Detección de límites geográficos
   - Interpolación suave de movimiento entre puntos de ruta
 
+### Planificador de Rutas de Senderismo
+- **Ruta**: `/projects/demo/hiking-planner`
+- **Tecnologías**: Laravel (PHP), Python (GDAL/Rasterio), Leaflet, Overpass API
+- **Características**:
+  - Cálculo de rutas de senderismo entre dos puntos
+  - Integración con OSRM (Open Source Routing Machine) para senderos
+  - **Elevación 3D**: Usa Modelos Digitales del Terreno (MDT) locales para calcular altitud precisa
+  - Perfiles de elevación (desnivel positivo/negativo)
+  - **Puntos de Interés**: Encuentra restaurantes, fuentes de agua, miradores y cimas a lo largo de la ruta
+  - **Planificación Inteligente**: Añade POIs a la ruta de forma interactiva con recálculo automático
+  - Arquitectura híbrida PHP+Python para procesamiento geoespacial
+
 ### Gestor de Cajeros Automáticos
 - **Ruta**: `/projects/demo/atm-manager`
 - **Tecnologías**: Vue 3, Element Plus, Pinia

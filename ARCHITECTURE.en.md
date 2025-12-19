@@ -236,10 +236,12 @@ The Hiking domain implements a hybrid architecture to handle complex geospatial 
 ### Components
 
 1.  **HikingController**: HTTP Entry Point.
-2.  **OsrmService**: Shared service to obtain flat routes (2D).
-3.  **ElevationService**: Adapter service that communicates with the Python script.
-4.  **add_elevation.py**: Python script that uses `rasterio` and `GDAL` to query the DTM.
-5.  **DTM (Digital Terrain Models)**: Local `.tif` files with elevation data.
+2.  **GetHikingRouteService**: Route logic orchestrator (Application Layer).
+3.  **GetRoutePoisService**: POI search orchestrator (Application Layer).
+4.  **RouteProviderInterface / OsrmService**: Abstraction and implementation for routing.
+5.  **ElevationProviderInterface / ElevationService**: Abstraction and implementation for elevation.
+6.  **PoiProviderInterface / OverpassPoiProvider**: Abstraction and implementation for POI search (Overpass API).
+7.  **Value Objects**: `Coordinate` and `RouteGeometry` to encapsulate geospatial domain logic.
 
 ### Hiking Data Flow
 
@@ -250,28 +252,21 @@ Frontend (Leaflet)
 GET /api/hiking/route (start, end)
      │
      ▼
-HikingController
+GetHikingRouteService ──► OsrmService (Gets 2D route)
+     │
+     └─► ElevationService (Adds Z)
      │
      ▼
-GetHikingRouteService (Application)
-     │
-     ├─► 1. OsrmService (Gets 2D lat/lon route)
-     │
-     ├─► 2. ElevationService
-     │          │
-     │          ▼
-     │      Process::run('python3 add_elevation.py')
-     │          │
-     │          ▼
-     │      GDAL/Rasterio (Reads .tif)
-     │          │
-     │          ▼
-     │      Returns JSON with Z (lat, lon, ele)
-     │
-     └─► 3. Calculates statistics (Gain +, Gain -)
-     │
-     ▼
-JSON GeoJSON Response (3D)
+Frontend (Receives route) ──► POST /api/hiking/pois (geom)
+                                  │
+                                  ▼
+                          GetRoutePoisService
+                                  │
+                                  ▼
+                          OverpassPoiProvider
+                                  │
+                                  ▼
+                          Overpass API (External)
 ```
 
 ## MCP Architecture (Model Context Protocol)

@@ -35,14 +35,19 @@ portfolio/
 │   │   │   └── Services/          # Servicios (ProjectService, etc.)
 │   │   └── Bus/                   # Dominio Bus
 │   │       └── Services/          # BusDataService
+│   │   └── Hiking/                # Dominio Hiking
+│   │       └── Services/          # GetHikingRouteService, GetRoutePoisService
 │   │
 │   ├── Domain/                    # DOMINIO PURO
 │   │   ├── Portfolio/             # Entidades Portfolio
 │   │   │   ├── Entities/          # Project, etc.
 │   │   │   └── Repositories/      # Interfaces
-│   │   └── Bus/                   # Entidades Bus
-│   │       ├── Entities/          # BusCompany, BusStop, BusLine, etc.
-│   │       └── Repositories/      # Interfaces de repositorios
+│   │   ├── Bus/                   # Entidades Bus
+│   │   │   ├── Entities/          # BusCompany, BusStop, BusLine, etc.
+│   │   │   └── Repositories/      # Interfaces de repositorios
+│   │   └── Hiking/                # Entidades Hiking
+│   │       ├── ValueObjects/      # Coordinate, RouteGeometry
+│   │       └── PoiProviderInterface.php
 │   │
 │   ├── Http/Controllers/          # CONTROLADORES
 │   │   ├── Api/                   # API Portfolio
