@@ -40,7 +40,7 @@ out center;
 QL;
 
         try {
-            $response = Http::asForm()->post(self::OVERPASS_URL, [
+            $response = Http::retry(3, 200)->asForm()->post(self::OVERPASS_URL, [
                 'data' => $query
             ]);
 
