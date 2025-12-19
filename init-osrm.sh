@@ -42,6 +42,10 @@ fi
 
 echo "🚀 Map ready for processing ($FILE_SIZE bytes)."
 
+# Cleanup old OSRM files to ensure clean generation
+echo "Cleaning up old OSRM data..."
+rm -f "$DATA_DIR"/*.osrm*
+
 # 2. Extract (using standard foot profile)
 echo "Running osrm-extract (foot profile)..."
 docker run -t --rm -v "${PWD}/docker/osrm:/data" osrm/osrm-backend osrm-extract -p /opt/foot.lua /data/$MAP_FILE
