@@ -60,7 +60,7 @@ services:
       - "5000:5000"
     volumes:
       - ./docker/osrm:/data
-    command: osrm-routed --algorithm mld /data/gran-canaria.osrm
+    command: osrm-routed --algorithm mld --mmap /data/gran-canaria.osrm
     networks:
       - portfolio_network
 
@@ -72,7 +72,7 @@ services:
       - "5001:5000"
     volumes:
       - ./docker/osrm:/data
-    command: osrm-routed --algorithm mld /data/gran-canaria-car.osrm
+    command: osrm-routed --algorithm mld --mmap /data/gran-canaria-car.osrm
     networks:
       - portfolio_network
 

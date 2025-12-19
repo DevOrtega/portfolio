@@ -36,6 +36,7 @@ cloudflared.deb
 github_deploy_key
 github_deploy_key.pub
 docker/osrm/*.osm
+docker/osrm/*.pbf
 docker/osrm/*.osrm*
 
 /docs/
