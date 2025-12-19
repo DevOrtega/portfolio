@@ -43,25 +43,34 @@ jobs:
         # ASEGÚRATE QUE ESTA RUTA ES CORRECTA EN TU SERVIDOR
         TARGET_DIR="/root/portfolio"
         
-        echo "📂 Sincronizando archivos con rsync (Push Deployment)..."
-        # Usamos rsync para enviar el código directamente y evitar problemas de DNS/Git en el servidor
-        # Excluimos archivos de entorno, almacenamiento y directorios generados que se construyen en Docker
-        rsync -avz --delete \
-          --exclude '.git/' \
-          --exclude '.github/' \
-          --exclude '.env' \
-          --exclude 'storage/' \
-          --exclude 'vendor/' \
-          --exclude 'node_modules/' \
-          --exclude 'public/build/' \
-          ./ deploy-target:$TARGET_DIR/
+        echo "📦 Preparando paquete de despliegue..."
+        # Empaquetamos el código excluyendo archivos pesados o específicos del entorno
+        tar -czf deployment.tar.gz \
+          --exclude='.git' \
+          --exclude='.github' \
+          --exclude='.env' \
+          --exclude='storage' \
+          --exclude='vendor' \
+          --exclude='node_modules' \
+          --exclude='public/build' \
+          .
 
-        echo "🚀 Ejecutando script remoto..."
+        echo "🚀 Transfiriendo paquete al servidor..."
+        # Usamos scp para subir el archivo (más universal que rsync)
+        scp deployment.tar.gz deploy-target:/tmp/deployment.tar.gz
+
+        echo "🏗️ Extrayendo y ejecutando despliegue remoto..."
         ssh deploy-target "
           set -e
+          mkdir -p $TARGET_DIR
+          
+          # Extraer el nuevo código sobre el directorio destino
+          tar -xzf /tmp/deployment.tar.gz -C $TARGET_DIR
+          rm /tmp/deployment.tar.gz
+          
           cd $TARGET_DIR
           
-          # Ensure scripts are executable
+          # Asegurar permisos
           chmod +x deploy-compose.sh
           chmod +x init-osrm.sh
           
