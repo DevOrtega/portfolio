@@ -234,10 +234,12 @@ El dominio de Senderismo implementa una arquitectura híbrida para manejar cálc
 ### Componentes
 
 1.  **HikingController**: Punto de entrada HTTP.
-2.  **OsrmService**: Servicio compartido para obtener rutas planas (2D).
-3.  **ElevationService**: Servicio adaptador que comunica con el script de Python.
-4.  **add_elevation.py**: Script Python que usa `rasterio` y `GDAL` para interrogar el MDT.
-5.  **MDT (Modelos Digitales del Terreno)**: Archivos `.tif` locales con datos de elevación.
+2.  **GetHikingRouteService**: Orquestador de la lógica de ruta (Application Layer).
+3.  **GetRoutePoisService**: Orquestador de la búsqueda de POIs (Application Layer).
+4.  **RouteProviderInterface / OsrmService**: Abstracción e implementación para rutas.
+5.  **ElevationProviderInterface / ElevationService**: Abstracción e implementación para elevación.
+6.  **PoiProviderInterface / OverpassPoiProvider**: Abstracción e implementación para búsqueda de puntos de interés (Overpass API).
+7.  **Value Objects**: `Coordinate` y `RouteGeometry` para encapsular lógica de dominio geoespacial.
 
 ### Flujo de Datos Hiking
 
@@ -248,28 +250,21 @@ Frontend (Leaflet)
 GET /api/hiking/route (start, end)
      │
      ▼
-HikingController
+GetHikingRouteService ──► OsrmService (Ruta 2D)
+     │
+     └─► ElevationService (Añade Z)
      │
      ▼
-GetHikingRouteService (Application)
-     │
-     ├─► 1. OsrmService (Obtiene ruta 2D lat/lon)
-     │
-     ├─► 2. ElevationService
-     │          │
-     │          ▼
-     │      Process::run('python3 add_elevation.py')
-     │          │
-     │          ▼
-     │      GDAL/Rasterio (Lee .tif)
-     │          │
-     │          ▼
-     │      Devuelve JSON con Z (lat, lon, ele)
-     │
-     └─► 3. Calcula estadísticas (Desnivel +, Desnivel -)
-     │
-     ▼
-JSON GeoJSON Response (3D)
+Frontend (Recibe ruta) ──► POST /api/hiking/pois (geom)
+                                  │
+                                  ▼
+                          GetRoutePoisService
+                                  │
+                                  ▼
+                          OverpassPoiProvider
+                                  │
+                                  ▼
+                          Overpass API (External)
 ```
 
 ## Arquitectura MCP (Model Context Protocol)

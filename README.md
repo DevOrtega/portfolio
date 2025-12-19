@@ -208,12 +208,14 @@ The portfolio includes functional demos of real projects:
 
 ### Hiking Route Planner
 - **Route**: `/projects/demo/hiking-planner`
-- **Technologies**: Laravel (PHP), Python (GDAL/Rasterio), Leaflet
+- **Technologies**: Laravel (PHP), Python (GDAL/Rasterio), Leaflet, Overpass API
 - **Features**:
   - Calculation of hiking routes between two points
   - Integration with OSRM (Open Source Routing Machine) for trails
   - **3D Elevation**: Uses local Digital Terrain Models (DTM/MDT) to calculate precise altitude
   - Elevation profiles (gain/loss stats)
+  - **Points of Interest**: Finds restaurants, water sources, viewpoints, and peaks along the route
+  - **Smart Planning**: Interactive addition of POIs to the route with automatic recalculation
   - Hybrid PHP+Python architecture for geospatial processing
 
 ### ATM Manager

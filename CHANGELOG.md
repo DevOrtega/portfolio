@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Major Updates
 
+#### Hiking Planner - Advanced Features & Architecture
+- **Points of Interest (POIs)**: Integration with Overpass API to find amenities (food, water, shelter) and natural features (peaks, viewpoints) along the route.
+- **Interactive Planning**: Ability to add any discovered POI directly to the route, auto-recalculating the optimal path.
+- **Hexagonal Architecture Refactor**: Complete refactor of the Hiking domain introducing Value Objects (`Coordinate`, `RouteGeometry`) and decoupling Infrastructure (`OverpassPoiProvider`) from Application logic.
+- **Enhanced UI**: Added map legend, detailed popups with naming fallback logic, and loading indicators.
+
 #### Portfolio Domain - Hexagonal Architecture Migration
 - **Domain Entities**: Added `Experience`, `Education`, `Skill`, `PersonalInfo` entities
 - **Repository Pattern**: Implemented repository interfaces and Eloquent implementations for all Portfolio entities
