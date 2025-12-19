@@ -27,20 +27,34 @@ class OverpassPoiProvider implements PoiProviderInterface
     {
         $coordsString = $route->toString();
 
+        // Build Query with expanded categories
         $query = <<<QL
 [out:json][timeout:25];
 (
+  // Food & Drink
   node["amenity"~"restaurant|cafe|bar|pub|fast_food"](around:{$radius},{$coordsString});
   way["amenity"~"restaurant|cafe|bar|pub|fast_food"](around:{$radius},{$coordsString});
   
-  node["amenity"="drinking_water"](around:{$radius},{$coordsString});
+  // Health
+  node["amenity"~"pharmacy|hospital|clinic|doctors"](around:{$radius},{$coordsString});
   
-  node["tourism"~"viewpoint|picnic_site|camp_site|alpine_hut|wilderness_hut"](around:{$radius},{$coordsString});
-  way["tourism"~"viewpoint|picnic_site|camp_site|alpine_hut|wilderness_hut"](around:{$radius},{$coordsString});
+  // Culture & Tourism
+  node["tourism"~"museum|viewpoint|picnic_site"](around:{$radius},{$coordsString});
+  way["tourism"~"museum|viewpoint|picnic_site"](around:{$radius},{$coordsString});
 
-  node["amenity"="parking"](around:{$radius},{$coordsString});
+  // Camping & Shelters
+  node["tourism"~"camp_site|caravan_site|alpine_hut|wilderness_hut"](around:{$radius},{$coordsString});
+  way["tourism"~"camp_site|caravan_site|alpine_hut|wilderness_hut"](around:{$radius},{$coordsString});
+
+  // Accommodation
+  node["tourism"~"hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
+  way["tourism"~"hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
+
+  // Transport & Basics
+  node["amenity"~"parking|drinking_water"](around:{$radius},{$coordsString});
   way["amenity"="parking"](around:{$radius},{$coordsString});
   
+  // Natural
   node["natural"="peak"](around:{$radius},{$coordsString});
 );
 out center;
@@ -75,7 +89,7 @@ QL;
 
             if (!$lat || !$lon) continue;
 
-            $type = $this->determineType($tags);
+            $category = $this->determineCategory($tags);
             
             // Comprehensive name priority list
             $name = $tags['name'] 
@@ -88,10 +102,10 @@ QL;
                  ?? null;
             
             if (!$name) {
-                if ($type === 'peak' && isset($tags['ele'])) {
+                if ($category === 'peak' && isset($tags['ele'])) {
                     $name = "Cima ({$tags['ele']}m)";
                 } 
-                else if ($type === 'viewpoint') {
+                else if ($category === 'viewpoint') {
                     $name = $tags['description'] ?? $tags['note'] ?? "Mirador";
                 }
                 else {
@@ -99,7 +113,7 @@ QL;
                     if ($specificTag && $specificTag !== 'yes') {
                         $name = ucfirst(str_replace('_', ' ', $specificTag));
                     } else {
-                        $name = ucfirst(str_replace('_', ' ', $type));
+                        $name = ucfirst(str_replace('_', ' ', $category));
                     }
                 }
             }
@@ -110,27 +124,49 @@ QL;
                 'lat' => $lat,
                 'lon' => $lon,
                 'name' => $name,
-                'category' => $type,
-                'tags' => $tags 
+                'category' => $category,
+                'tags' => $tags,
+                'relevance' => $this->calculateRelevance($tags)
             ];
         }
         return $pois;
     }
 
-    private function determineType(array $tags): string
+    private function determineCategory(array $tags): string
     {
         if (isset($tags['amenity'])) {
-            if (in_array($tags['amenity'], ['restaurant', 'cafe', 'bar', 'pub', 'fast_food'])) return 'food';
-            if ($tags['amenity'] === 'drinking_water') return 'water';
-            if ($tags['amenity'] === 'parking') return 'parking';
+            $a = $tags['amenity'];
+            if (in_array($a, ['restaurant', 'cafe', 'bar', 'pub', 'fast_food'])) return 'food';
+            if ($a === 'pharmacy') return 'health';
+            if (in_array($a, ['hospital', 'clinic', 'doctors'])) return 'health';
+            if ($a === 'drinking_water') return 'water';
+            if ($a === 'parking') return 'parking';
         }
         if (isset($tags['tourism'])) {
-            if ($tags['tourism'] === 'viewpoint') return 'viewpoint';
-            if ($tags['tourism'] === 'picnic_site') return 'picnic';
-            if (in_array($tags['tourism'], ['camp_site', 'alpine_hut', 'wilderness_hut'])) return 'shelter';
+            $t = $tags['tourism'];
+            if ($t === 'viewpoint') return 'viewpoint';
+            if ($t === 'picnic_site') return 'picnic';
+            if ($t === 'museum') return 'culture';
+            if (in_array($t, ['camp_site', 'caravan_site'])) return 'camping';
+            if (in_array($t, ['alpine_hut', 'wilderness_hut'])) return 'shelter';
+            if (in_array($t, ['hotel', 'hostel', 'guest_house', 'chalet', 'apartment', 'motel'])) return 'accommodation';
         }
         if (isset($tags['natural']) && $tags['natural'] === 'peak') return 'peak';
 
         return 'other';
+    }
+
+    private function calculateRelevance(array $tags): int
+    {
+        $score = 0;
+        if (isset($tags['name'])) $score += 10;
+        if (isset($tags['wikidata']) || isset($tags['wikipedia'])) $score += 20;
+        if (isset($tags['stars'])) $score += (int) $tags['stars'] * 5;
+        if (isset($tags['award:michelin'])) $score += 30;
+        if (isset($tags['website']) || isset($tags['contact:website'])) $score += 5;
+        if (isset($tags['phone']) || isset($tags['contact:phone'])) $score += 5;
+        if (isset($tags['opening_hours'])) $score += 2;
+        
+        return $score;
     }
 }

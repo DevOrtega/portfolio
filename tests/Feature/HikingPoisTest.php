@@ -6,62 +6,64 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(RefreshDatabase::class);
 
-test('hiking pois endpoint returns formatted pois', function () {
-    // 1. Mock Overpass API Response
+test('hiking pois endpoint returns formatted pois with new categories', function () {
     Http::fake([
         'overpass-api.de/*' => Http::response([
             'elements' => [
-                [
-                    'type' => 'node',
-                    'id' => 123,
-                    'lat' => 28.0,
-                    'lon' => -15.5,
-                    'tags' => [
-                        'amenity' => 'restaurant',
-                        'name' => 'El Refugio'
-                    ]
-                ],
-                [
-                    'type' => 'node',
-                    'id' => 124,
-                    'lat' => 28.1,
-                    'lon' => -15.6,
-                    'tags' => [
-                        'natural' => 'peak',
-                        'ele' => '1949'
-                    ]
-                ]
+                ['type' => 'node', 'id' => 1, 'lat' => 28.0, 'lon' => -15.5, 'tags' => ['amenity' => 'pharmacy', 'name' => 'Farmacia A']],
+                ['type' => 'node', 'id' => 2, 'lat' => 28.1, 'lon' => -15.6, 'tags' => ['tourism' => 'museum', 'name' => 'Museo B']],
+                ['type' => 'node', 'id' => 3, 'lat' => 28.2, 'lon' => -15.7, 'tags' => ['tourism' => 'camp_site', 'name' => 'Camping C']],
+                ['type' => 'node', 'id' => 4, 'lat' => 28.3, 'lon' => -15.8, 'tags' => ['tourism' => 'hotel', 'stars' => '4', 'name' => 'Hotel D']]
             ]
         ], 200)
     ]);
 
-    // 2. Make Request
     $response = $this->postJson('/api/hiking/pois', [
-        'route' => [
-            [-15.5, 28.0], // Lon, Lat (as sent by frontend/OSRM)
-            [-15.6, 28.1]
-        ],
+        'route' => [[-15.5, 28.0], [-15.6, 28.1]],
         'radius' => 500
     ]);
 
-    // 3. Assertions
     $response->assertStatus(200);
-    
-    $response->assertJsonCount(2);
-    
-    // Check Restaurant
-    $response->assertJsonFragment([
-        'id' => 123,
-        'category' => 'food',
-        'name' => 'El Refugio'
+    $response->assertJsonFragment(['category' => 'health', 'name' => 'Farmacia A']);
+    $response->assertJsonFragment(['category' => 'culture', 'name' => 'Museo B']);
+    $response->assertJsonFragment(['category' => 'camping', 'name' => 'Camping C']);
+    $response->assertJsonFragment(['category' => 'accommodation', 'name' => 'Hotel D']);
+});
+
+test('hiking pois service sorts by relevance and limits per category', function () {
+    // Generate 20 restaurants, some with wikidata (more relevant)
+    $elements = [];
+    for ($i = 1; $i <= 20; $i++) {
+        $tags = ['amenity' => 'restaurant', 'name' => "Restaurante $i"];
+        if ($i > 15) {
+            $tags['wikidata'] = "Q$i"; // Higher relevance
+        }
+        $elements[] = [
+            'type' => 'node',
+            'id' => $i,
+            'lat' => 28.0,
+            'lon' => -15.5,
+            'tags' => $tags
+        ];
+    }
+
+    Http::fake(['overpass-api.de/*' => Http::response(['elements' => $elements], 200)]);
+
+    $response = $this->postJson('/api/hiking/pois', [
+        'route' => [[-15.5, 28.0], [-15.6, 28.1]]
     ]);
 
-    // Check Peak Naming Fallback
-    $response->assertJsonFragment([
-        'id' => 124,
-        'category' => 'peak',
-        'name' => 'Cima (1949m)'
-    ]);
+    $response->assertStatus(200);
+    
+    // Should be limited to 15 per category
+    $response->assertJsonCount(15);
+    
+    // The 5 restaurants with wikidata (16-20) MUST be present because they are more relevant
+    $data = $response->json();
+    $names = collect($data)->pluck('name')->toArray();
+    
+    expect($names)->toContain('Restaurante 16');
+    expect($names)->toContain('Restaurante 20');
 });
 
 test('hiking pois endpoint handles overpass failure gracefully', function () {

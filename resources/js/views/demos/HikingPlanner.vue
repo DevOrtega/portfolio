@@ -67,17 +67,22 @@ const createIcon = (color, label = '') => {
     });
 };
 
-const createPoiIcon = (type) => {
+const createPoiIcon = (category) => {
     let color = '#6b7280';
     let label = '•';
     
-    switch(type) {
-        case 'food': color = '#ef4444'; label = 'R'; break; // Red
-        case 'water': color = '#06b6d4'; label = 'W'; break; // Cyan
-        case 'viewpoint': color = '#8b5cf6'; label = 'V'; break; // Violet
-        case 'shelter': color = '#d97706'; label = 'S'; break; // Amber
-        case 'parking': color = '#374151'; label = 'P'; break; // Dark Gray
-        case 'peak': color = '#10b981'; label = '^'; break; // Green
+    switch(category) {
+        case 'food': color = '#ef4444'; label = 'R'; break;
+        case 'water': color = '#06b6d4'; label = 'W'; break;
+        case 'viewpoint': color = '#8b5cf6'; label = 'V'; break;
+        case 'picnic': color = '#fb7185'; label = 'X'; break;
+        case 'camping': color = '#16a34a'; label = 'C'; break;
+        case 'culture': color = '#78350f'; label = 'M'; break;
+        case 'health': color = '#db2777'; label = 'H'; break;
+        case 'shelter': color = '#d97706'; label = 'S'; break;
+        case 'accommodation': color = '#4f46e5'; label = 'A'; break;
+        case 'parking': color = '#374151'; label = 'P'; break;
+        case 'peak': color = '#10b981'; label = '^'; break;
     }
     
     return L.divIcon({

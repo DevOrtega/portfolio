@@ -34,7 +34,25 @@ final readonly class GetRoutePoisService
         // Start with 0.001 (approx 100m)
         $simplifiedRoute = $route->simplify(0.001);
 
-        return $this->poiProvider->getPoisNearRoute($simplifiedRoute, $radius);
+        $pois = $this->poiProvider->getPoisNearRoute($simplifiedRoute, $radius);
+
+        return $this->filterAndLimitPois($pois);
+    }
+
+    /**
+     * Group POIs by category and limit each to avoid saturating the map.
+     * Prioritizes items with higher relevance scores.
+     */
+    private function filterAndLimitPois(array $allPois): array
+    {
+        $limitPerCategory = 15;
+        
+        return collect($allPois)
+            ->groupBy('category')
+            ->map(fn($items) => $items->sortByDesc('relevance')->take($limitPerCategory))
+            ->flatten(1)
+            ->values()
+            ->toArray();
     }
 }
 
