@@ -314,6 +314,33 @@ const selectLocation = (place, type, index = null) => {
     }
 };
 
+const clearField = (type, index = null) => {
+    if (type === 'start') {
+        startQuery.value = '';
+        startLocation.value = null;
+    } else if (type === 'end') {
+        endQuery.value = '';
+        endLocation.value = null;
+    } else if (type === 'waypoint' && index !== null) {
+        waypoints.value[index].query = '';
+        waypoints.value[index].location = null;
+    }
+    
+    // Clear routes and POIs (user requirement)
+    routes.value = [];
+    pois.value = [];
+    routesLayer.value.clearLayers();
+    poisLayer.value.clearLayers();
+    decoratorsLayer.value.clearLayers();
+    
+    updateMarkers();
+    
+    // Only recalculate if we still have a valid path (Start + End)
+    if (startLocation.value && endLocation.value) {
+        calculateRoutes();
+    }
+};
+
 const updateMarkers = () => {
     markersLayer.value.clearLayers();
     
@@ -448,12 +475,20 @@ const renderPois = () => {
         const categoryLabel = t('hiking.legend.' + poi.category);
         const hasProperName = poi.name.toLowerCase() !== poi.category.toLowerCase() && 
                              poi.name.toLowerCase() !== categoryLabel.toLowerCase();
+        
+        const openingHours = poi.tags?.opening_hours;
 
         L.marker([poi.lat, poi.lon], { icon: createPoiIcon(poi.category) })
          .bindPopup(`
             <div class="text-center min-w-[120px]">
                 <b class="block text-sm mb-0.5">${poi.name}</b>
                 ${hasProperName ? `<span class="text-[10px] uppercase text-gray-500 block mb-2">${categoryLabel}</span>` : '<div class="mb-2"></div>'}
+                
+                ${openingHours ? `<div class="text-[9px] text-gray-400 mb-2 border-t border-gray-600 pt-1 mt-1 flex items-center justify-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    <span>${openingHours}</span>
+                </div>` : ''}
+
                 <button onclick="window.addPoiToRoute(${poi.id})" 
                         class="w-full bg-blue-600 text-white text-[10px] py-1 px-2 rounded hover:bg-blue-700 transition-colors font-bold uppercase tracking-tight">
                     ${t('hiking.addToRoute')}
@@ -575,7 +610,7 @@ const getTranslatedDifficulty = (diff) => {
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
                             :placeholder="$t('hiking.originPlaceholder')"
                         />
-                        <button v-if="startQuery" @click="startQuery=''; startLocation=null; updateMarkers()" class="pr-3 text-gray-500 hover:text-white">✕</button>
+                        <button v-if="startQuery" @click="clearField('start')" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
                     <!-- Results Dropdown -->
                     <ul v-if="startResults.length > 0" class="absolute w-full bg-gray-700 mt-1 rounded-lg shadow-xl border border-gray-600 z-50 max-h-48 overflow-y-auto">
@@ -604,7 +639,7 @@ const getTranslatedDifficulty = (diff) => {
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
                             :placeholder="$t('hiking.intermediatePlaceholder')"
                         />
-                        <button v-if="wp.query" @click="wp.query=''; wp.location=null; updateMarkers(); if(startLocation && endLocation) calculateRoutes()" class="pr-3 text-gray-500 hover:text-white">✕</button>
+                        <button v-if="wp.query" @click="clearField('waypoint', index)" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
                     <!-- Results Dropdown -->
                     <ul v-if="wp.results.length > 0" class="absolute w-full bg-gray-700 mt-1 rounded-lg shadow-xl border border-gray-600 z-50 max-h-48 overflow-y-auto">
@@ -638,7 +673,7 @@ const getTranslatedDifficulty = (diff) => {
                             class="w-full bg-transparent border-none focus:ring-0 text-white placeholder-gray-500 py-3 px-2"
                             :placeholder="$t('hiking.destinationPlaceholder')"
                         />
-                        <button v-if="endQuery" @click="endQuery=''; endLocation=null; updateMarkers()" class="pr-3 text-gray-500 hover:text-white">✕</button>
+                        <button v-if="endQuery" @click="clearField('end')" class="pr-3 text-gray-500 hover:text-white">✕</button>
                     </div>
                     <!-- Results Dropdown -->
                     <ul v-if="endResults.length > 0" class="absolute w-full bg-gray-700 mt-1 rounded-lg shadow-xl border border-gray-600 z-50 max-h-48 overflow-y-auto">
