@@ -41,28 +41,29 @@ jobs:
     - name: Descargar Mapa (Canarias)
       run: |
         mkdir -p docker/osrm
-        echo "🌍 Descargando datos de mapa (PBF) desde múltiples fuentes..."
+        echo "🌍 Descargando datos de mapa (PBF) desde fuente verificada (OSM France)..."
         
+        # URL VERIFICADA: Espejo francés (África/España/Canarias)
+        URL="https://download.openstreetmap.fr/extracts/africa/spain/canarias/canarias-latest.osm.pbf"
         UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         
-        # FUENTE 1: BBBike (Extracto de Gran Canaria, muy ligero y estable)
-        URL1="https://download.bbbike.org/osm/bbbike/GranCanaria/GranCanaria.osm.pbf"
-        # FUENTE 2: Geofabrik (Islas Canarias completas)
-        URL2="https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
-        
-        if curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL1"; then
-          echo "✅ Descargado desde BBBike (Gran Canaria)"
-        elif curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL2"; then
-          echo "✅ Descargado desde Geofabrik (Canarias)"
+        echo "Intentando descarga desde: $URL"
+        # Usamos --retry para mayor robustez ante micro-cortes
+        if curl -L -f -A "$UA" --connect-timeout 10 --retry 3 -o docker/osrm/gran-canaria.osm.pbf "$URL"; then
+          echo "✅ Mapa descargado correctamente"
         else
-          echo "❌ ERROR: Todas las fuentes de descarga han fallado."
+          echo "❌ ERROR: No se pudo descargar el mapa. El espejo podría estar temporalmente fuera de servicio."
           exit 1
         fi
         
-        # VERIFICACIÓN DE TAMAÑO (Mínimo 5MB para Gran Canaria, 20MB para todas las islas)
+        # VERIFICACIÓN DE TAMAÑO (Canarias PBF pesa ~60MB)
         FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
-        echo "Tamaño final: $FILE_SIZE bytes"
-        if [ "$FILE_SIZE" -lt 5000000 ]; then exit 1; fi
+        echo "Tamaño del archivo: $FILE_SIZE bytes"
+        
+        if [ "$FILE_SIZE" -lt 30000000 ]; then
+          echo "❌ ERROR: El archivo es demasiado pequeño ($FILE_SIZE bytes). Descarga incompleta o corrupta."
+          exit 1
+        fi
 
     - name: Desplegar en Servidor
       run: |
