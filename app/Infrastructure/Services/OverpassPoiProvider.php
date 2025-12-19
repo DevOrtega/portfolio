@@ -16,7 +16,7 @@ class OverpassPoiProvider implements PoiProviderInterface
     public function getPoisNearRoute(RouteGeometry $route, int $radius): array
     {
         // Force refresh cache by changing version prefix
-        $cacheKey = 'hiking_pois_v4_' . md5($route->toString() . $radius);
+        $cacheKey = 'hiking_pois_v5_' . md5($route->toString() . $radius);
 
         return Cache::remember($cacheKey, self::CACHE_TTL, function () use ($route, $radius) {
             return $this->fetchFromOverpass($route, $radius);
@@ -27,14 +27,14 @@ class OverpassPoiProvider implements PoiProviderInterface
     {
         $coordsString = $route->toString();
 
-        // Optimized Query using NWR (Node, Way, Relation)
-        // Grouping tags to reduce complexity and repetitions
+        // Optimized Query: single around per category group
+        // Increased timeout to 60s
         $query = <<<QL
-[out:json][timeout:30];
+[out:json][timeout:60];
 (
-  nwr["amenity"~"restaurant|cafe|bar|pub|fast_food|pharmacy|hospital|clinic|doctors|parking|drinking_water"](around:{$radius},{$coordsString});
-  nwr["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
-  nwr["natural"="peak"](around:{$radius},{$coordsString});
+  nwr(around:{$radius},{$coordsString})["amenity"~"restaurant|cafe|bar|pub|fast_food|pharmacy|hospital|clinic|doctors|parking|drinking_water"];
+  nwr(around:{$radius},{$coordsString})["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"];
+  nwr(around:{$radius},{$coordsString})["natural"="peak"];
 );
 out center;
 QL;
@@ -46,15 +46,15 @@ QL;
 
             if (!$response->successful()) {
                 Log::error('Overpass API failed', ['status' => $response->status(), 'body' => $response->body()]);
-                return [];
+                throw new \RuntimeException("Overpass API returned status {$response->status()}");
             }
 
             $data = $response->json();
             return $this->transformPois($data['elements'] ?? []);
 
         } catch (\Exception $e) {
-            Log::error('Overpass connection error', ['message' => $e->getMessage()]);
-            return [];
+            Log::error('Overpass error', ['message' => $e->getMessage()]);
+            throw $e;
         }
     }
 

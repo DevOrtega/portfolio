@@ -33,7 +33,7 @@ final readonly class GetRoutePoisService
         // Simplify geometry to avoid limits
         // Start with 0.001 (approx 100m)
         $epsilon = 0.001;
-        $simplifiedRoute = $route->simplify(0.001, 100);
+        $simplifiedRoute = $route->simplify(0.001, 40);
 
         $pois = $this->poiProvider->getPoisNearRoute($simplifiedRoute, $radius);
 

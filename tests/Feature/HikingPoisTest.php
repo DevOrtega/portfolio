@@ -75,15 +75,9 @@ test('hiking pois endpoint handles overpass failure gracefully', function () {
         'route' => [[-15.5, 28.0], [-15.6, 28.1]]
     ]);
 
-    // Should return empty array or 500? 
-    // Controller catches exception and returns 500 error json or empty?
-    // Looking at Controller: return response()->json(['error' => ...], 500);
-    // Actually GetRoutePoisService returns [] on error, but Controller wraps in try/catch.
-    // Service catches Http error and returns [].
-    // So Controller receives [] and returns 200 OK with [].
-    
-    $response->assertStatus(200);
-    $response->assertJsonCount(0);
+    // Controller catches exception and returns 500 error json
+    $response->assertStatus(500);
+    $response->assertJsonStructure(['error']);
 });
 
 test('hiking pois service simplifies route correctly', function () {
