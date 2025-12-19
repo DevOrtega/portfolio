@@ -44,7 +44,8 @@ jobs:
         TARGET_DIR="/root/portfolio"
         
         echo "📦 Preparando paquete de despliegue..."
-        # Creamos el paquete en /tmp para evitar que tar se vea a sí mismo o cambios en el directorio actual
+        # Excluimos .git, .github, .env, storage, vendor, node_modules, build
+        # Y también mdt/ y gtfs/ que son datos pesados que ya deberían estar en el servidor
         tar -czf /tmp/deployment.tar.gz \
           --exclude='.git' \
           --exclude='.github' \
@@ -53,19 +54,22 @@ jobs:
           --exclude='vendor' \
           --exclude='node_modules' \
           --exclude='public/build' \
+          --exclude='mdt' \
+          --exclude='gtfs' \
           .
 
         echo "🚀 Transfiriendo paquete al servidor..."
-        scp /tmp/deployment.tar.gz deploy-target:/tmp/deployment.tar.gz
+        # Subimos al home para evitar problemas de espacio/permisos en /tmp
+        scp /tmp/deployment.tar.gz deploy-target:~/deployment.tar.gz
 
         echo "🏗️ Extrayendo y ejecutando despliegue remoto..."
         ssh deploy-target "
           set -e
           mkdir -p $TARGET_DIR
           
-          # Extraer el nuevo código sobre el directorio destino
-          tar -xzf /tmp/deployment.tar.gz -C $TARGET_DIR
-          rm /tmp/deployment.tar.gz
+          # Extraer el nuevo código sobre el directorio destino (no borra lo existente)
+          tar -xzf ~/deployment.tar.gz -C $TARGET_DIR
+          rm ~/deployment.tar.gz
           
           cd $TARGET_DIR
           
