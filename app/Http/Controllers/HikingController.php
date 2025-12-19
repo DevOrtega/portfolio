@@ -41,7 +41,24 @@ class HikingController extends Controller
      *     ),
      *     @OA\Response(
      *         response=200,
-     *         description="List of POIs"
+     *         description="List of POIs",
+     *         @OA\JsonContent(
+     *             type="array",
+     *             @OA\Items(
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=123456),
+     *                 @OA\Property(property="type", type="string", example="node"),
+     *                 @OA\Property(property="lat", type="number", format="float", example=28.01),
+     *                 @OA\Property(property="lon", type="number", format="float", example=-15.6),
+     *                 @OA\Property(property="name", type="string", example="Restaurante El Paso"),
+     *                 @OA\Property(property="category", type="string", example="food"),
+     *                 @OA\Property(
+     *                     property="tags", 
+     *                     type="object", 
+     *                     example={"amenity": "restaurant", "cuisine": "regional"}
+     *                 )
+     *             )
+     *         )
      *     )
      * )
      */

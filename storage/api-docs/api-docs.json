@@ -618,6 +618,91 @@
                 }
             }
         },
+        "/api/hiking/pois": {
+            "post": {
+                "tags": [
+                    "Hiking"
+                ],
+                "summary": "Find POIs near a route",
+                "description": "Get POIs along a route",
+                "operationId": "555fbfd908cdc560bc2fceb64543e37a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "route": {
+                                        "type": "array",
+                                        "items": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "number"
+                                            }
+                                        }
+                                    },
+                                    "radius": {
+                                        "type": "integer",
+                                        "example": 1000
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "List of POIs",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "properties": {
+                                            "id": {
+                                                "type": "integer",
+                                                "example": 123456
+                                            },
+                                            "type": {
+                                                "type": "string",
+                                                "example": "node"
+                                            },
+                                            "lat": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": 28.01
+                                            },
+                                            "lon": {
+                                                "type": "number",
+                                                "format": "float",
+                                                "example": -15.6
+                                            },
+                                            "name": {
+                                                "type": "string",
+                                                "example": "Restaurante El Paso"
+                                            },
+                                            "category": {
+                                                "type": "string",
+                                                "example": "food"
+                                            },
+                                            "tags": {
+                                                "type": "object",
+                                                "example": {
+                                                    "amenity": "restaurant",
+                                                    "cuisine": "regional"
+                                                }
+                                            }
+                                        },
+                                        "type": "object"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
         "/api/hiking/route": {
             "get": {
                 "tags": [
@@ -645,6 +730,29 @@
                         "schema": {
                             "type": "string",
                             "example": "28.1235,-15.4363"
+                        }
+                    },
+                    {
+                        "name": "waypoints[]",
+                        "in": "query",
+                        "description": "List of intermediate coordinates (lat,lon)",
+                        "required": false,
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "type": "string",
+                                "example": "28.05,-15.55"
+                            }
+                        }
+                    },
+                    {
+                        "name": "intermediate",
+                        "in": "query",
+                        "description": "Legacy intermediate point (lat,lon). Deprecated, use waypoints[] instead.",
+                        "required": false,
+                        "deprecated": true,
+                        "schema": {
+                            "type": "string"
                         }
                     }
                 ],
