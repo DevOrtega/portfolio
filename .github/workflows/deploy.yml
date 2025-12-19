@@ -38,22 +38,29 @@ jobs:
           ProxyCommand cloudflared access ssh --hostname %h --id ${{ secrets.CF_CLIENT_ID }} --secret ${{ secrets.CF_CLIENT_SECRET }}
         " >> ~/.ssh/config
 
-    - name: Descargar Mapa (Gran Canaria)
+    - name: Descargar Mapa (Canarias)
       run: |
         mkdir -p docker/osrm
-        echo "🌍 Descargando datos de mapa (PBF) desde OSM France (Espejo estable)..."
-        # Usamos OSM France con un User-Agent real para evitar bloqueos
-        curl -L -f -A "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36" \
-          -o docker/osrm/gran-canaria.osm.pbf "https://download.openstreetmap.fr/extracts/europe/spain/canary_islands-latest.osm.pbf"
+        echo "🌍 Descargando datos de mapa (PBF)..."
         
-        # VERIFICACIÓN CRÍTICA: Si el archivo es pequeño, el despliegue debe fallar aquí
-        FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
-        echo "Tamaño del mapa: $FILE_SIZE bytes"
-        if [ "$FILE_SIZE" -lt 10000000 ]; then
-          echo "❌ ERROR: El mapa descargado es demasiado pequeño. El servidor origen podría estar caído o bloqueando la petición."
-          exit 1
+        # Intentar desde OSM France primero
+        URL1="https://download.openstreetmap.fr/extracts/europe/spain/canary-islands-latest.osm.pbf"
+        # Fallback a Geofabrik si falla
+        URL2="https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
+        
+        UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        
+        if curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL1"; then
+          echo "✅ Descargado desde OSM France"
+        else
+          echo "⚠️ Falló OSM France, intentando Geofabrik..."
+          curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL2"
+          echo "✅ Descargado desde Geofabrik"
         fi
-        ls -lh docker/osrm/
+        
+        FILE_SIZE=$(stat -c%s docker/osrm/gran-canaria.osm.pbf)
+        echo "Tamaño final: $FILE_SIZE bytes"
+        if [ "$FILE_SIZE" -lt 10000000 ]; then exit 1; fi
 
     - name: Desplegar en Servidor
       run: |

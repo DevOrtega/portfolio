@@ -23,7 +23,7 @@ if [ -f "$DATA_DIR/$MAP_FILE" ] && [ $(stat -c%s "$DATA_DIR/$MAP_FILE") -gt 1000
 else
     echo "⚠️ Map file missing or too small. Attempting emergency download from OSM France..."
     rm -f "$DATA_DIR/$MAP_FILE"
-    curl -L -f -A "Mozilla/5.0" -o "$DATA_DIR/$MAP_FILE" "https://download.openstreetmap.fr/extracts/europe/spain/canary_islands-latest.osm.pbf" || true
+    curl -L -f -A "Mozilla/5.0" -o "$DATA_DIR/$MAP_FILE" "https://download.openstreetmap.fr/extracts/europe/spain/canary-islands-latest.osm.pbf" || true
 fi
 
 # Final verification
