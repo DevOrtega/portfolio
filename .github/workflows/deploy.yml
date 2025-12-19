@@ -43,16 +43,15 @@ jobs:
         mkdir -p docker/osrm
         echo "🌍 Descargando datos de mapa (PBF) desde fuente verificada (OSM France)..."
         
-        # URL VERIFICADA: Espejo francés (África/España/Canarias)
-        URL="https://download.openstreetmap.fr/extracts/africa/spain/canarias/canarias-latest.osm.pbf"
+        # URL VERIFICADA TRAS INSPECCIÓN: El archivo está en /spain/ directamente
+        URL="https://download.openstreetmap.fr/extracts/africa/spain/canarias-latest.osm.pbf"
         UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
         
         echo "Intentando descarga desde: $URL"
-        # Usamos --retry para mayor robustez ante micro-cortes
         if curl -L -f -A "$UA" --connect-timeout 10 --retry 3 -o docker/osrm/gran-canaria.osm.pbf "$URL"; then
           echo "✅ Mapa descargado correctamente"
         else
-          echo "❌ ERROR: No se pudo descargar el mapa. El espejo podría estar temporalmente fuera de servicio."
+          echo "❌ ERROR: No se pudo descargar el mapa."
           exit 1
         fi
         
