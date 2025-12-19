@@ -43,18 +43,21 @@ jobs:
         mkdir -p docker/osrm
         echo "🌍 Descargando datos de mapa (PBF)..."
         
-        # Intentar desde OSM France primero
-        URL1="https://download.openstreetmap.fr/extracts/europe/spain/canary-islands-latest.osm.pbf"
-        # Fallback a Geofabrik si falla
+        # Intentar desde OSM France (Espejo muy estable para CI)
+        # Nota: Usamos guión bajo en islas_canarias que es el estándar de este espejo
+        URL1="https://download.openstreetmap.fr/extracts/europe/spain/islas_canarias-latest.osm.pbf"
+        
+        # Fallback a Geofabrik con cabeceras de navegación real
         URL2="https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
         
         UA="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        REF="https://download.geofabrik.de/europe/spain.html"
         
         if curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL1"; then
           echo "✅ Descargado desde OSM France"
         else
-          echo "⚠️ Falló OSM France, intentando Geofabrik..."
-          curl -L -f -A "$UA" -o docker/osrm/gran-canaria.osm.pbf "$URL2"
+          echo "⚠️ Falló OSM France, intentando Geofabrik con bypass..."
+          curl -L -f -A "$UA" -e "$REF" -o docker/osrm/gran-canaria.osm.pbf "$URL2"
           echo "✅ Descargado desde Geofabrik"
         fi
         
