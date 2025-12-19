@@ -41,8 +41,9 @@ jobs:
     - name: Descargar Mapa (Gran Canaria)
       run: |
         mkdir -p docker/osrm
-        echo "🌍 Descargando datos de mapa desde Overpass..."
-        curl -L -o docker/osrm/gran-canaria.osm "https://overpass-api.de/api/map?bbox=-15.9,27.7,-15.3,28.3"
+        echo "🌍 Descargando datos de mapa (PBF) desde BBBike..."
+        # Usamos el extracto PBF de Gran Canaria, que es más estable que Overpass para áreas grandes
+        curl -L -o docker/osrm/gran-canaria.osm.pbf "https://download.bbbike.org/osm/bbbike/GranCanaria/GranCanaria.osm.pbf"
         ls -lh docker/osrm/
 
     - name: Desplegar en Servidor

@@ -3,11 +3,7 @@ set -e
 
 # Configuration
 DATA_DIR="./docker/osrm"
-# Using Overpass API to get exact GC bounding box (returns XML .osm)
-# BBox: left,bottom,right,top
-BBOX="-15.9,27.7,-15.3,28.3"
-MAP_URL="https://overpass-api.de/api/map?bbox=$BBOX"
-MAP_FILE="gran-canaria.osm" # XML format
+MAP_FILE="gran-canaria.osm.pbf"
 OSRM_FILE="gran-canaria.osrm"
 
 echo "=== OSRM Setup ==="
@@ -18,25 +14,23 @@ if ! command -v docker &> /dev/null; then
     exit 1
 fi
 
-# 1. Download Map Data
-if [ -f "$DATA_DIR/$MAP_FILE" ]; then
-    echo "Map file $MAP_FILE already exists, skipping download."
+# 1. Download Map Data (if not present)
+if [ -f "$DATA_DIR/$MAP_FILE" ] && [ $(stat -c%s "$DATA_DIR/$MAP_FILE") -gt 1000000 ]; then
+    echo "Map file $MAP_FILE already exists and looks valid, skipping download."
 else
-    echo "Downloading map data from Overpass API (Gran Canaria area)..."
-    rm -f "$DATA_DIR/canary-islands-latest.osm.pbf" # Clean up old attempts
-    curl -L -f -o "$DATA_DIR/$MAP_FILE" "$MAP_URL"
-    echo "Map downloaded successfully."
+    echo "Downloading map data from BBBike (Gran Canaria)..."
+    rm -f "$DATA_DIR/$MAP_FILE"
+    curl -L -f -o "$DATA_DIR/$MAP_FILE" "https://download.bbbike.org/osm/bbbike/GranCanaria/GranCanaria.osm.pbf"
 fi
 
-# Verify file size
+# Final verification
 FILE_SIZE=$(stat -c%s "$DATA_DIR/$MAP_FILE")
-if [ "$FILE_SIZE" -lt 100000 ]; then
-    echo "Error: File is too small ($FILE_SIZE bytes). Likely an error."
-    head -n 5 "$DATA_DIR/$MAP_FILE"
+if [ "$FILE_SIZE" -lt 1000000 ]; then
+    echo "Error: Map file is too small ($FILE_SIZE bytes). Likely corrupt."
     exit 1
 fi
 
-echo "Map downloaded successfully ($FILE_SIZE bytes)."
+echo "Map ready ($FILE_SIZE bytes)."
 
 # 2. Extract (using standard foot profile)
 echo "Running osrm-extract (foot profile)..."
