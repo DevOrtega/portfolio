@@ -18,9 +18,9 @@ fi
 if [ -f "$DATA_DIR/$MAP_FILE" ] && [ $(stat -c%s "$DATA_DIR/$MAP_FILE") -gt 1000000 ]; then
     echo "Map file $MAP_FILE already exists and looks valid, skipping download."
 else
-    echo "Downloading map data from BBBike (Gran Canaria)..."
+    echo "Downloading map data from Geofabrik (Canary Islands)..."
     rm -f "$DATA_DIR/$MAP_FILE"
-    curl -L -f -o "$DATA_DIR/$MAP_FILE" "https://download.bbbike.org/osm/bbbike/GranCanaria/GranCanaria.osm.pbf"
+    curl -L -f -o "$DATA_DIR/$MAP_FILE" "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
 fi
 
 # Final verification

@@ -41,9 +41,9 @@ jobs:
     - name: Descargar Mapa (Gran Canaria)
       run: |
         mkdir -p docker/osrm
-        echo "🌍 Descargando datos de mapa (PBF) desde BBBike..."
-        # Usamos el extracto PBF de Gran Canaria, que es más estable que Overpass para áreas grandes
-        curl -L -o docker/osrm/gran-canaria.osm.pbf "https://download.bbbike.org/osm/bbbike/GranCanaria/GranCanaria.osm.pbf"
+        echo "🌍 Descargando datos de mapa (PBF) desde Geofabrik..."
+        # Usamos el extracto de las Islas Canarias de Geofabrik, que es el estándar de fiabilidad
+        curl -L -o docker/osrm/gran-canaria.osm.pbf "https://download.geofabrik.de/europe/spain/canary-islands-latest.osm.pbf"
         ls -lh docker/osrm/
 
     - name: Desplegar en Servidor
