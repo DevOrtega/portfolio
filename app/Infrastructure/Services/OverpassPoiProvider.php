@@ -27,34 +27,20 @@ class OverpassPoiProvider implements PoiProviderInterface
     {
         $coordsString = $route->toString();
 
-        // Build Query with expanded categories
+        // Build Optimized Query by grouping tags
+        // This reduces coordinates string repetitions significantly
         $query = <<<QL
 [out:json][timeout:25];
 (
-  // Food & Drink
-  node["amenity"~"restaurant|cafe|bar|pub|fast_food"](around:{$radius},{$coordsString});
-  way["amenity"~"restaurant|cafe|bar|pub|fast_food"](around:{$radius},{$coordsString});
+  // Amenities (Food, Health, Parking, Water)
+  node["amenity"~"restaurant|cafe|bar|pub|fast_food|pharmacy|hospital|clinic|doctors|parking|drinking_water"](around:{$radius},{$coordsString});
+  way["amenity"~"restaurant|cafe|bar|pub|fast_food|parking"](around:{$radius},{$coordsString});
   
-  // Health
-  node["amenity"~"pharmacy|hospital|clinic|doctors"](around:{$radius},{$coordsString});
-  
-  // Culture & Tourism
-  node["tourism"~"museum|viewpoint|picnic_site"](around:{$radius},{$coordsString});
-  way["tourism"~"museum|viewpoint|picnic_site"](around:{$radius},{$coordsString});
+  // Tourism & Culture (Museums, Viewpoints, Picnic, Camping, Accommodation, Shelters)
+  node["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
+  way["tourism"~"museum|viewpoint|picnic_site|camp_site|caravan_site|alpine_hut|wilderness_hut|hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
 
-  // Camping & Shelters
-  node["tourism"~"camp_site|caravan_site|alpine_hut|wilderness_hut"](around:{$radius},{$coordsString});
-  way["tourism"~"camp_site|caravan_site|alpine_hut|wilderness_hut"](around:{$radius},{$coordsString});
-
-  // Accommodation
-  node["tourism"~"hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
-  way["tourism"~"hotel|hostel|guest_house|chalet|apartment|motel"](around:{$radius},{$coordsString});
-
-  // Transport & Basics
-  node["amenity"~"parking|drinking_water"](around:{$radius},{$coordsString});
-  way["amenity"="parking"](around:{$radius},{$coordsString});
-  
-  // Natural
+  // Natural (Peaks)
   node["natural"="peak"](around:{$radius},{$coordsString});
 );
 out center;
