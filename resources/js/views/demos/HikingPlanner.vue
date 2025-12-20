@@ -12,7 +12,7 @@ import RouteInstructions from '@/components/hiking/RouteInstructions.vue';
 // State
 const { t } = useI18n();
 const mapContainer = ref(null);
-const map = ref(null);
+let map = null; // Non-reactive Leaflet instance
 const loading = ref(false);
 const error = ref(null);
 const sidebarOpen = ref(true);
@@ -98,33 +98,33 @@ const createPoiIcon = (category) => {
 onMounted(() => {
     if (!mapContainer.value) return;
 
-    map.value = L.map(mapContainer.value).setView([27.96, -15.55], 11); 
+    map = L.map(mapContainer.value).setView([27.96, -15.55], 11); 
 
     L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; OpenStreetMap &copy; CARTO',
         subdomains: 'abcd',
         maxZoom: 20
-    }).addTo(map.value);
+    }).addTo(map);
 
-    markersLayer.value = L.layerGroup().addTo(map.value);
-    routesLayer.value = L.layerGroup().addTo(map.value);
-    decoratorsLayer.value = L.layerGroup().addTo(map.value);
-    poisLayer.value = L.layerGroup().addTo(map.value);
+    markersLayer.value = L.layerGroup().addTo(map);
+    routesLayer.value = L.layerGroup().addTo(map);
+    decoratorsLayer.value = L.layerGroup().addTo(map);
+    poisLayer.value = L.layerGroup().addTo(map);
 
     // Allow clicking on map to set points if inputs are focused
-    map.value.on('click', onMapClick);
+    map.on('click', onMapClick);
     
     // Initialize with one empty waypoint if desired, or none. Let's start with 0.
 });
 
 onUnmounted(() => {
-    if (map.value) map.value.remove();
+    if (map) map.remove();
 });
 
 watch(sidebarOpen, () => {
     // Wait for transition to finish
     setTimeout(() => {
-        if (map.value) map.value.invalidateSize();
+        if (map) map.invalidateSize();
     }, 305);
 });
 
@@ -375,7 +375,7 @@ const updateMarkers = () => {
 
     // Fit bounds if points exist
     if (hasPoints) {
-        map.value.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
+        map.fitBounds(bounds, { padding: [50, 50], maxZoom: 13 });
     }
 };
 
@@ -515,7 +515,7 @@ const renderRoutes = () => {
         }).addTo(routesLayer.value);
 
         if (isSelected) {
-            map.value.fitBounds(layer.getBounds(), { padding: [50, 50] });
+            map.fitBounds(layer.getBounds(), { padding: [50, 50] });
             
             // Add directional arrows
             // Coordinates in GeoJSON are [lon, lat, ele], Leaflet needs [lat, lon]
